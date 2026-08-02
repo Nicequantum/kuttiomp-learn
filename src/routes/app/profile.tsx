@@ -27,15 +27,17 @@ function ProfilePage() {
   const totalWords = getAllWords().length;
   const totalPaths = getPaths().length;
   const [tts, setTts] = useState<string>("…");
+  const [ttsWarn, setTtsWarn] = useState<string | null>(null);
 
   useEffect(() => {
-    void checkTtsStatus().then((s) =>
-      setTts(
-        s.configured
-          ? `Grok TTS ready (voice: ${s.voice ?? "default"})`
-          : "Grok TTS not configured — add XAI_API_KEY on Vercel",
-      ),
-    );
+    void checkTtsStatus().then((s) => {
+      if (!s.configured) {
+        setTts("Grok TTS not configured — add XAI_API_KEY on Vercel");
+        return;
+      }
+      setTts(`Grok TTS ready (voice: ${s.voice ?? "default"})`);
+      if (s.warning) setTtsWarn(s.warning);
+    });
   }, []);
 
   function switchMode(id: LearningMode) {
@@ -96,11 +98,15 @@ function ProfilePage() {
         </h2>
         <div className="surface-card pad-mode space-y-2 text-[var(--color-muted)] leading-relaxed">
           <p>
-            On iPhone: open this site in <strong className="text-[var(--color-fg)]">Safari</strong>,
-            tap Share, then <strong className="text-[var(--color-fg)]">Add to Home Screen</strong>.
+            On iPhone: open this site in{" "}
+            <strong className="text-[var(--color-fg)]">Safari</strong>, tap
+            Share, then{" "}
+            <strong className="text-[var(--color-fg)]">Add to Home Screen</strong>
+            .
           </p>
           <p className="text-sm text-[var(--color-subtle)]">
-            Requires the public HTTPS deploy (not only the Grok build preview).
+            If production ever fails to load, clear site data for this domain
+            (old service worker) or open in a private window once.
           </p>
         </div>
       </section>
@@ -111,10 +117,17 @@ function ProfilePage() {
         </h2>
         <div className="surface-card pad-mode space-y-2">
           <p className="font-medium">{tts}</p>
+          {ttsWarn && (
+            <p className="text-sm text-[var(--color-warn-fg)] leading-relaxed rounded-mode bg-[var(--color-warn-soft)] p-3">
+              {ttsWarn}
+            </p>
+          )}
           <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-            Demo uses Grok Text-to-Speech when <code className="text-[var(--color-fg)]">XAI_API_KEY</code> is
-            set on the server. Living speaker recordings always replace synthetic
-            audio in production.
+            <strong className="text-[var(--color-fg)]">XAI_TTS_VOICE</strong> must
+            be a <em>TTS</em> voice name like{" "}
+            <code className="text-[var(--color-fg)]">ara</code> or{" "}
+            <code className="text-[var(--color-fg)]">eve</code> — not a Voice
+            Agent id starting with <code className="text-[var(--color-fg)]">agent_</code>.
           </p>
         </div>
       </section>
@@ -156,9 +169,8 @@ function ProfilePage() {
         </h2>
         <div className="surface-card pad-mode space-y-3 text-[var(--color-muted)] leading-relaxed">
           <p>
-            This is the learner home. The Knowledge Keeper portal (lexicon,
-            audio studio, approvals) stays separate. Cross-link both apps with
-            environment URLs after deploy.
+            This is the learner home. The Knowledge Keeper portal stays
+            separate. Cross-link both apps with environment URLs after deploy.
           </p>
           {KEEPER_PORTAL_URL ? (
             <Button asChild variant="secondary" className="w-full sm:w-auto">
@@ -169,7 +181,8 @@ function ProfilePage() {
             </Button>
           ) : (
             <p className="text-sm text-[var(--color-subtle)]">
-              Set <code className="text-[var(--color-fg)]">VITE_KEEPER_PORTAL_URL</code>{" "}
+              Set{" "}
+              <code className="text-[var(--color-fg)]">VITE_KEEPER_PORTAL_URL</code>{" "}
               on this app to show a button to your admin site.
             </p>
           )}

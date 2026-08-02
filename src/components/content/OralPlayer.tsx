@@ -3,6 +3,7 @@ import { Pause, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   checkTtsStatus,
+  getLastTtsError,
   speakWord,
   stopSpeaking,
 } from "@/lib/audio/speak";
@@ -28,13 +29,22 @@ export function OralPlayer({
 }: Props) {
   const [playing, setPlaying] = useState(false);
   const [withEnglish, setWithEnglish] = useState(false);
-  const [provider, setProvider] = useState<string>("checking");
+  const [statusLine, setStatusLine] = useState("Checking voice…");
+  const [lastEngine, setLastEngine] = useState<string | null>(null);
   const markHeard = useProgressStore((s) => s.markHeard);
 
   useEffect(() => {
-    void checkTtsStatus().then((s) =>
-      setProvider(s.configured ? `Grok TTS (${s.voice ?? "default"})` : "Browser voice"),
-    );
+    void checkTtsStatus().then((s) => {
+      if (!s.configured) {
+        setStatusLine("Browser voice — add XAI_API_KEY on Vercel for Grok TTS");
+        return;
+      }
+      if (s.warning) {
+        setStatusLine(`Grok TTS (using ${s.voice}) — ${s.warning}`);
+        return;
+      }
+      setStatusLine(`Grok TTS ready (voice: ${s.voice ?? "default"})`);
+    });
   }, []);
 
   async function onPlay() {
@@ -45,11 +55,24 @@ export function OralPlayer({
     }
     setPlaying(true);
     markHeard(wordId);
-    await speakWord({
+    const engine = await speakWord({
       narragansett,
       english,
       includeEnglish: withEnglish,
     });
+    setLastEngine(engine);
+    if (engine === "browser") {
+      const err = getLastTtsError();
+      if (err) {
+        setStatusLine(`Grok TTS failed → browser voice. ${err}`);
+      }
+    } else if (engine === "grok") {
+      setStatusLine((prev) =>
+        prev.startsWith("Grok TTS ready") || prev.includes("using")
+          ? prev
+          : "Playing with Grok TTS",
+      );
+    }
     setPlaying(false);
   }
 
@@ -68,7 +91,13 @@ export function OralPlayer({
             Oral first
           </span>
         </div>
-        <span className="text-xs text-[var(--color-subtle)]">{provider}</span>
+        <span className="max-w-[55%] text-right text-xs text-[var(--color-subtle)] leading-snug">
+          {lastEngine === "grok"
+            ? "Playing: Grok"
+            : lastEngine === "browser"
+              ? "Playing: browser"
+              : ""}
+        </span>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -102,9 +131,7 @@ export function OralPlayer({
       </div>
 
       <p className="text-[length:calc(var(--mode-font-body)*0.85)] text-[var(--color-subtle)] leading-snug">
-        {provider.startsWith("Grok")
-          ? "Human-quality Grok voice for demo only — not a living tribal speaker. Approved Keeper recordings will replace this."
-          : "Using device voice until XAI_API_KEY is set on the server. Add the key on Vercel for Grok TTS."}
+        {statusLine}
       </p>
     </div>
   );

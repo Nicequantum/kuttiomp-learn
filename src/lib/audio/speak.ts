@@ -1,16 +1,15 @@
 /**
  * Oral playback layer.
  * Prefers Grok TTS via /api/tts (server holds XAI_API_KEY).
- * Falls back to browser speech if TTS is not configured.
- *
- * Living speaker recordings always outrank any synthetic voice.
+ * Falls back to browser speech if TTS fails.
  */
 
 let currentAudio: HTMLAudioElement | null = null;
 let currentUtterance: SpeechSynthesisUtterance | null = null;
 let grokAvailable: boolean | null = null;
+let lastTtsError: string | null = null;
 
-const audioCache = new Map<string, string>(); // key -> object URL
+const audioCache = new Map<string, string>();
 
 export function stopSpeaking() {
   if (typeof window === "undefined") return;
@@ -23,10 +22,15 @@ export function stopSpeaking() {
   currentUtterance = null;
 }
 
+export function getLastTtsError() {
+  return lastTtsError;
+}
+
 export async function checkTtsStatus(): Promise<{
   configured: boolean;
   provider: string;
   voice: string | null;
+  warning?: string | null;
 }> {
   try {
     const res = await fetch("/api/tts", { method: "GET" });
@@ -38,7 +42,9 @@ export async function checkTtsStatus(): Promise<{
       configured: boolean;
       provider: string;
       voice: string | null;
+      warning?: string | null;
     };
+    // Key present does not mean voice works — we verify on first play
     grokAvailable = data.configured;
     return data;
   } catch {
@@ -49,11 +55,10 @@ export async function checkTtsStatus(): Promise<{
 
 function browserSpeak(
   text: string,
-  opts?: { rate?: number; onEnd?: () => void },
+  opts?: { rate?: number },
 ): Promise<void> {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      opts?.onEnd?.();
       resolve();
       return;
     }
@@ -63,12 +68,10 @@ function browserSpeak(
     u.lang = "en-US";
     u.onend = () => {
       currentUtterance = null;
-      opts?.onEnd?.();
       resolve();
     };
     u.onerror = () => {
       currentUtterance = null;
-      opts?.onEnd?.();
       resolve();
     };
     currentUtterance = u;
@@ -84,21 +87,43 @@ async function grokSpeak(
   let url = audioCache.get(cacheKey);
 
   if (!url) {
-    const res = await fetch("/api/tts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, kind }),
-    });
-    if (!res.ok) return false;
-    const blob = await res.blob();
-    if (!blob.size || !blob.type.startsWith("audio")) return false;
-    url = URL.createObjectURL(blob);
-    audioCache.set(cacheKey, url);
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, kind }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        lastTtsError =
+          (err as { message?: string }).message ||
+          `TTS HTTP ${res.status}`;
+        console.warn("[speak] Grok TTS failed", err);
+        return false;
+      }
+      const blob = await res.blob();
+      const type = blob.type || res.headers.get("content-type") || "";
+      if (!blob.size) {
+        lastTtsError = "Empty audio from Grok TTS";
+        return false;
+      }
+      // Accept audio/* or application/octet-stream
+      if (type && !type.startsWith("audio") && !type.includes("octet")) {
+        lastTtsError = `Unexpected content-type: ${type}`;
+        return false;
+      }
+      url = URL.createObjectURL(blob);
+      audioCache.set(cacheKey, url);
+      lastTtsError = null;
+    } catch (e) {
+      lastTtsError = e instanceof Error ? e.message : "TTS network error";
+      return false;
+    }
   }
 
   return new Promise((resolve) => {
     stopSpeaking();
-    const audio = new Audio(url);
+    const audio = new Audio(url!);
     currentAudio = audio;
     audio.onended = () => {
       currentAudio = null;
@@ -130,11 +155,12 @@ export async function speakWord(opts: {
       }
       return "grok";
     }
+    // One failed attempt — keep trying Grok on later words after fix/redeploy
   }
 
   await browserSpeak(opts.narragansett, { rate: 0.7 });
   if (opts.includeEnglish && opts.english) {
     await browserSpeak(opts.english, { rate: 0.9 });
   }
-  return grokAvailable ? "browser" : "browser";
+  return "browser";
 }
