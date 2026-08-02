@@ -18,11 +18,20 @@ export const KEEPER_PORTAL_URL =
   (import.meta.env.VITE_KEEPER_PORTAL_URL as string | undefined)?.trim() || "";
 
 /**
- * Scenery images (land-based, calm). Soft-overlaid for readability.
- * Not decorative cartoon culture — place and light of this land.
+ * High-resolution land photography (JPG + WebP).
+ * Prefer WebP when supported; JPG is the universal fallback.
  */
 export const SCENERY = {
-  sunset: "/scenery/sunset-woodland.jpg",
-  coastal: "/scenery/coastal-marsh.jpg",
-  stream: "/scenery/forest-stream.jpg",
+  sunset: {
+    jpg: "/scenery/sunset-woodland.jpg",
+    webp: "/scenery/sunset-woodland.webp",
+  },
+  coastal: {
+    jpg: "/scenery/coastal-marsh.jpg",
+    webp: "/scenery/coastal-marsh.webp",
+  },
+  stream: {
+    jpg: "/scenery/forest-stream.jpg",
+    webp: "/scenery/forest-stream.webp",
+  },
 } as const;

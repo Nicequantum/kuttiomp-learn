@@ -1,5 +1,5 @@
 /* Kuttiomp Learn — minimal offline shell */
-const CACHE = "kuttiomp-learn-v1";
+const CACHE = "kuttiomp-learn-v2";
 const PRECACHE = [
   "/",
   "/welcome",
@@ -7,8 +7,11 @@ const PRECACHE = [
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/scenery/sunset-woodland.jpg",
+  "/scenery/sunset-woodland.webp",
   "/scenery/coastal-marsh.jpg",
+  "/scenery/coastal-marsh.webp",
   "/scenery/forest-stream.jpg",
+  "/scenery/forest-stream.webp",
 ];
 
 self.addEventListener("install", (event) => {
