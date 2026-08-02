@@ -41,32 +41,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col md:max-w-2xl">
-      <header className="safe-pt sticky top-0 z-30 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_82%,transparent)] backdrop-blur-md">
+      <header className="safe-pt sticky top-0 z-30 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_72%,transparent)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <p className="font-display text-lg tracking-tight text-[var(--color-fg)]">
               {APP_NAME}
             </p>
-            <p className="truncate text-sm text-[var(--color-muted)]">
+            <p className="truncate text-sm text-[var(--color-primary)]">
               {modeLabel} path
             </p>
           </div>
           <Link
             to="/app/profile"
-            className="rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)]"
+            className="rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]"
           >
             Switch mode
           </Link>
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-5 pb-[calc(var(--mode-nav-height)+1.5rem)]">
+      <main className="flex-1 px-4 py-5 pb-[calc(var(--mode-nav-height)+1.75rem)]">
         {children}
       </main>
 
       <nav
         aria-label="Primary"
-        className="safe-pb fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] backdrop-blur-md"
+        className="safe-pb fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_82%,transparent)] backdrop-blur-xl"
       >
         <div className="mx-auto flex max-w-lg items-stretch justify-between gap-1 px-2 pt-1 md:max-w-2xl">
           {tabs.map((tab) => {
@@ -86,7 +86,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 aria-current={active ? "page" : undefined}
               >
                 <Icon
-                  className={cn("h-5 w-5", active && "stroke-[2.25]")}
+                  className={cn("h-5 w-5", active && "stroke-[2.35]")}
                   aria-hidden
                 />
                 <span className="truncate">{label}</span>

@@ -11,7 +11,6 @@ import { APP_NAME, APP_TAGLINE } from "@/lib/content/config";
 import { purgeServiceWorkers } from "@/lib/pwa/register";
 import { ScenicBackdrop } from "@/components/layout/ScenicBackdrop";
 
-/** Runs in HTML before modules — kills broken production SW immediately */
 const SW_KILL_SCRIPT = `
 (function(){
   try {
@@ -38,9 +37,9 @@ export const Route = createRootRoute({
       },
       { title: `${APP_NAME} — Narragansett language learning` },
       { name: "description", content: APP_TAGLINE },
-      { name: "theme-color", content: "#2d5a3d" },
+      { name: "theme-color", content: "#0a100e" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Kuttiomp" },
       { name: "mobile-web-app-capable", content: "yes" },
     ],
@@ -54,11 +53,7 @@ export const Route = createRootRoute({
       { rel: "apple-touch-icon", href: "/icons/icon-180.png" },
       { rel: "icon", href: "/icons/icon-192.png", sizes: "192x192" },
     ],
-    scripts: [
-      {
-        children: SW_KILL_SCRIPT,
-      },
-    ],
+    scripts: [{ children: SW_KILL_SCRIPT }],
   }),
   component: RootDocument,
 });
@@ -68,6 +63,9 @@ function RootDocument() {
 
   useEffect(() => {
     applyModeToDocument(mode);
+    const theme = mode === "elder" ? "#ffffff" : "#0a100e";
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", theme);
   }, [mode]);
 
   useEffect(() => {

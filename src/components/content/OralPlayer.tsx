@@ -40,10 +40,10 @@ export function OralPlayer({
         return;
       }
       if (s.provider === "xai-voice-agent") {
-        setStatusLine(`Your Voice Agent ready (${s.voice})`);
+        setStatusLine("Demo cloud voice (agent path)");
         return;
       }
-      setStatusLine(`Grok TTS ready (voice: ${s.voice ?? "default"})`);
+      setStatusLine("Demo cloud voice");
     });
   }, []);
 
@@ -63,7 +63,7 @@ export function OralPlayer({
     setLastEngine(engine);
     if (engine === "browser") {
       const err = getLastTtsError();
-      if (err) setStatusLine(`Cloud voice failed → browser. ${err}`);
+      if (err) setStatusLine(`Cloud voice unavailable — using device voice`);
     }
     setPlaying(false);
   }
@@ -71,23 +71,23 @@ export function OralPlayer({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-mode-lg border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_88%,transparent)] backdrop-blur-sm",
+        "flex flex-col gap-3 rounded-mode-lg border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface-elevated)_55%,transparent)]",
         size === "hero" ? "p-5" : "p-4",
         className,
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-[var(--color-muted)]">
+        <div className="flex items-center gap-2 text-[var(--color-primary)]">
           <Volume2 className="h-4 w-4" aria-hidden />
-          <span className="text-sm font-medium tracking-wide uppercase">
+          <span className="text-sm font-semibold tracking-wide uppercase">
             Oral first
           </span>
         </div>
         <span className="text-xs text-[var(--color-subtle)]">
           {lastEngine === "grok"
-            ? "Playing: cloud voice"
+            ? "Cloud"
             : lastEngine === "browser"
-              ? "Playing: browser"
+              ? "Device"
               : ""}
         </span>
       </div>
@@ -99,7 +99,7 @@ export function OralPlayer({
           size={size === "hero" ? "lg" : "default"}
           onClick={onPlay}
           aria-label={playing ? "Stop audio" : `Play ${narragansett}`}
-          className="gap-2"
+          className="gap-2 shadow-[0_0_24px_var(--color-glow)]"
         >
           {playing ? (
             <Pause className="h-5 w-5" aria-hidden />
@@ -123,7 +123,7 @@ export function OralPlayer({
       </div>
 
       <p className="text-[length:calc(var(--mode-font-body)*0.85)] text-[var(--color-subtle)] leading-snug">
-        {statusLine}
+        {statusLine}. Not a living tribal speaker.
       </p>
     </div>
   );

@@ -6,14 +6,13 @@ import { cn } from "@/lib/utils";
 const modeScene: Record<LearningMode, keyof typeof SCENERY> = {
   little_ones: "sunset",
   young_learner: "stream",
-  core_adult: "coastal",
-  elder: "stream",
+  core_adult: "night",
+  elder: "coastal",
 };
 
 /**
- * Fixed land photography backdrop — max sharpness.
- * Minimal wash; frosted surface-cards carry text contrast.
- * Uses real <img> + object-fit for crisper browser decoding than CSS bg.
+ * Land Night stage: sharp photography with deep vignette.
+ * Elder uses heavy light wash for Protocol 11 readability.
  */
 export function ScenicBackdrop({ className }: { className?: string }) {
   const mode = useModeStore((s) => s.mode) ?? "core_adult";
@@ -36,27 +35,39 @@ export function ScenicBackdrop({ className }: { className?: string }) {
           fetchPriority="high"
           className={cn(
             "absolute inset-0 h-full w-full object-cover object-center",
-            // Avoid CSS scale transforms (they soften pixels)
-            mode === "elder" && "contrast-[1.05] saturate-[0.95]",
+            mode !== "elder" && "motion-safe:animate-[ken_48s_ease-in-out_infinite_alternate]",
           )}
-          style={{
-            imageRendering: "auto",
-          }}
         />
       </picture>
 
-      {/* Barely-there wash — land stays photographic */}
+      {/* Mode wash from CSS tokens */}
       <div
-        className={cn(
-          "absolute inset-0",
-          mode === "elder"
-            ? "bg-[color-mix(in_oklab,var(--color-bg)_65%,transparent)]"
-            : "bg-[color-mix(in_oklab,var(--color-bg)_14%,transparent)]",
-        )}
+        className="absolute inset-0"
+        style={{
+          background: `color-mix(in oklab, var(--color-bg) var(--scene-wash), transparent)`,
+        }}
       />
-      {/* Thin top/bottom only for chrome readability */}
-      <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[color-mix(in_oklab,var(--color-bg)_28%,transparent)] to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[color-mix(in_oklab,var(--color-bg)_32%,transparent)] to-transparent" />
+      {/* Cinematic vignette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse at center, transparent 20%, color-mix(in oklab, var(--color-bg) var(--scene-vignette), transparent) 100%)`,
+        }}
+      />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[color-mix(in_oklab,var(--color-bg)_50%,transparent)] to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[color-mix(in_oklab,var(--color-bg)_70%,transparent)] to-transparent" />
+
+      <style>{`
+        @keyframes ken {
+          from { transform: scale(1.02); }
+          to { transform: scale(1.08); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .motion-safe\\:animate-\\[ken_48s_ease-in-out_infinite_alternate\\] {
+            animation: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -37,4 +37,8 @@ export const SCENERY = {
     jpg: "/scenery/forest-stream.jpg",
     webp: "/scenery/forest-stream.webp",
   },
+  night: {
+    jpg: "/scenery/night-pines.jpg",
+    webp: "/scenery/night-pines.webp",
+  },
 } as const;
