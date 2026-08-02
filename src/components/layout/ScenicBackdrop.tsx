@@ -11,8 +11,9 @@ const modeScene: Record<LearningMode, string> = {
 };
 
 /**
- * Fixed land photography backdrop with soft wash so text stays readable.
- * Mode switches scene subtly — place, not costume.
+ * Fixed land photography backdrop.
+ * Wash is kept light so scenery stays vivid; text readability comes from
+ * frosted cards (surface-card), not a heavy full-screen fog.
  */
 export function ScenicBackdrop({ className }: { className?: string }) {
   const mode = useModeStore((s) => s.mode) ?? "core_adult";
@@ -30,22 +31,24 @@ export function ScenicBackdrop({ className }: { className?: string }) {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{
           backgroundImage: `url(${src})`,
-          filter: mode === "elder" ? "grayscale(0.15) contrast(1.05)" : "none",
+          filter:
+            mode === "elder"
+              ? "grayscale(0.1) contrast(1.08) saturate(0.95)"
+              : "saturate(1.08) contrast(1.04)",
         }}
       />
-      {/* Lighter wash so land shows; elder keeps more solid for Protocol 11 */}
+      {/* Very light wash — land stays clear; elder needs slightly more for Protocol 11 */}
       <div
         className={cn(
           "absolute inset-0",
           mode === "elder"
-            ? "bg-[color-mix(in_oklab,var(--color-bg)_86%,transparent)]"
-            : mode === "little_ones"
-              ? "bg-[color-mix(in_oklab,var(--color-bg)_55%,transparent)]"
-              : "bg-[color-mix(in_oklab,var(--color-bg)_58%,transparent)]",
+            ? "bg-[color-mix(in_oklab,var(--color-bg)_72%,transparent)]"
+            : "bg-[color-mix(in_oklab,var(--color-bg)_28%,transparent)]",
         )}
       />
-      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[color-mix(in_oklab,var(--color-bg)_45%,transparent)] to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[color-mix(in_oklab,var(--color-bg)_65%,transparent)] to-transparent" />
+      {/* Soft top/bottom only so header + nav stay readable without clouding center */}
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[color-mix(in_oklab,var(--color-bg)_40%,transparent)] to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[color-mix(in_oklab,var(--color-bg)_45%,transparent)] to-transparent" />
     </div>
   );
 }
