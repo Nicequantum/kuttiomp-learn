@@ -1,0 +1,727 @@
+{
+  "purpose": "Kuttiomp Learn demo TTS context — historical seed only",
+  "language": "Narragansett (historical orthography via Williams 1643)",
+  "authority": "Living Knowledge Keepers supersede all of this",
+  "delivery": {
+    "rate": "slow",
+    "style": "clear, respectful, syllable-aware, no caricature",
+    "language_tag_for_api": "en",
+    "note": "No native TTS locale exists; treat orthography carefully"
+  },
+  "entries": [
+    {
+      "id": "rw-002-ne-n-ke-n-ew",
+      "form": "Neèn, Keèn, Ewò",
+      "english": "I, you, he.",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-003-ke-nkaneen",
+      "form": "Keénkaneen",
+      "english": "You and I.",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-004-ascowequassunn-mmis",
+      "form": "Ascowequassunnúmmis",
+      "english": "Good morrow.",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-005-askuttaaquomps-n",
+      "form": "Askuttaaquompsín",
+      "english": "How do you do??",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-006-asnpaumpma-ntam",
+      "form": "Asnpaumpmaúntam",
+      "english": "I am very well.",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-007-taub-t-paump-ma-ntaman",
+      "form": "Taubút paump maúntaman",
+      "english": "I am glad you are well.",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-008-cowa-nckamish",
+      "form": "Cowaúnckamish",
+      "english": "My service to you.",
+      "chapter": "Salutation"
+    },
+    {
+      "id": "rw-009-matta-niccattupp-mmin",
+      "form": "Matta niccattuppúmmin",
+      "english": "I am not hungry.",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-010-nicc-wkatone",
+      "form": "Niccàwkatone",
+      "english": "I am thirstie.",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-011-nip-or-nip-wese",
+      "form": "Nip, or nipéwese",
+      "english": "Give me some water.",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-012-namitch-commetes-mmin",
+      "form": "Namitch, commetesímmin",
+      "english": "Stay, you must eat first.",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-013-t-aquacumm-ich",
+      "form": "Téaquacumméich",
+      "english": "What will you eat?",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-014-n-kehick",
+      "form": "Nókehick",
+      "english": "Parch’d meal, which is a",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-015-aup-mmineanash",
+      "form": "Aupúmmineanash",
+      "english": "The parch’d corne.",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-016-aup-minea-nawsa-mp",
+      "form": "Aupúminea-nawsaùmp",
+      "english": "The parch’d meale boild",
+      "chapter": "Eating and Entertainment"
+    },
+    {
+      "id": "rw-017-nsowwushk-wmen",
+      "form": "Nsowwushkâwmen",
+      "english": "I am weary.",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-018-nk-taquaum",
+      "form": "Nkàtaquaum",
+      "english": "I am sleepie.",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-019-kukkoveto-s",
+      "form": "Kukkovetoùs",
+      "english": "Shall I lodge here?",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-020-kukkow-ti",
+      "form": "Kukkowéti",
+      "english": "Will you sleep here.",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-021-wunn-gin-c-wish",
+      "form": "Wunnégin, cówish",
+      "english": "Welcome, sleep here.",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-022-nummouaqu-men",
+      "form": "Nummouaquômen",
+      "english": "I will lodge abroad.",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-023-puckqu-tchick-nickou-men",
+      "form": "Puckquátchick nickouêmen",
+      "english": "I will sleep without the doores,",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-024-mouaqu-mitea",
+      "form": "Mouaquómitea",
+      "english": "Let us lye abroad.",
+      "chapter": "Sleep and Lodging"
+    },
+    {
+      "id": "rw-025-nqu-t",
+      "form": "Nquít",
+      "english": "One.",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-026-pi-ck",
+      "form": "Piùck",
+      "english": "10",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-027-piucknabna-qu-t",
+      "form": "Piucknabna quìt",
+      "english": "11",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-028-piucknab-ne-se",
+      "form": "Piucknab neèse",
+      "english": "12",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-029-piucknab-n-sh",
+      "form": "Piucknab nìsh",
+      "english": "13",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-030-piucknab-y-h",
+      "form": "Piucknab yòh",
+      "english": "14",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-031-piucknab-nap-nna",
+      "form": "Piucknab napánna",
+      "english": "15",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-032-piucknab-naq-tta",
+      "form": "Piucknab naqútta",
+      "english": "16",
+      "chapter": "Numbers"
+    },
+    {
+      "id": "rw-033-ske-tomp-a-og",
+      "form": "Skeétomp-aûog",
+      "english": "Man-men.",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-034-squ-ws-suck",
+      "form": "Squàws-suck",
+      "english": "Woman-women.",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-035-kichizuck",
+      "form": "Kichizuck",
+      "english": "Old men.",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-036-h-mesuck",
+      "form": "Hômesuck",
+      "english": "Old men.",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-037-kutch-nnu",
+      "form": "Kutchínnu",
+      "english": "A middle-aged man,",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-038-kutch-nnuwock",
+      "form": "Kutchínnuwock",
+      "english": "Middle-aged men.",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-039-wuske-ne",
+      "form": "Wuskeène",
+      "english": "A youth,",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-040-wuskeene-suck",
+      "form": "Wuskeeneésuck",
+      "english": "Youths.",
+      "chapter": "Relations of Consanguinity"
+    },
+    {
+      "id": "rw-041-wetu",
+      "form": "Wetu",
+      "english": "An House.",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-042-wetu-muck",
+      "form": "Wetuômuck",
+      "english": "At home.",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-043-w-kick",
+      "form": "Wékick",
+      "english": "At his house.",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-044-nickqu-num",
+      "form": "Nickquénum",
+      "english": "I am going;",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-045-puttuckak-un",
+      "form": "Puttuckakàun",
+      "english": "A round house.",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-046-puttuckak-unese",
+      "form": "Puttuckakàunese",
+      "english": "A little round house.",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-047-wetuom-mese",
+      "form": "Wetuomémese",
+      "english": "A little house;",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-048-ne-s-quttow",
+      "form": "Neés quttow",
+      "english": "A long house with two fires.",
+      "chapter": "House and Family"
+    },
+    {
+      "id": "rw-049-uppaqu-ntup",
+      "form": "Uppaquóntup",
+      "english": "The head.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-050-nuppaqu-ntup",
+      "form": "Nuppaquóntup",
+      "english": "My head.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-051-w-sheck",
+      "form": "Wésheck",
+      "english": "The hayre.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-052-wuchechep-nnock",
+      "form": "Wuchechepúnnock",
+      "english": "A great bunch of hayre",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-053-m-ppacuck",
+      "form": "Múppacuck",
+      "english": "A long locke.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-054-msc-ttuck",
+      "form": "Mscáttuck",
+      "english": "The fore-head.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-055-wuske-suck-quash",
+      "form": "Wuskeésuck-quash",
+      "english": "Eye, or eyes.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-056-wucha-n",
+      "form": "Wuchaûn",
+      "english": "The nostrills.",
+      "chapter": "Parts of the Body"
+    },
+    {
+      "id": "rw-057-aunchemokauhett-ttea",
+      "form": "Aunchemokauhettíttea",
+      "english": "Let us discourse, or tell newes.",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-058-aaunchem-kaw",
+      "form": "Aaunchemókaw",
+      "english": "Tell me your newes.",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-059-cuttaunchem-kous",
+      "form": "Cuttaunchemókous",
+      "english": "I will tell you newes.",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-060-mautaunchemokou-an",
+      "form": "Mautaunchemokouêan",
+      "english": "When I have done telling",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-061-cummautaunchem-kous",
+      "form": "Cummautaunchemókous",
+      "english": "I have done my newes.",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-062-wutauich-ocou-og",
+      "form": "Wutauichéocouôog",
+      "english": "I will tell it them.",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-063-awaun-mesh-aunchem-kau",
+      "form": "Awaun mesh aunchemókau",
+      "english": "Who brought this newes?",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-064-awaun-mesh-kupp-ttouwaw",
+      "form": "Awaun mesh kuppíttouwaw",
+      "english": "Of whom did you heare it?",
+      "chapter": "Discourse and News"
+    },
+    {
+      "id": "rw-065-maut-bon-chich-uquat-wom",
+      "form": "Mautàbon, Chicháuquat wompan",
+      "english": "It is day.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-066-ampat-uban",
+      "form": "Ampatâuban",
+      "english": "It is broad day.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-067-p-shisha",
+      "form": "Páshisha",
+      "english": "It is Sunne-rise.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-068-numm-ttaq-aw",
+      "form": "Nummáttaqúaw",
+      "english": "Fore-noone.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-069-yahen-paushaq-aw",
+      "form": "Yahen Paushaqúaw",
+      "english": "Allmost noone.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-070-p-weshaquaw",
+      "form": "Páweshaquaw",
+      "english": "Noone.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-071-qutt-kquaquaw",
+      "form": "Quttùkquaquaw",
+      "english": "After dinner.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-072-naww-uwqaw",
+      "form": "Nawwâuwqaw",
+      "english": "After-noone.",
+      "chapter": "Time of the Day"
+    },
+    {
+      "id": "rw-073-nquittaq-nnegat",
+      "form": "Nquittaqúnnegat",
+      "english": "One day.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-074-neesq-nnagat",
+      "form": "Neesqúnnagat",
+      "english": "2 dayes.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-075-shuckqun-ckat",
+      "form": "Shuckqunóckat",
+      "english": "3 dayes.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-076-piuckaq-nnagat",
+      "form": "Piuckaqúnnagat",
+      "english": "10 dayes.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-077-piuckaqunnagat-nabnaqu-t",
+      "form": "Piuckaqunnagat nabnaquìt",
+      "english": "11 dayes.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-078-neesneechektashuck-qunn-",
+      "form": "Neesneechektashuck qunnóckat",
+      "english": "20 dayes.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-079-s-quan",
+      "form": "Séquan",
+      "english": "The Spring.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-080-aukeete-mitch",
+      "form": "Aukeeteámitch",
+      "english": "Spring, or seed-time.",
+      "chapter": "Seasons of the Year"
+    },
+    {
+      "id": "rw-081-m-yi",
+      "form": "Máyi",
+      "english": "A way.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-082-mat-mayan-nno",
+      "form": "Mat mayanúnno",
+      "english": "There is no way.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-083-peem-yag-t",
+      "form": "Peemáyagât",
+      "english": "A little way.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-084-mishimm-yagat",
+      "form": "Mishimmáyagat",
+      "english": "A great path.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-085-mach-pscat",
+      "form": "Machípscat",
+      "english": "A stone path.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-086-nnatotem-ckaun",
+      "form": "Nnatotemúckaun",
+      "english": "I will ask the way.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-087-kunnat-temous",
+      "form": "Kunnatótemous",
+      "english": "I will inquire of you.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-088-kokotem-innea-m-yi",
+      "form": "Kokotemíinnea méyi",
+      "english": "Shew me the way.",
+      "chapter": "Travel"
+    },
+    {
+      "id": "rw-089-k-esuck",
+      "form": "Kéesuck",
+      "english": "The Heavens.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-090-keesucqu-u",
+      "form": "Keesucquíu",
+      "english": "Heavenward.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-091-a-ke-aukease-u",
+      "form": "Aúke, Aukeaseíu",
+      "english": "Downwards.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-092-nipp-wus",
+      "form": "Nippâwus",
+      "english": "The Sun.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-093-keesuckqu-nd",
+      "form": "Keesuckquànd",
+      "english": "A name of the Sun.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-094-munn-nnock",
+      "form": "Munnánnock",
+      "english": "A name of the Sun.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-095-pashp-shea",
+      "form": "Pashpíshea",
+      "english": "The Moone is up.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-096-y-ockquitteunk",
+      "form": "Yò Ockquitteunk",
+      "english": "A new Moone.",
+      "chapter": "The Heavenly Lights"
+    },
+    {
+      "id": "rw-097-t-ocke-tussinn-mmin-k-es",
+      "form": "T Ocke tussinnámmin kéesuck",
+      "english": "What thinke you of the Weather?",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-098-wekinea-quat",
+      "form": "Wekineaûquat",
+      "english": "Faire Weather.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-099-wekinn-uquocks",
+      "form": "Wekinnàuquocks",
+      "english": "When it is faire Weather.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-100-tahk-or-t-takki",
+      "form": "Tahkì or tátakki",
+      "english": "Cold Weather.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-101-tahk-es",
+      "form": "Tahkèes",
+      "english": "Cold.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-102-ta-kocks",
+      "form": "Taúkocks",
+      "english": "Cold weather.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-103-k-usitteks",
+      "form": "Káusitteks",
+      "english": "Hot weather.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-104-kuss-ttah",
+      "form": "Kussúttah",
+      "english": "It is hot.",
+      "chapter": "The Weather"
+    },
+    {
+      "id": "rw-105-w-a-pi",
+      "form": "W Aûpi",
+      "english": "The Wind.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-106-w-upanash",
+      "form": "Wâupanash",
+      "english": "The Winds.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-107-tash-nash-waupanash",
+      "form": "Tashínash waupanash",
+      "english": "How many winds are there?",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-108-chepew-ssin",
+      "form": "Chepewéssin",
+      "english": "The North east.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-109-s-chimoachepew-ssin",
+      "form": "Sáchimoachepewéssin",
+      "english": "Strong North east wind.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-110-nop-tin",
+      "form": "Nopâtin",
+      "english": "The East wind.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-111-nan-ckquittin",
+      "form": "Nanóckquittin",
+      "english": "The South east wind.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-112-touw-ttin",
+      "form": "Touwúttin",
+      "english": "South wind.",
+      "chapter": "The Winds"
+    },
+    {
+      "id": "rw-113-npesh-wog",
+      "form": "NPesháwog",
+      "english": "} Fowle",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-114-ntauch-umen",
+      "form": "Ntauchâumen",
+      "english": "I go a fowling or hunting.",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-115-aucha-i",
+      "form": "Auchaûi",
+      "english": "he is gone to hunt or fowle.",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-116-pepem-i",
+      "form": "Pepemôi",
+      "english": "He is gone to fowle.",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-117-w-mpissacuk",
+      "form": "Wómpissacuk",
+      "english": "An Eagle.",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-118-wompsacuckqu-uog",
+      "form": "Wompsacuckquâuog",
+      "english": "Eagle.",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-119-n-yhom-m-uog",
+      "form": "Néyhom, mâuog",
+      "english": "Turkies.",
+      "chapter": "Fowl"
+    },
+    {
+      "id": "rw-120-paupock-s-og",
+      "form": "Paupock, sûog",
+      "english": "Partridges.",
+      "chapter": "Fowl"
+    }
+  ]
+}
