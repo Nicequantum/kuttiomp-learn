@@ -13,13 +13,16 @@ export const IS_DEMO_HISTORICAL = CONTENT_CORPUS === "demo_historical";
 export const APP_NAME = "Kuttiomp";
 export const APP_TAGLINE = "A gathering place for Narragansett language";
 
-/** Optional link back to the Knowledge Keeper portal (admin on Vercel). */
+/**
+ * Knowledge Keeper portal (admin).
+ * Override with VITE_KEEPER_PORTAL_URL on Vercel if the admin domain changes.
+ */
 export const KEEPER_PORTAL_URL =
-  (import.meta.env.VITE_KEEPER_PORTAL_URL as string | undefined)?.trim() || "";
+  (import.meta.env.VITE_KEEPER_PORTAL_URL as string | undefined)?.trim() ||
+  "https://kuttiomp-admin-viti.vercel.app";
 
 /**
  * High-resolution land photography (JPG + WebP).
- * Prefer WebP when supported; JPG is the universal fallback.
  */
 export const SCENERY = {
   sunset: {
