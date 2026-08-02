@@ -24,7 +24,6 @@ export const KEEPER_PORTAL_URL =
 /**
  * Kuttiomp FastAPI origin for Public Lexicon Contract v1.
  * Example: https://api.your-domain.com  (no trailing slash)
- * Leave empty until public routes ship — app stays on demo seed.
  */
 export const API_BASE_URL = (
   (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? ""
@@ -32,6 +31,20 @@ export const API_BASE_URL = (
 
 export function isApiConfigured(): boolean {
   return Boolean(API_BASE_URL);
+}
+
+/**
+ * Mock living pipeline while Keepers build real data.
+ * Default ON when no live API is configured (so engineering + demos progress).
+ * Set VITE_USE_MOCK_PUBLIC_API=false to force seed-only.
+ * When VITE_API_BASE_URL is set, live API always wins (mock ignored).
+ */
+export function isMockPipelineEnabled(): boolean {
+  if (isApiConfigured()) return false;
+  const raw = String(
+    import.meta.env.VITE_USE_MOCK_PUBLIC_API ?? "true",
+  ).toLowerCase();
+  return raw !== "false" && raw !== "0";
 }
 
 /**

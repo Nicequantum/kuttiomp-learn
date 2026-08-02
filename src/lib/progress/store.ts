@@ -13,9 +13,13 @@ type ProgressState = {
   practicedIds: string[];
   completedPaths: string[];
   wordProgress: Record<string, WordProgress>;
+  /** Last word opened in listen/focus — resume support */
+  lastListenWordId: string | null;
+  lastListenIndex: number;
   markHeard: (id: string) => void;
   markRevealed: (id: string) => void;
   markPracticed: (id: string) => void;
+  setListenCursor: (wordId: string, index: number) => void;
   completePath: (pathId: string) => void;
   clearDemoProgress: () => void;
   stats: () => {
@@ -41,6 +45,8 @@ export const useProgressStore = create<ProgressState>()(
       practicedIds: [],
       completedPaths: [],
       wordProgress: {},
+      lastListenWordId: null,
+      lastListenIndex: 0,
       markHeard: (id) =>
         set((s) => {
           const prev = s.wordProgress[id] ?? {
@@ -53,6 +59,7 @@ export const useProgressStore = create<ProgressState>()(
             : [...s.heardIds, id];
           return {
             heardIds,
+            lastListenWordId: id,
             wordProgress: {
               ...s.wordProgress,
               [id]: {
@@ -103,6 +110,8 @@ export const useProgressStore = create<ProgressState>()(
             },
           };
         }),
+      setListenCursor: (wordId, index) =>
+        set({ lastListenWordId: wordId, lastListenIndex: index }),
       completePath: (pathId) =>
         set((s) => ({
           completedPaths: s.completedPaths.includes(pathId)
@@ -115,6 +124,8 @@ export const useProgressStore = create<ProgressState>()(
           practicedIds: [],
           completedPaths: [],
           wordProgress: {},
+          lastListenWordId: null,
+          lastListenIndex: 0,
         }),
       stats: () => {
         const s = get();

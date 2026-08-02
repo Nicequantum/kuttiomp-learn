@@ -11,6 +11,8 @@ import {
 } from "@/lib/content/corpus";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
+import { useProgressStore } from "@/lib/progress/store";
+import { getWordById } from "@/lib/content/corpus";
 
 export const Route = createFileRoute("/app/")({
   component: HomePage,
@@ -22,6 +24,8 @@ function HomePage() {
   const featured = getFeaturedWords(mode === "little_ones" ? 4 : 5);
   const paths = getPaths().slice(0, 2);
   const total = getAllWords().length;
+  const lastId = useProgressStore((s) => s.lastListenWordId);
+  const resumeWord = lastId ? getWordById(lastId) : undefined;
 
   return (
     <div className="space-y-8">
@@ -47,9 +51,13 @@ function HomePage() {
         <div className="focus-stage pad-mode flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <p className="label-eyebrow">Primary action</p>
-            <p className="font-display text-title">Continue listening</p>
+            <p className="font-display text-title">
+              {resumeWord ? "Resume listening" : "Continue listening"}
+            </p>
             <p className="text-sm text-[var(--color-muted)]">
-              Focus mode — one form at a time, oral first
+              {resumeWord
+                ? `Pick up at “${resumeWord.wordNarragansett}”`
+                : "Focus mode — one form at a time, oral first"}
             </p>
           </div>
           <Button size="lg" className="shrink-0 shadow-[0_0_28px_var(--color-glow)]">

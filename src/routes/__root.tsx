@@ -11,6 +11,7 @@ import { APP_NAME, APP_TAGLINE } from "@/lib/content/config";
 import { purgeServiceWorkers } from "@/lib/pwa/register";
 import { ScenicBackdrop } from "@/components/layout/ScenicBackdrop";
 import { CorpusHydrator } from "@/components/content/CorpusHydrator";
+import { ErrorBoundary } from "@/components/system/ErrorBoundary";
 
 const SW_KILL_SCRIPT = `
 (function(){
@@ -81,9 +82,11 @@ function RootDocument() {
         <HeadContent />
       </head>
       <body className="relative min-h-dvh">
-        <ScenicBackdrop />
-        <CorpusHydrator />
-        <Outlet />
+        <ErrorBoundary>
+          <ScenicBackdrop />
+          <CorpusHydrator />
+          <Outlet />
+        </ErrorBoundary>
         <Scripts />
       </body>
     </html>

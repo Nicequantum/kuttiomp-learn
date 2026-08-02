@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, EyeOff } from "lucide-react";
 import { OralPlayer } from "@/components/content/OralPlayer";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
@@ -22,13 +22,33 @@ function ListenPage() {
     () => getListenQueue(meta.id === "little_ones" ? 8 : 12),
     [meta.id],
   );
-  const [index, setIndex] = useState(0);
-  const [showMeaning, setShowMeaning] = useState(meta.showGlossImmediately);
+  const lastListenWordId = useProgressStore((s) => s.lastListenWordId);
+  const setListenCursor = useProgressStore((s) => s.setListenCursor);
   const markPracticed = useProgressStore((s) => s.markPracticed);
   const markRevealed = useProgressStore((s) => s.markRevealed);
   const practicedIds = useProgressStore((s) => s.practicedIds);
 
+  const initialIndex = useMemo(() => {
+    if (!lastListenWordId) return 0;
+    const i = queue.findIndex((w) => w.id === lastListenWordId);
+    return i >= 0 ? i : 0;
+  }, [queue, lastListenWordId]);
+
+  const [index, setIndex] = useState(initialIndex);
+  const [showMeaning, setShowMeaning] = useState(meta.showGlossImmediately);
+
+  // When queue changes (mode switch), re-align index
+  useEffect(() => {
+    setIndex(initialIndex);
+    setShowMeaning(meta.showGlossImmediately);
+  }, [initialIndex, meta.showGlossImmediately]);
+
   const word = queue[index];
+
+  useEffect(() => {
+    if (word) setListenCursor(word.id, index);
+  }, [word, index, setListenCursor]);
+
   if (!word) {
     return <p className="text-[var(--color-muted)]">No content available.</p>;
   }
@@ -63,7 +83,6 @@ function ListenPage() {
         {practiced && <Badge tone="land">Practiced</Badge>}
       </div>
 
-      {/* Progress rail */}
       <div
         className="h-1 overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--color-fg)_12%,transparent)]"
         aria-hidden

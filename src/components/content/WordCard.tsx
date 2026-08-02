@@ -29,7 +29,10 @@ export function WordCard({
     e.preventDefault();
     e.stopPropagation();
     markHeard(word.id);
-    await speakWord({ narragansett: word.wordNarragansett });
+    await speakWord({
+      narragansett: word.wordNarragansett,
+      primaryAudioUrl: word.primaryAudioUrl,
+    });
   }
 
   return (
@@ -49,17 +52,9 @@ export function WordCard({
       >
         <Play className="h-5 w-5 translate-x-0.5" aria-hidden />
       </button>
-
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <p
-            className={cn(
-              "narr-word text-[var(--color-fg)]",
-              compact
-                ? "text-lg"
-                : "text-[length:calc(var(--mode-font-title)*0.85)]",
-            )}
-          >
+          <p className="narr-word text-title leading-snug" lang="nax">
             {word.wordNarragansett}
           </p>
           <ChevronRight
@@ -67,21 +62,17 @@ export function WordCard({
             aria-hidden
           />
         </div>
-
-        {revealDefault ? (
-          <p className="mt-1 text-content text-[var(--color-muted)] leading-snug">
+        {revealDefault && (
+          <p className="mt-1 text-[var(--color-muted)] leading-snug line-clamp-2">
             {word.englishGloss}
           </p>
-        ) : (
-          <p className="mt-1 text-sm text-[var(--color-subtle)]">
-            Tap to reveal meaning
-          </p>
         )}
-
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <Badge tone="warn">Historical seed</Badge>
-          {word.isPhrase && <Badge>Phrase</Badge>}
-          {practiced && <Badge tone="land">Practiced</Badge>}
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Badge tone={word.source === "keeper_approved" ? "land" : "warn"}>
+            {word.source === "keeper_approved" ? "Living" : "Historical"}
+          </Badge>
+          {practiced && <Badge tone="neutral">Practiced</Badge>}
+          {word.primaryAudioUrl && <Badge tone="land">Recording</Badge>}
         </div>
       </div>
     </Link>
