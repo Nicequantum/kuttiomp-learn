@@ -1,28 +1,16 @@
-/**
- * One-shot cleanup worker.
- * Previous versions intercepted "/" (307 → /welcome) and broke production.
- * This file unregisters itself and wipes caches so the site works again.
- */
-self.addEventListener("install", (event) => {
+/* Intentionally inert — previous SW versions broke production.
+   Immediately unregister and clear caches if this file is still installed. */
+self.addEventListener("install", (e) => {
   self.skipWaiting();
-  event.waitUntil(Promise.resolve());
+  e.waitUntil(Promise.resolve());
 });
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
     (async () => {
       const keys = await caches.keys();
       await Promise.all(keys.map((k) => caches.delete(k)));
       await self.registration.unregister();
-      const clients = await self.clients.matchAll({ type: "window" });
-      for (const client of clients) {
-        client.navigate(client.url);
-      }
     })(),
   );
 });
-
-// Do not intercept any fetches — navigations must hit the network directly
-self.addEventListener("fetch", () => {
-  /* no-op: let browser handle everything */
-});
+// Never call event.respondWith — do not intercept network

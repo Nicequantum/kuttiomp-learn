@@ -8,8 +8,25 @@ import { useEffect } from "react";
 import appCss from "../styles.css?url";
 import { useModeStore, applyModeToDocument } from "@/lib/mode/store";
 import { APP_NAME, APP_TAGLINE } from "@/lib/content/config";
-import { registerServiceWorker } from "@/lib/pwa/register";
+import { purgeServiceWorkers } from "@/lib/pwa/register";
 import { ScenicBackdrop } from "@/components/layout/ScenicBackdrop";
+
+/** Runs in HTML before modules — kills broken production SW immediately */
+const SW_KILL_SCRIPT = `
+(function(){
+  try {
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){ r.unregister(); });
+    });
+    if (window.caches) {
+      caches.keys().then(function(keys){
+        keys.forEach(function(k){ caches.delete(k); });
+      });
+    }
+  } catch (e) {}
+})();
+`;
 
 export const Route = createRootRoute({
   head: () => ({
@@ -37,6 +54,11 @@ export const Route = createRootRoute({
       { rel: "apple-touch-icon", href: "/icons/icon-180.png" },
       { rel: "icon", href: "/icons/icon-192.png", sizes: "192x192" },
     ],
+    scripts: [
+      {
+        children: SW_KILL_SCRIPT,
+      },
+    ],
   }),
   component: RootDocument,
 });
@@ -49,7 +71,7 @@ function RootDocument() {
   }, [mode]);
 
   useEffect(() => {
-    registerServiceWorker();
+    void purgeServiceWorkers();
   }, []);
 
   return (
