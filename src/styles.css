@@ -31,7 +31,6 @@
   --radius-2xl: 2rem;
 }
 
-/* ========== LAND NIGHT (default + adult) ========== */
 :root,
 [data-mode="core_adult"] {
   --k-bg: #0a100e;
@@ -63,7 +62,6 @@
   --scene-vignette: 55%;
 }
 
-/* Little Ones — warmer night */
 [data-mode="little_ones"] {
   --k-bg: #100e0c;
   --k-surface: color-mix(in oklab, #1c1612 90%, transparent);
@@ -94,7 +92,6 @@
   --scene-vignette: 50%;
 }
 
-/* Young Learner — cooler night */
 [data-mode="young_learner"] {
   --k-bg: #0a1214;
   --k-surface: color-mix(in oklab, #121c20 90%, transparent);
@@ -125,11 +122,7 @@
   --scene-vignette: 52%;
 }
 
-/*
- * Elder — same Land Night stage (photo stays visible).
- * Cards/blocks only: solid white + near-black type, larger scale.
- * Chrome (header labels outside cards) stays light for legibility on photo.
- */
+/* Elder: land photo stage; white cards get their own text tokens below */
 [data-mode="elder"] {
   --k-bg: #0a100e;
   --k-surface: #ffffff;
@@ -148,11 +141,6 @@
   --k-warn-fg: #1a1208;
   --k-ring: #d4a574;
   --k-glow: color-mix(in oklab, #d4a574 35%, transparent);
-  /* Card-only text tokens */
-  --k-card-fg: #0a0a0a;
-  --k-card-muted: #1a1a1a;
-  --k-card-subtle: #333333;
-  --k-card-border: #1a1a1a;
   --mode-font-body: 1.35rem;
   --mode-font-title: 2.1rem;
   --mode-font-display: 2.65rem;
@@ -253,29 +241,29 @@
     -webkit-backdrop-filter: blur(16px) saturate(1.15);
   }
 
-  /* Elder: solid white readable blocks on full land photo */
-  [data-mode="elder"] .surface-card {
+  /*
+   * Elder cards: solid white + black type.
+   * Re-scope tokens so every child (muted, primary, borders) stays readable.
+   */
+  [data-mode="elder"] .surface-card,
+  [data-mode="elder"] .focus-stage {
+    --k-fg: #0a0a0a;
+    --k-muted: #1f1f1f;
+    --k-subtle: #333333;
+    --k-border: #1a1a1a;
+    --k-border-strong: #000000;
+    --k-primary: #0a0a0a;
+    --k-primary-fg: #ffffff;
+    --k-surface: #ffffff;
+    --k-surface-elevated: #f5f5f5;
+    --k-ring: #000000;
+    --k-glow: transparent;
     background: #ffffff;
-    color: var(--k-card-fg);
+    color: #0a0a0a;
     border: 2px solid #0a0a0a;
-    box-shadow: 0 12px 40px color-mix(in oklab, #000 40%, transparent);
+    box-shadow: 0 14px 44px color-mix(in oklab, #000 42%, transparent);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-  }
-
-  [data-mode="elder"] .surface-card .text-content,
-  [data-mode="elder"] .surface-card p,
-  [data-mode="elder"] .surface-card h2,
-  [data-mode="elder"] .surface-card h3,
-  [data-mode="elder"] .surface-card .font-display,
-  [data-mode="elder"] .surface-card .font-medium,
-  [data-mode="elder"] .surface-card .narr-word {
-    color: var(--k-card-fg);
-  }
-
-  [data-mode="elder"] .surface-card .text-\[var\(--color-muted\)\],
-  [data-mode="elder"] .surface-card [class*="color-muted"] {
-    color: var(--k-card-muted);
   }
 
   .narr-word {
@@ -326,21 +314,6 @@
     -webkit-backdrop-filter: blur(20px);
   }
 
-  [data-mode="elder"] .focus-stage {
-    background: #ffffff;
-    color: #0a0a0a;
-    border: 2px solid #0a0a0a;
-    box-shadow: 0 16px 48px color-mix(in oklab, #000 45%, transparent);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  [data-mode="elder"] .focus-stage .narr-word,
-  [data-mode="elder"] .focus-stage p,
-  [data-mode="elder"] .focus-stage .text-content {
-    color: #0a0a0a;
-  }
-
   .label-eyebrow {
     font-size: 0.72rem;
     font-weight: 600;
@@ -360,7 +333,7 @@
   }
 
   [data-mode="elder"] .text-glow {
-    text-shadow: 0 2px 12px color-mix(in oklab, #000 55%, transparent);
+    text-shadow: 0 2px 14px color-mix(in oklab, #000 60%, transparent);
   }
 }
 
