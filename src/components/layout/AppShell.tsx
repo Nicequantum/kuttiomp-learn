@@ -38,10 +38,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const mode = useModeStore((s) => s.mode);
   const labels = mode ? MODES[mode].navLabels : MODES.core_adult.navLabels;
   const modeLabel = mode ? MODES[mode].shortLabel : "Learn";
+  const isElder = mode === "elder";
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-lg flex-col md:max-w-2xl">
-      <header className="safe-pt sticky top-0 z-30 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_72%,transparent)] backdrop-blur-xl">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
+      <header className="safe-pt sticky top-0 z-30 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_78%,transparent)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <p className="font-display text-lg tracking-tight text-[var(--color-fg)]">
@@ -49,24 +54,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </p>
             <p className="truncate text-sm text-[var(--color-primary)]">
               {modeLabel} path
+              {isElder ? " · large type" : ""}
             </p>
           </div>
-          <Link
-            to="/app/profile"
-            className="rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]"
-          >
-            Switch mode
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              to="/app/guide"
+              className={cn(
+                "rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]",
+                "min-h-10 inline-flex items-center",
+              )}
+            >
+              Guide
+            </Link>
+            <Link
+              to="/app/profile"
+              className="inline-flex min-h-10 items-center rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]"
+            >
+              Mode
+            </Link>
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-5 pb-[calc(var(--mode-nav-height)+1.75rem)]">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 px-4 py-5 pb-[calc(var(--mode-nav-height)+1.75rem)] outline-none"
+      >
         {children}
       </main>
 
       <nav
         aria-label="Primary"
-        className="safe-pb fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_82%,transparent)] backdrop-blur-xl"
+        className="safe-pb fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_88%,transparent)] backdrop-blur-xl"
       >
         <div className="mx-auto flex max-w-lg items-stretch justify-between gap-1 px-2 pt-1 md:max-w-2xl">
           {tabs.map((tab) => {
@@ -78,7 +99,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={tab.key}
                 to={tab.to}
                 className={cn(
-                  "flex min-h-[var(--mode-nav-height)] min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-mode px-1 text-[0.7rem] font-medium transition-colors",
+                  "flex min-h-[var(--mode-nav-height)] min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-mode px-1 font-medium transition-colors",
+                  isElder ? "text-[0.8rem]" : "text-[0.7rem]",
                   active
                     ? "text-[var(--color-primary)]"
                     : "text-[var(--color-subtle)] hover:text-[var(--color-muted)]",
@@ -86,7 +108,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 aria-current={active ? "page" : undefined}
               >
                 <Icon
-                  className={cn("h-5 w-5", active && "stroke-[2.35]")}
+                  className={cn(
+                    active && "stroke-[2.35]",
+                    isElder ? "h-6 w-6" : "h-5 w-5",
+                  )}
                   aria-hidden
                 />
                 <span className="truncate">{label}</span>

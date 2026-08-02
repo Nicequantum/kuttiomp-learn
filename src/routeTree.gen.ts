@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppGuideRouteImport } from './routes/app/guide'
 import { Route as AppListenRouteImport } from './routes/app/listen'
 import { Route as AppPathsRouteImport } from './routes/app/paths'
 import { Route as AppProfileRouteImport } from './routes/app/profile'
@@ -46,6 +47,11 @@ const ApiTtsRoute = ApiTtsRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuideRoute = AppGuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => AppRoute,
 } as any)
 const AppListenRoute = AppListenRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/welcome': typeof WelcomeRoute
   '/api/tts': typeof ApiTtsRoute
+  '/app/guide': typeof AppGuideRoute
   '/app/listen': typeof AppListenRoute
   '/app/paths': typeof AppPathsRouteWithChildren
   '/app/profile': typeof AppProfileRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/welcome': typeof WelcomeRoute
   '/api/tts': typeof ApiTtsRoute
+  '/app/guide': typeof AppGuideRoute
   '/app/listen': typeof AppListenRoute
   '/app/profile': typeof AppProfileRoute
   '/app': typeof AppIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/welcome': typeof WelcomeRoute
   '/api/tts': typeof ApiTtsRoute
+  '/app/guide': typeof AppGuideRoute
   '/app/listen': typeof AppListenRoute
   '/app/paths': typeof AppPathsRouteWithChildren
   '/app/profile': typeof AppProfileRoute
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/welcome'
     | '/api/tts'
+    | '/app/guide'
     | '/app/listen'
     | '/app/paths'
     | '/app/profile'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/'
     | '/welcome'
     | '/api/tts'
+    | '/app/guide'
     | '/app/listen'
     | '/app/profile'
     | '/app'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/welcome'
     | '/api/tts'
+    | '/app/guide'
     | '/app/listen'
     | '/app/paths'
     | '/app/profile'
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guide': {
+      id: '/app/guide'
+      path: '/guide'
+      fullPath: '/app/guide'
+      preLoaderRoute: typeof AppGuideRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/listen': {
@@ -309,6 +328,7 @@ const AppWordsRouteWithChildren = AppWordsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppGuideRoute: typeof AppGuideRoute
   AppListenRoute: typeof AppListenRoute
   AppPathsRoute: typeof AppPathsRouteWithChildren
   AppProfileRoute: typeof AppProfileRoute
@@ -317,6 +337,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppGuideRoute: AppGuideRoute,
   AppListenRoute: AppListenRoute,
   AppPathsRoute: AppPathsRouteWithChildren,
   AppProfileRoute: AppProfileRoute,

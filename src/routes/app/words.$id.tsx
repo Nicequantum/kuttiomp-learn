@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, MapPin, User } from "lucide-react";
 import { HistoricalBanner, HistoricalInlineNote } from "@/components/content/HistoricalBanner";
+import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { OralPlayer } from "@/components/content/OralPlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,10 @@ function WordDetailPage() {
           <Badge tone="land">{word.semanticDomain}</Badge>
         </div>
       </header>
+
+      {word.source === "historical_seed" && (
+        <OrthographyGuide compact />
+      )}
 
       <OralPlayer
         wordId={word.id}

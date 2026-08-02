@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getDomains, searchWords } from "@/lib/content/corpus";
 import { cn } from "@/lib/utils";
+import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 
 export const Route = createFileRoute("/app/words/")({
   component: WordsPage,
@@ -28,11 +29,13 @@ function WordsPage() {
       <header className="space-y-2">
         <h1 className="font-display text-display">Words</h1>
         <p className="text-content text-[var(--color-muted)]">
-          Search English or Narragansett. All demo entries are historical seed.
+          Search English or Narragansett. Search English or Narragansett. Historical demo forms and any living mock/API forms appear together.
         </p>
       </header>
 
       <HistoricalBanner compact />
+
+      <OrthographyGuide compact />
 
       <div className="relative">
         <Search

@@ -13,10 +13,12 @@ const modeScene: Record<LearningMode, keyof typeof SCENERY> = {
 /**
  * Full land photography for every mode — including Elder.
  * Elder only differs in content blocks (white cards), not a blank white page.
+ * Ken Burns disabled for Elder + reduced-motion.
  */
 export function ScenicBackdrop({ className }: { className?: string }) {
   const mode = useModeStore((s) => s.mode) ?? "core_adult";
   const scene = SCENERY[modeScene[mode]];
+  const allowMotion = mode !== "elder";
 
   return (
     <div
@@ -35,7 +37,8 @@ export function ScenicBackdrop({ className }: { className?: string }) {
           fetchPriority="high"
           className={cn(
             "absolute inset-0 h-full w-full object-cover object-center",
-            "motion-safe:animate-[ken_48s_ease-in-out_infinite_alternate]",
+            allowMotion &&
+              "motion-safe:animate-[ken_48s_ease-in-out_infinite_alternate]",
           )}
         />
       </picture>

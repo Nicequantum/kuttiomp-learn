@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Route as RouteIcon, Volume2 } from "lucide-react";
+import { ArrowRight, BookOpen, Route as RouteIcon, Volume2, BookMarked } from "lucide-react";
+import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { MasteryPanel } from "@/components/content/MasteryPanel";
 import { WordCard } from "@/components/content/WordCard";
@@ -121,6 +122,8 @@ function HomePage() {
           ))}
         </div>
       </section>
+
+      <OrthographyGuide compact />
 
       {paths.length > 0 && (
         <section className="space-y-3" aria-labelledby="paths-heading">

@@ -337,6 +337,64 @@
   }
 }
 
+
+  .skip-link {
+    position: absolute;
+    left: 0.75rem;
+    top: -100px;
+    z-index: 100;
+    border-radius: var(--mode-radius);
+    background: var(--color-primary);
+    color: var(--color-primary-fg);
+    padding: 0.65rem 1rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    top: 0.75rem;
+    outline: 3px solid var(--color-ring);
+    outline-offset: 3px;
+  }
+
+  /* Elder accessibility — Protocol 11 */
+  [data-mode="elder"] body,
+  [data-mode="elder"] {
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+  }
+  [data-mode="elder"] :focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+  [data-mode="elder"] a:focus-visible,
+  [data-mode="elder"] button:focus-visible {
+    outline: 3px solid #000;
+    outline-offset: 3px;
+  }
+  [data-mode="elder"] .surface-card :focus-visible,
+  [data-mode="elder"] .focus-stage :focus-visible {
+    outline: 3px solid #000;
+    outline-offset: 2px;
+  }
+  [data-mode="elder"] .narr-word {
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+  }
+  [data-mode="elder"] .label-eyebrow {
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+  /* Stronger chrome contrast on photo for elders */
+  [data-mode="elder"] header,
+  [data-mode="elder"] nav[aria-label="Primary"] {
+    background: color-mix(in oklab, var(--color-bg) 82%, transparent) !important;
+  }
+
+[data-mode="elder"] img.motion-safe\:animate-\[ken_48s_ease-in-out_infinite_alternate\],
+  [data-mode="elder"] .motion-safe\:animate-\[ken_48s_ease-in-out_infinite_alternate\] {
+    animation: none !important;
+  }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
