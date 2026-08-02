@@ -1,0 +1,107 @@
+# Kuttiomp Learn — Deploy & Environment Guide
+
+This is the **learner frontend** (what speakers and families open).  
+Your existing Vercel app is the **Keeper portal / API** (where language work is done).
+
+Keep them as **two related deployments**, linked by buttons — not one mixed UI.
+
+---
+
+## Recommended architecture
+
+| App | Audience | Deploy |
+| --- | --- | --- |
+| **Kuttiomp Learn** (this project) | Learners / demo for Keepers | **New Vercel project** (or Cloudflare Pages) |
+| **Keeper portal** (`apps/admin` + `apps/api`) | Keepers / speakers only | Your **existing** Vercel project |
+
+### Why separate?
+
+- Keepers tools stay private-ish; learners never see editors by accident  
+- Different auth, caching, and env vars  
+- One click each way: “Open learner demo” / “Open Keeper portal”
+
+### Can Keepers open the learner app from the backend site?
+
+**Yes.** After both are live:
+
+1. On **this** project set `VITE_KEEPER_PORTAL_URL=https://your-admin.vercel.app`  
+2. On **admin** add a nav button: `Open learner demo` → `https://your-learn.vercel.app`  
+   (env on admin: e.g. `NEXT_PUBLIC_LEARN_APP_URL`)
+
+No special Vercel networking is required — just two HTTPS URLs.
+
+### Cloudflare?
+
+Optional. Vercel is enough if admin is already there. Use Cloudflare only if you want a second host or custom edge rules. Not required.
+
+---
+
+## Environment variables — **Learner app** (this project)
+
+Add these in **Vercel → Project → Settings → Environment Variables**  
+(Production + Preview as needed).
+
+| Variable | Required? | Example | Purpose |
+| --- | --- | --- | --- |
+| `XAI_API_KEY` | **Yes for Grok voice** | `xai-...` | Server-only key for Grok Text-to-Speech. **Never** prefix with `VITE_` — must not ship to the browser. |
+| `XAI_TTS_VOICE` | Optional | `ara` | Voice id (`ara`, `eve`, `leo`, `sal`, `rex`, …). Default in code: `ara`. |
+| `VITE_CONTENT_CORPUS` | Optional | `demo_historical` | `demo_historical` (Williams seed) or `keeper_only` (production). |
+| `VITE_KEEPER_PORTAL_URL` | Recommended | `https://admin.yourdomain.com` | Shows “Open Keeper portal” in learner Profile. |
+
+### Do **not** put the API key in chat or in `VITE_*` vars
+
+Code calls: `process.env.XAI_API_KEY` only inside `/api/tts` on the server.
+
+---
+
+## Environment variables — **Keeper portal** (existing project)
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_LEARN_APP_URL` | URL of this learner deploy — for a “Preview learner app” button in admin |
+
+(Your existing Supabase/Clerk/Grok keys for admin stay as they are.)
+
+---
+
+## Deploy steps (Vercel) for this frontend
+
+1. Create a **new** Vercel project from this app’s repo/folder (or connect the monorepo and set Root Directory to this app).  
+2. Framework: Vite / Nitro (TanStack Start build already outputs Vercel).  
+3. Build command: `npm run build`  
+4. Add env vars above.  
+5. Deploy → copy the URL (e.g. `https://kuttiomp-learn.vercel.app`).  
+6. Optional: custom domain `learn.yourdomain.org`.  
+7. On admin, add the learner URL button.
+
+### iPhone home screen
+
+1. Open the **public HTTPS** URL in **Safari**  
+2. Share → **Add to Home Screen**  
+3. Opens as a standalone app (PWA)
+
+---
+
+## Voice notes
+
+- **Grok TTS** (`POST /api/tts` → `https://api.x.ai/v1/tts`) is for demo human-quality speech.  
+- It is **not** a Narragansett native speaker. Historical spellings remain approximations.  
+- Production path: speaker-attributed recordings from Keepers replace TTS entry-by-entry.  
+- Optional later: xAI **custom voice** from a consented speaker sample (cultural approval required).
+
+---
+
+## Scenic backgrounds
+
+Land photography (woodland sunset, coastal marsh, forest stream) is baked into `/public/scenery/`.  
+No extra env vars. Modes slightly change which scene is shown.
+
+---
+
+## Checklist before showing Keepers
+
+- [ ] Learner deployed on HTTPS  
+- [ ] `XAI_API_KEY` set → Profile shows “Grok TTS ready”  
+- [ ] `VITE_KEEPER_PORTAL_URL` set (optional)  
+- [ ] Admin has “Open learner demo” link  
+- [ ] Tested Add to Home Screen on one iPhone  

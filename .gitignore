@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.node_modules.tmp.*/
+.npm/
+.node_modules.lock
+
+# Build / deploy
+dist/
+.output/
+.vercel/
+.nitro/
+.tanstack/
+.turbo/
+
+# Env & secrets — never commit
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+/tmp/
+*.swp
+.idea/
+.vscode/
+
+# Agent workspace only (not needed for Vercel deploy)
+.grok/
+screenshots/
+artifacts/
+attachments/
+AGENTS.md
+AGENTS.project.md
+*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Misc
+coverage/
+.cache/

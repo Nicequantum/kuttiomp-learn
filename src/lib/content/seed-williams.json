@@ -1,0 +1,2562 @@
+{
+  "corpus": "demo_historical",
+  "corpusLabel": "Demo historical seed",
+  "notice": "This content is drawn from Roger Williams’ 1643 colonial record A Key into the Language of America. It is a historical scaffold only. Living Narragansett Knowledge Keepers and speakers hold absolute authority. Production will replace this seed with elder-approved voices.",
+  "sourceWork": {
+    "title": "A Key into the Language of America",
+    "author": "Roger Williams",
+    "year": 1643,
+    "note": "Public domain. Colonial outsider perspective with phonetic approximations and cultural limitations."
+  },
+  "words": [
+    {
+      "id": "rw-002-ne-n-ke-n-ew",
+      "wordNarragansett": "Neèn, Keèn, Ewò",
+      "englishGloss": "I, you, he.",
+      "englishHistorical": "I, you, he.",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-003-ke-nkaneen",
+      "wordNarragansett": "Keénkaneen",
+      "englishGloss": "You and I.",
+      "englishHistorical": "You and I.",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-004-ascowequassunn-mmis",
+      "wordNarragansett": "Ascowequassunnúmmis",
+      "englishGloss": "Good morrow.",
+      "englishHistorical": "Good morrow.",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-005-askuttaaquomps-n",
+      "wordNarragansett": "Askuttaaquompsín",
+      "englishGloss": "How do you do??",
+      "englishHistorical": "Hou doe you?",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-006-asnpaumpma-ntam",
+      "wordNarragansett": "Asnpaumpmaúntam",
+      "englishGloss": "I am very well.",
+      "englishHistorical": "I am very well.",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-007-taub-t-paump-ma-ntaman",
+      "wordNarragansett": "Taubút paump maúntaman",
+      "englishGloss": "I am glad you are well.",
+      "englishHistorical": "I am glad you are well.",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-008-cowa-nckamish",
+      "wordNarragansett": "Cowaúnckamish",
+      "englishGloss": "My service to you.",
+      "englishHistorical": "My service to you.",
+      "chapter": "Salutation",
+      "chapterNum": 1,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-009-matta-niccattupp-mmin",
+      "wordNarragansett": "Matta niccattuppúmmin",
+      "englishGloss": "I am not hungry.",
+      "englishHistorical": "I am not hungry.",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-010-nicc-wkatone",
+      "wordNarragansett": "Niccàwkatone",
+      "englishGloss": "I am thirstie.",
+      "englishHistorical": "I am thirstie.",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-011-nip-or-nip-wese",
+      "wordNarragansett": "Nip, or nipéwese",
+      "englishGloss": "Give me some water.",
+      "englishHistorical": "Give me some water.",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-012-namitch-commetes-mmin",
+      "wordNarragansett": "Namitch, commetesímmin",
+      "englishGloss": "Stay, you must eat first.",
+      "englishHistorical": "Stay, you must eat first.",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-013-t-aquacumm-ich",
+      "wordNarragansett": "Téaquacumméich",
+      "englishGloss": "What will you eat?",
+      "englishHistorical": "What will you eat?",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-014-n-kehick",
+      "wordNarragansett": "Nókehick",
+      "englishGloss": "Parch’d meal, which is a",
+      "englishHistorical": "Parch’d meal, which is a",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-015-aup-mmineanash",
+      "wordNarragansett": "Aupúmmineanash",
+      "englishGloss": "The parch’d corne.",
+      "englishHistorical": "The parch’d corne.",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-016-aup-minea-nawsa-mp",
+      "wordNarragansett": "Aupúminea-nawsaùmp",
+      "englishGloss": "The parch’d meale boild",
+      "englishHistorical": "The parch’d meale boild",
+      "chapter": "Eating and Entertainment",
+      "chapterNum": 2,
+      "semanticDomain": "food",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-017-nsowwushk-wmen",
+      "wordNarragansett": "Nsowwushkâwmen",
+      "englishGloss": "I am weary.",
+      "englishHistorical": "I am weary.",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-018-nk-taquaum",
+      "wordNarragansett": "Nkàtaquaum",
+      "englishGloss": "I am sleepie.",
+      "englishHistorical": "I am sleepie.",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-019-kukkoveto-s",
+      "wordNarragansett": "Kukkovetoùs",
+      "englishGloss": "Shall I lodge here?",
+      "englishHistorical": "Shall I lodge here?",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-020-kukkow-ti",
+      "wordNarragansett": "Kukkowéti",
+      "englishGloss": "Will you sleep here.",
+      "englishHistorical": "Will you sleepe here.",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-021-wunn-gin-c-wish",
+      "wordNarragansett": "Wunnégin, cówish",
+      "englishGloss": "Welcome, sleep here.",
+      "englishHistorical": "Welcome, sleepe here.",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-022-nummouaqu-men",
+      "wordNarragansett": "Nummouaquômen",
+      "englishGloss": "I will lodge abroad.",
+      "englishHistorical": "I will lodge abroad.",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-023-puckqu-tchick-nickou-men",
+      "wordNarragansett": "Puckquátchick nickouêmen",
+      "englishGloss": "I will sleep without the doores,",
+      "englishHistorical": "I will sleepe without the doores,",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-024-mouaqu-mitea",
+      "wordNarragansett": "Mouaquómitea",
+      "englishGloss": "Let us lye abroad.",
+      "englishHistorical": "Let us lye abroad.",
+      "chapter": "Sleep and Lodging",
+      "chapterNum": 3,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-025-nqu-t",
+      "wordNarragansett": "Nquít",
+      "englishGloss": "One.",
+      "englishHistorical": "One.",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-026-pi-ck",
+      "wordNarragansett": "Piùck",
+      "englishGloss": "10",
+      "englishHistorical": "10",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-027-piucknabna-qu-t",
+      "wordNarragansett": "Piucknabna quìt",
+      "englishGloss": "11",
+      "englishHistorical": "11",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-028-piucknab-ne-se",
+      "wordNarragansett": "Piucknab neèse",
+      "englishGloss": "12",
+      "englishHistorical": "12",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-029-piucknab-n-sh",
+      "wordNarragansett": "Piucknab nìsh",
+      "englishGloss": "13",
+      "englishHistorical": "13",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-030-piucknab-y-h",
+      "wordNarragansett": "Piucknab yòh",
+      "englishGloss": "14",
+      "englishHistorical": "14",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-031-piucknab-nap-nna",
+      "wordNarragansett": "Piucknab napánna",
+      "englishGloss": "15",
+      "englishHistorical": "15",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-032-piucknab-naq-tta",
+      "wordNarragansett": "Piucknab naqútta",
+      "englishGloss": "16",
+      "englishHistorical": "16",
+      "chapter": "Numbers",
+      "chapterNum": 4,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-033-ske-tomp-a-og",
+      "wordNarragansett": "Skeétomp-aûog",
+      "englishGloss": "Man-men.",
+      "englishHistorical": "Man-men.",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-034-squ-ws-suck",
+      "wordNarragansett": "Squàws-suck",
+      "englishGloss": "Woman-women.",
+      "englishHistorical": "Woman-women.",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-035-kichizuck",
+      "wordNarragansett": "Kichizuck",
+      "englishGloss": "Old men.",
+      "englishHistorical": "Old men.",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-036-h-mesuck",
+      "wordNarragansett": "Hômesuck",
+      "englishGloss": "Old men.",
+      "englishHistorical": "Old men.",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-037-kutch-nnu",
+      "wordNarragansett": "Kutchínnu",
+      "englishGloss": "A middle-aged man,",
+      "englishHistorical": "A middle-aged man,",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-038-kutch-nnuwock",
+      "wordNarragansett": "Kutchínnuwock",
+      "englishGloss": "Middle-aged men.",
+      "englishHistorical": "Middle-aged men.",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-039-wuske-ne",
+      "wordNarragansett": "Wuskeène",
+      "englishGloss": "A youth,",
+      "englishHistorical": "A youth,",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-040-wuskeene-suck",
+      "wordNarragansett": "Wuskeeneésuck",
+      "englishGloss": "Youths.",
+      "englishHistorical": "Youths.",
+      "chapter": "Relations of Consanguinity",
+      "chapterNum": 5,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-041-wetu",
+      "wordNarragansett": "Wetu",
+      "englishGloss": "An House.",
+      "englishHistorical": "An House.",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-042-wetu-muck",
+      "wordNarragansett": "Wetuômuck",
+      "englishGloss": "At home.",
+      "englishHistorical": "At home.",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-043-w-kick",
+      "wordNarragansett": "Wékick",
+      "englishGloss": "At his house.",
+      "englishHistorical": "At his house.",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-044-nickqu-num",
+      "wordNarragansett": "Nickquénum",
+      "englishGloss": "I am going;",
+      "englishHistorical": "I am going;",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-045-puttuckak-un",
+      "wordNarragansett": "Puttuckakàun",
+      "englishGloss": "A round house.",
+      "englishHistorical": "A round house.",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-046-puttuckak-unese",
+      "wordNarragansett": "Puttuckakàunese",
+      "englishGloss": "A little round house.",
+      "englishHistorical": "A little round house.",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-047-wetuom-mese",
+      "wordNarragansett": "Wetuomémese",
+      "englishGloss": "A little house;",
+      "englishHistorical": "A little house;",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-048-ne-s-quttow",
+      "wordNarragansett": "Neés quttow",
+      "englishGloss": "A long house with two fires.",
+      "englishHistorical": "A long house with two fires.",
+      "chapter": "House and Family",
+      "chapterNum": 6,
+      "semanticDomain": "kinship",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-049-uppaqu-ntup",
+      "wordNarragansett": "Uppaquóntup",
+      "englishGloss": "The head.",
+      "englishHistorical": "The head.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-050-nuppaqu-ntup",
+      "wordNarragansett": "Nuppaquóntup",
+      "englishGloss": "My head.",
+      "englishHistorical": "My head.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-051-w-sheck",
+      "wordNarragansett": "Wésheck",
+      "englishGloss": "The hayre.",
+      "englishHistorical": "The hayre.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-052-wuchechep-nnock",
+      "wordNarragansett": "Wuchechepúnnock",
+      "englishGloss": "A great bunch of hayre",
+      "englishHistorical": "A great bunch of hayre",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-053-m-ppacuck",
+      "wordNarragansett": "Múppacuck",
+      "englishGloss": "A long locke.",
+      "englishHistorical": "A long locke.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-054-msc-ttuck",
+      "wordNarragansett": "Mscáttuck",
+      "englishGloss": "The fore-head.",
+      "englishHistorical": "The fore-head.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-055-wuske-suck-quash",
+      "wordNarragansett": "Wuskeésuck-quash",
+      "englishGloss": "Eye, or eyes.",
+      "englishHistorical": "Eye, or eyes.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-056-wucha-n",
+      "wordNarragansett": "Wuchaûn",
+      "englishGloss": "The nostrills.",
+      "englishHistorical": "The nostrills.",
+      "chapter": "Parts of the Body",
+      "chapterNum": 7,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-057-aunchemokauhett-ttea",
+      "wordNarragansett": "Aunchemokauhettíttea",
+      "englishGloss": "Let us discourse, or tell newes.",
+      "englishHistorical": "Let us discourse, or tell newes.",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-058-aaunchem-kaw",
+      "wordNarragansett": "Aaunchemókaw",
+      "englishGloss": "Tell me your newes.",
+      "englishHistorical": "Tell me your newes.",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-059-cuttaunchem-kous",
+      "wordNarragansett": "Cuttaunchemókous",
+      "englishGloss": "I will tell you newes.",
+      "englishHistorical": "I will tell you newes.",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-060-mautaunchemokou-an",
+      "wordNarragansett": "Mautaunchemokouêan",
+      "englishGloss": "When I have done telling",
+      "englishHistorical": "When I have done telling",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-061-cummautaunchem-kous",
+      "wordNarragansett": "Cummautaunchemókous",
+      "englishGloss": "I have done my newes.",
+      "englishHistorical": "I have done my newes.",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-062-wutauich-ocou-og",
+      "wordNarragansett": "Wutauichéocouôog",
+      "englishGloss": "I will tell it them.",
+      "englishHistorical": "I will tell it them.",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-063-awaun-mesh-aunchem-kau",
+      "wordNarragansett": "Awaun mesh aunchemókau",
+      "englishGloss": "Who brought this newes?",
+      "englishHistorical": "Who brought this newes?",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-064-awaun-mesh-kupp-ttouwaw",
+      "wordNarragansett": "Awaun mesh kuppíttouwaw",
+      "englishGloss": "Of whom did you heare it?",
+      "englishHistorical": "Of whom did you heare it?",
+      "chapter": "Discourse and News",
+      "chapterNum": 8,
+      "semanticDomain": "other",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-065-maut-bon-chich-uquat-wom",
+      "wordNarragansett": "Mautàbon, Chicháuquat wompan",
+      "englishGloss": "It is day.",
+      "englishHistorical": "It is day.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-066-ampat-uban",
+      "wordNarragansett": "Ampatâuban",
+      "englishGloss": "It is broad day.",
+      "englishHistorical": "It is broad day.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-067-p-shisha",
+      "wordNarragansett": "Páshisha",
+      "englishGloss": "It is Sunne-rise.",
+      "englishHistorical": "It is Sunne-rise.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-068-numm-ttaq-aw",
+      "wordNarragansett": "Nummáttaqúaw",
+      "englishGloss": "Fore-noone.",
+      "englishHistorical": "Fore-noone.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-069-yahen-paushaq-aw",
+      "wordNarragansett": "Yahen Paushaqúaw",
+      "englishGloss": "Allmost noone.",
+      "englishHistorical": "Allmost noone.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-070-p-weshaquaw",
+      "wordNarragansett": "Páweshaquaw",
+      "englishGloss": "Noone.",
+      "englishHistorical": "Noone.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-071-qutt-kquaquaw",
+      "wordNarragansett": "Quttùkquaquaw",
+      "englishGloss": "After dinner.",
+      "englishHistorical": "After dinner.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-072-naww-uwqaw",
+      "wordNarragansett": "Nawwâuwqaw",
+      "englishGloss": "After-noone.",
+      "englishHistorical": "After-noone.",
+      "chapter": "Time of the Day",
+      "chapterNum": 9,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-073-nquittaq-nnegat",
+      "wordNarragansett": "Nquittaqúnnegat",
+      "englishGloss": "One day.",
+      "englishHistorical": "One day.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-074-neesq-nnagat",
+      "wordNarragansett": "Neesqúnnagat",
+      "englishGloss": "2 dayes.",
+      "englishHistorical": "2 dayes.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-075-shuckqun-ckat",
+      "wordNarragansett": "Shuckqunóckat",
+      "englishGloss": "3 dayes.",
+      "englishHistorical": "3 dayes.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-076-piuckaq-nnagat",
+      "wordNarragansett": "Piuckaqúnnagat",
+      "englishGloss": "10 dayes.",
+      "englishHistorical": "10 dayes.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-077-piuckaqunnagat-nabnaqu-t",
+      "wordNarragansett": "Piuckaqunnagat nabnaquìt",
+      "englishGloss": "11 dayes.",
+      "englishHistorical": "11 dayes.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-078-neesneechektashuck-qunn-",
+      "wordNarragansett": "Neesneechektashuck qunnóckat",
+      "englishGloss": "20 dayes.",
+      "englishHistorical": "20 dayes.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-079-s-quan",
+      "wordNarragansett": "Séquan",
+      "englishGloss": "The Spring.",
+      "englishHistorical": "The Spring.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-080-aukeete-mitch",
+      "wordNarragansett": "Aukeeteámitch",
+      "englishGloss": "Spring, or seed-time.",
+      "englishHistorical": "Spring, or seed-time.",
+      "chapter": "Seasons of the Year",
+      "chapterNum": 10,
+      "semanticDomain": "time",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-081-m-yi",
+      "wordNarragansett": "Máyi",
+      "englishGloss": "A way.",
+      "englishHistorical": "A way.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-082-mat-mayan-nno",
+      "wordNarragansett": "Mat mayanúnno",
+      "englishGloss": "There is no way.",
+      "englishHistorical": "There is no way.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-083-peem-yag-t",
+      "wordNarragansett": "Peemáyagât",
+      "englishGloss": "A little way.",
+      "englishHistorical": "A little way.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-084-mishimm-yagat",
+      "wordNarragansett": "Mishimmáyagat",
+      "englishGloss": "A great path.",
+      "englishHistorical": "A great path.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-085-mach-pscat",
+      "wordNarragansett": "Machípscat",
+      "englishGloss": "A stone path.",
+      "englishHistorical": "A stone path.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-086-nnatotem-ckaun",
+      "wordNarragansett": "Nnatotemúckaun",
+      "englishGloss": "I will ask the way.",
+      "englishHistorical": "I will aske the way.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-087-kunnat-temous",
+      "wordNarragansett": "Kunnatótemous",
+      "englishGloss": "I will inquire of you.",
+      "englishHistorical": "I will inquire of you.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-088-kokotem-innea-m-yi",
+      "wordNarragansett": "Kokotemíinnea méyi",
+      "englishGloss": "Shew me the way.",
+      "englishHistorical": "Shew me the way.",
+      "chapter": "Travel",
+      "chapterNum": 11,
+      "semanticDomain": "movement",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-089-k-esuck",
+      "wordNarragansett": "Kéesuck",
+      "englishGloss": "The Heavens.",
+      "englishHistorical": "The Heavens.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-090-keesucqu-u",
+      "wordNarragansett": "Keesucquíu",
+      "englishGloss": "Heavenward.",
+      "englishHistorical": "Heavenward.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-091-a-ke-aukease-u",
+      "wordNarragansett": "Aúke, Aukeaseíu",
+      "englishGloss": "Downwards.",
+      "englishHistorical": "Downwards.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-092-nipp-wus",
+      "wordNarragansett": "Nippâwus",
+      "englishGloss": "The Sun.",
+      "englishHistorical": "The Sun.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-093-keesuckqu-nd",
+      "wordNarragansett": "Keesuckquànd",
+      "englishGloss": "A name of the Sun.",
+      "englishHistorical": "A name of the Sun.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-094-munn-nnock",
+      "wordNarragansett": "Munnánnock",
+      "englishGloss": "A name of the Sun.",
+      "englishHistorical": "A name of the Sun.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-095-pashp-shea",
+      "wordNarragansett": "Pashpíshea",
+      "englishGloss": "The Moone is up.",
+      "englishHistorical": "The Moone is up.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-096-y-ockquitteunk",
+      "wordNarragansett": "Yò Ockquitteunk",
+      "englishGloss": "A new Moone.",
+      "englishHistorical": "A new Moone.",
+      "chapter": "The Heavenly Lights",
+      "chapterNum": 12,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-097-t-ocke-tussinn-mmin-k-es",
+      "wordNarragansett": "T Ocke tussinnámmin kéesuck",
+      "englishGloss": "What thinke you of the Weather?",
+      "englishHistorical": "What thinke you of the Weather?",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-098-wekinea-quat",
+      "wordNarragansett": "Wekineaûquat",
+      "englishGloss": "Faire Weather.",
+      "englishHistorical": "Faire Weather.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-099-wekinn-uquocks",
+      "wordNarragansett": "Wekinnàuquocks",
+      "englishGloss": "When it is faire Weather.",
+      "englishHistorical": "When it is faire Weather.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-100-tahk-or-t-takki",
+      "wordNarragansett": "Tahkì or tátakki",
+      "englishGloss": "Cold Weather.",
+      "englishHistorical": "Cold Weather.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-101-tahk-es",
+      "wordNarragansett": "Tahkèes",
+      "englishGloss": "Cold.",
+      "englishHistorical": "Cold.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-102-ta-kocks",
+      "wordNarragansett": "Taúkocks",
+      "englishGloss": "Cold weather.",
+      "englishHistorical": "Cold weather.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-103-k-usitteks",
+      "wordNarragansett": "Káusitteks",
+      "englishGloss": "Hot weather.",
+      "englishHistorical": "Hot weather.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-104-kuss-ttah",
+      "wordNarragansett": "Kussúttah",
+      "englishGloss": "It is hot.",
+      "englishHistorical": "It is hot.",
+      "chapter": "The Weather",
+      "chapterNum": 13,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-105-w-a-pi",
+      "wordNarragansett": "W Aûpi",
+      "englishGloss": "The Wind.",
+      "englishHistorical": "The Wind.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-106-w-upanash",
+      "wordNarragansett": "Wâupanash",
+      "englishGloss": "The Winds.",
+      "englishHistorical": "The Winds.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-107-tash-nash-waupanash",
+      "wordNarragansett": "Tashínash waupanash",
+      "englishGloss": "How many winds are there?",
+      "englishHistorical": "How many winds are there?",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-108-chepew-ssin",
+      "wordNarragansett": "Chepewéssin",
+      "englishGloss": "The North east.",
+      "englishHistorical": "The North east.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-109-s-chimoachepew-ssin",
+      "wordNarragansett": "Sáchimoachepewéssin",
+      "englishGloss": "Strong North east wind.",
+      "englishHistorical": "Strong North east wind.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-110-nop-tin",
+      "wordNarragansett": "Nopâtin",
+      "englishGloss": "The East wind.",
+      "englishHistorical": "The East wind.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-111-nan-ckquittin",
+      "wordNarragansett": "Nanóckquittin",
+      "englishGloss": "The South east wind.",
+      "englishHistorical": "The South east wind.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-112-touw-ttin",
+      "wordNarragansett": "Touwúttin",
+      "englishGloss": "South wind.",
+      "englishHistorical": "South wind.",
+      "chapter": "The Winds",
+      "chapterNum": 14,
+      "semanticDomain": "weather",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-113-npesh-wog",
+      "wordNarragansett": "NPesháwog",
+      "englishGloss": "} Fowle",
+      "englishHistorical": "} Fowle",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-114-ntauch-umen",
+      "wordNarragansett": "Ntauchâumen",
+      "englishGloss": "I go a fowling or hunting.",
+      "englishHistorical": "I goe a fowling or hunting.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-115-aucha-i",
+      "wordNarragansett": "Auchaûi",
+      "englishGloss": "he is gone to hunt or fowle.",
+      "englishHistorical": "Hee is gone to hunt or fowle.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-116-pepem-i",
+      "wordNarragansett": "Pepemôi",
+      "englishGloss": "He is gone to fowle.",
+      "englishHistorical": "He is gone to fowle.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-117-w-mpissacuk",
+      "wordNarragansett": "Wómpissacuk",
+      "englishGloss": "An Eagle.",
+      "englishHistorical": "An Eagle.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-118-wompsacuckqu-uog",
+      "wordNarragansett": "Wompsacuckquâuog",
+      "englishGloss": "Eagle.",
+      "englishHistorical": "Eagle.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": false,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-119-n-yhom-m-uog",
+      "wordNarragansett": "Néyhom, mâuog",
+      "englishGloss": "Turkies.",
+      "englishHistorical": "Turkies.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    },
+    {
+      "id": "rw-120-paupock-s-og",
+      "wordNarragansett": "Paupock, sûog",
+      "englishGloss": "Partridges.",
+      "englishHistorical": "Partridges.",
+      "chapter": "Fowl",
+      "chapterNum": 15,
+      "semanticDomain": "fauna",
+      "source": "historical_seed",
+      "sourceWork": "A Key into the Language of America (Roger Williams, 1643)",
+      "authority": "colonial_record",
+      "elderApproved": false,
+      "isSacred": false,
+      "isPhrase": true,
+      "speakerAttribution": "Historical record (Williams 1643) — not a living tribal speaker",
+      "orthographyNote": "17th-century English phonetic approximation; living speakers hold final authority on form and sound.",
+      "seasonalUsage": [
+        "year_round"
+      ]
+    }
+  ],
+  "paths": [
+    {
+      "id": "path-greetings",
+      "title": "Greetings & Salutation",
+      "chapter": "Salutation",
+      "stage": 1,
+      "description": "Meet and greet in the language of this land.",
+      "wordIds": [
+        "rw-002-ne-n-ke-n-ew",
+        "rw-003-ke-nkaneen",
+        "rw-004-ascowequassunn-mmis",
+        "rw-005-askuttaaquomps-n",
+        "rw-006-asnpaumpma-ntam",
+        "rw-007-taub-t-paump-ma-ntaman",
+        "rw-008-cowa-nckamish"
+      ]
+    },
+    {
+      "id": "path-family",
+      "title": "Family & Kin",
+      "chapter": "Relations of Consanguinity",
+      "stage": 1,
+      "description": "Names for those we belong to.",
+      "wordIds": [
+        "rw-033-ske-tomp-a-og",
+        "rw-034-squ-ws-suck",
+        "rw-035-kichizuck",
+        "rw-036-h-mesuck",
+        "rw-037-kutch-nnu",
+        "rw-038-kutch-nnuwock",
+        "rw-039-wuske-ne",
+        "rw-040-wuskeene-suck"
+      ]
+    },
+    {
+      "id": "path-home",
+      "title": "House & Home",
+      "chapter": "House and Family",
+      "stage": 2,
+      "description": "Where we gather and rest.",
+      "wordIds": [
+        "rw-041-wetu",
+        "rw-042-wetu-muck",
+        "rw-043-w-kick",
+        "rw-044-nickqu-num",
+        "rw-045-puttuckak-un",
+        "rw-046-puttuckak-unese",
+        "rw-047-wetuom-mese",
+        "rw-048-ne-s-quttow"
+      ]
+    },
+    {
+      "id": "path-food",
+      "title": "Food & Sharing",
+      "chapter": "Eating and Entertainment",
+      "stage": 2,
+      "description": "Words for meals and hospitality.",
+      "wordIds": [
+        "rw-009-matta-niccattupp-mmin",
+        "rw-010-nicc-wkatone",
+        "rw-011-nip-or-nip-wese",
+        "rw-012-namitch-commetes-mmin",
+        "rw-013-t-aquacumm-ich",
+        "rw-014-n-kehick",
+        "rw-015-aup-mmineanash",
+        "rw-016-aup-minea-nawsa-mp"
+      ]
+    },
+    {
+      "id": "path-land",
+      "title": "Earth & Fruits",
+      "chapter": "The Earth and Fruits",
+      "stage": 2,
+      "description": "Plants and the land that feeds us.",
+      "wordIds": [
+        "rw-002-ne-n-ke-n-ew",
+        "rw-003-ke-nkaneen",
+        "rw-004-ascowequassunn-mmis",
+        "rw-005-askuttaaquomps-n",
+        "rw-006-asnpaumpma-ntam"
+      ]
+    },
+    {
+      "id": "path-water",
+      "title": "Water & Sea",
+      "chapter": "The Sea",
+      "stage": 3,
+      "description": "Rivers, coast, and crossing water.",
+      "wordIds": [
+        "rw-002-ne-n-ke-n-ew",
+        "rw-003-ke-nkaneen",
+        "rw-004-ascowequassunn-mmis",
+        "rw-005-askuttaaquomps-n",
+        "rw-006-asnpaumpma-ntam"
+      ]
+    },
+    {
+      "id": "path-seasons",
+      "title": "Seasons & Weather",
+      "chapter": "Seasons of the Year",
+      "stage": 3,
+      "description": "How the year turns.",
+      "wordIds": [
+        "rw-073-nquittaq-nnegat",
+        "rw-074-neesq-nnagat",
+        "rw-075-shuckqun-ckat",
+        "rw-076-piuckaq-nnagat",
+        "rw-077-piuckaqunnagat-nabnaqu-t",
+        "rw-078-neesneechektashuck-qunn-",
+        "rw-079-s-quan",
+        "rw-080-aukeete-mitch"
+      ]
+    },
+    {
+      "id": "path-travel",
+      "title": "Travel & Paths",
+      "chapter": "Travel",
+      "stage": 3,
+      "description": "Coming and going on the land.",
+      "wordIds": [
+        "rw-081-m-yi",
+        "rw-082-mat-mayan-nno",
+        "rw-083-peem-yag-t",
+        "rw-084-mishimm-yagat",
+        "rw-085-mach-pscat",
+        "rw-086-nnatotem-ckaun",
+        "rw-087-kunnat-temous",
+        "rw-088-kokotem-innea-m-yi"
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "id": 1,
+      "key": "awakening",
+      "label": "Awakening",
+      "description": "Recognize common words and greetings by sound and context."
+    },
+    {
+      "id": 2,
+      "key": "rooted",
+      "label": "Rooted",
+      "description": "Use everyday words in home and land routines."
+    },
+    {
+      "id": 3,
+      "key": "flowing",
+      "label": "Flowing",
+      "description": "Hold short conversations about family and place."
+    },
+    {
+      "id": 4,
+      "key": "deepening",
+      "label": "Deepening",
+      "description": "Participate with care in community language life."
+    },
+    {
+      "id": 5,
+      "key": "fluent",
+      "label": "Fluent",
+      "description": "Conduct daily and tribal business in the language."
+    },
+    {
+      "id": 6,
+      "key": "ancestral",
+      "label": "Ancestral Mastery",
+      "description": "Teach and create new respectful content (elder verified)."
+    }
+  ]
+}
