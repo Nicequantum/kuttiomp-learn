@@ -27,16 +27,18 @@ function ProfilePage() {
   const totalWords = getAllWords().length;
   const totalPaths = getPaths().length;
   const [tts, setTts] = useState<string>("…");
-  const [ttsWarn, setTtsWarn] = useState<string | null>(null);
 
   useEffect(() => {
     void checkTtsStatus().then((s) => {
       if (!s.configured) {
-        setTts("Grok TTS not configured — add XAI_API_KEY on Vercel");
+        setTts("Cloud voice not configured — add XAI_API_KEY on Vercel");
+        return;
+      }
+      if (s.provider === "xai-voice-agent") {
+        setTts(`Your Voice Agent is connected (${s.voice})`);
         return;
       }
       setTts(`Grok TTS ready (voice: ${s.voice ?? "default"})`);
-      if (s.warning) setTtsWarn(s.warning);
     });
   }, []);
 
@@ -104,10 +106,6 @@ function ProfilePage() {
             <strong className="text-[var(--color-fg)]">Add to Home Screen</strong>
             .
           </p>
-          <p className="text-sm text-[var(--color-subtle)]">
-            If production ever fails to load, clear site data for this domain
-            (old service worker) or open in a private window once.
-          </p>
         </div>
       </section>
 
@@ -117,17 +115,13 @@ function ProfilePage() {
         </h2>
         <div className="surface-card pad-mode space-y-2">
           <p className="font-medium">{tts}</p>
-          {ttsWarn && (
-            <p className="text-sm text-[var(--color-warn-fg)] leading-relaxed rounded-mode bg-[var(--color-warn-soft)] p-3">
-              {ttsWarn}
-            </p>
-          )}
           <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-            <strong className="text-[var(--color-fg)]">XAI_TTS_VOICE</strong> must
-            be a <em>TTS</em> voice name like{" "}
-            <code className="text-[var(--color-fg)]">ara</code> or{" "}
-            <code className="text-[var(--color-fg)]">eve</code> — not a Voice
-            Agent id starting with <code className="text-[var(--color-fg)]">agent_</code>.
+            To use the agent you created, set{" "}
+            <code className="text-[var(--color-fg)]">XAI_VOICE_AGENT_ID</code>{" "}
+            to your <code className="text-[var(--color-fg)]">agent_…</code> id
+            (or put that id in{" "}
+            <code className="text-[var(--color-fg)]">XAI_TTS_VOICE</code>). The
+            app speaks through that agent’s voice via realtime WebSocket.
           </p>
         </div>
       </section>
@@ -148,18 +142,6 @@ function ProfilePage() {
             {meta.sourceWork.title} ({meta.sourceWork.author},{" "}
             {meta.sourceWork.year}). {meta.sourceWork.note}
           </p>
-          <div className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-fg)_3%,transparent)] p-3 text-sm leading-relaxed text-[var(--color-muted)]">
-            <p className="font-medium text-[var(--color-fg)]">
-              Production cutover
-            </p>
-            <p className="mt-1">
-              Set{" "}
-              <code className="text-[var(--color-fg)]">
-                VITE_CONTENT_CORPUS=keeper_only
-              </code>{" "}
-              to drop all historical seed.
-            </p>
-          </div>
         </div>
       </section>
 
@@ -170,7 +152,7 @@ function ProfilePage() {
         <div className="surface-card pad-mode space-y-3 text-[var(--color-muted)] leading-relaxed">
           <p>
             This is the learner home. The Knowledge Keeper portal stays
-            separate. Cross-link both apps with environment URLs after deploy.
+            separate.
           </p>
           {KEEPER_PORTAL_URL ? (
             <Button asChild variant="secondary" className="w-full sm:w-auto">
@@ -183,7 +165,7 @@ function ProfilePage() {
             <p className="text-sm text-[var(--color-subtle)]">
               Set{" "}
               <code className="text-[var(--color-fg)]">VITE_KEEPER_PORTAL_URL</code>{" "}
-              on this app to show a button to your admin site.
+              to link your admin site.
             </p>
           )}
         </div>

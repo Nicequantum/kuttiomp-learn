@@ -36,11 +36,11 @@ export function OralPlayer({
   useEffect(() => {
     void checkTtsStatus().then((s) => {
       if (!s.configured) {
-        setStatusLine("Browser voice — add XAI_API_KEY on Vercel for Grok TTS");
+        setStatusLine("Browser voice — add XAI_API_KEY on Vercel");
         return;
       }
-      if (s.warning) {
-        setStatusLine(`Grok TTS (using ${s.voice}) — ${s.warning}`);
+      if (s.provider === "xai-voice-agent") {
+        setStatusLine(`Your Voice Agent ready (${s.voice})`);
         return;
       }
       setStatusLine(`Grok TTS ready (voice: ${s.voice ?? "default"})`);
@@ -63,15 +63,7 @@ export function OralPlayer({
     setLastEngine(engine);
     if (engine === "browser") {
       const err = getLastTtsError();
-      if (err) {
-        setStatusLine(`Grok TTS failed → browser voice. ${err}`);
-      }
-    } else if (engine === "grok") {
-      setStatusLine((prev) =>
-        prev.startsWith("Grok TTS ready") || prev.includes("using")
-          ? prev
-          : "Playing with Grok TTS",
-      );
+      if (err) setStatusLine(`Cloud voice failed → browser. ${err}`);
     }
     setPlaying(false);
   }
@@ -91,9 +83,9 @@ export function OralPlayer({
             Oral first
           </span>
         </div>
-        <span className="max-w-[55%] text-right text-xs text-[var(--color-subtle)] leading-snug">
+        <span className="text-xs text-[var(--color-subtle)]">
           {lastEngine === "grok"
-            ? "Playing: Grok"
+            ? "Playing: cloud voice"
             : lastEngine === "browser"
               ? "Playing: browser"
               : ""}

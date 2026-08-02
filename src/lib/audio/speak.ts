@@ -1,7 +1,5 @@
 /**
- * Oral playback layer.
- * Prefers Grok TTS via /api/tts (server holds XAI_API_KEY).
- * Falls back to browser speech if TTS fails.
+ * Oral playback — Grok Voice Agent or REST TTS via /api/tts.
  */
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -30,6 +28,7 @@ export async function checkTtsStatus(): Promise<{
   configured: boolean;
   provider: string;
   voice: string | null;
+  agentId?: string | null;
   warning?: string | null;
 }> {
   try {
@@ -42,9 +41,8 @@ export async function checkTtsStatus(): Promise<{
       configured: boolean;
       provider: string;
       voice: string | null;
-      warning?: string | null;
+      agentId?: string | null;
     };
-    // Key present does not mean voice works — we verify on first play
     grokAvailable = data.configured;
     return data;
   } catch {
@@ -53,10 +51,7 @@ export async function checkTtsStatus(): Promise<{
   }
 }
 
-function browserSpeak(
-  text: string,
-  opts?: { rate?: number },
-): Promise<void> {
+function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       resolve();
@@ -96,27 +91,20 @@ async function grokSpeak(
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         lastTtsError =
-          (err as { message?: string }).message ||
-          `TTS HTTP ${res.status}`;
-        console.warn("[speak] Grok TTS failed", err);
+          (err as { message?: string }).message || `TTS HTTP ${res.status}`;
+        console.warn("[speak] synthesis failed", err);
         return false;
       }
       const blob = await res.blob();
-      const type = blob.type || res.headers.get("content-type") || "";
       if (!blob.size) {
-        lastTtsError = "Empty audio from Grok TTS";
-        return false;
-      }
-      // Accept audio/* or application/octet-stream
-      if (type && !type.startsWith("audio") && !type.includes("octet")) {
-        lastTtsError = `Unexpected content-type: ${type}`;
+        lastTtsError = "Empty audio";
         return false;
       }
       url = URL.createObjectURL(blob);
       audioCache.set(cacheKey, url);
       lastTtsError = null;
     } catch (e) {
-      lastTtsError = e instanceof Error ? e.message : "TTS network error";
+      lastTtsError = e instanceof Error ? e.message : "network error";
       return false;
     }
   }
@@ -137,7 +125,6 @@ async function grokSpeak(
   });
 }
 
-/** Speak Narragansett form carefully, then optional English gloss. */
 export async function speakWord(opts: {
   narragansett: string;
   english?: string;
@@ -155,7 +142,6 @@ export async function speakWord(opts: {
       }
       return "grok";
     }
-    // One failed attempt — keep trying Grok on later words after fix/redeploy
   }
 
   await browserSpeak(opts.narragansett, { rate: 0.7 });
