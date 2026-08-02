@@ -86,6 +86,7 @@ function ListenPage() {
           wordId={word.id}
           narragansett={word.wordNarragansett}
           english={word.englishGloss}
+          primaryAudioUrl={word.primaryAudioUrl}
           size="hero"
           showEnglishToggle={meta.id !== "little_ones"}
         />

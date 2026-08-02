@@ -54,7 +54,9 @@ function WordDetailPage() {
           {word.englishGloss}
         </p>
         <div className="flex flex-wrap gap-2">
-          <Badge tone="warn">Historical seed</Badge>
+          <Badge tone={word.source === "keeper_approved" ? "land" : "warn"}>
+            {word.source === "keeper_approved" ? "Living form" : "Historical seed"}
+          </Badge>
           {word.isPhrase && <Badge>Phrase</Badge>}
           <Badge tone="neutral">{word.chapter}</Badge>
           <Badge tone="land">{word.semanticDomain}</Badge>
@@ -65,6 +67,7 @@ function WordDetailPage() {
         wordId={word.id}
         narragansett={word.wordNarragansett}
         english={word.englishGloss}
+        primaryAudioUrl={word.primaryAudioUrl}
         size="hero"
       />
 

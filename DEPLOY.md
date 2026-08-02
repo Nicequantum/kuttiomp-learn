@@ -105,3 +105,14 @@ No extra env vars. Modes slightly change which scene is shown.
 - [ ] `VITE_KEEPER_PORTAL_URL` set (optional)  
 - [ ] Admin has “Open learner demo” link  
 - [ ] Tested Add to Home Screen on one iPhone  
+
+## Public lexicon (demo → production)
+
+See [docs/PUBLIC_LEXICON_CONTRACT.md](docs/PUBLIC_LEXICON_CONTRACT.md).
+
+| Variable | Values |
+|----------|--------|
+| `VITE_CONTENT_CORPUS` | `demo_historical` (default) or `keeper_only` |
+| `VITE_API_BASE_URL` | Public API origin, e.g. `https://your-api.example.com` |
+
+Until the monorepo exposes `GET /api/v1/public/lexicon`, leave `VITE_API_BASE_URL` empty.

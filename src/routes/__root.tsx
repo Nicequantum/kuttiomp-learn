@@ -10,6 +10,7 @@ import { useModeStore, applyModeToDocument } from "@/lib/mode/store";
 import { APP_NAME, APP_TAGLINE } from "@/lib/content/config";
 import { purgeServiceWorkers } from "@/lib/pwa/register";
 import { ScenicBackdrop } from "@/components/layout/ScenicBackdrop";
+import { CorpusHydrator } from "@/components/content/CorpusHydrator";
 
 const SW_KILL_SCRIPT = `
 (function(){
@@ -81,6 +82,7 @@ function RootDocument() {
       </head>
       <body className="relative min-h-dvh">
         <ScenicBackdrop />
+        <CorpusHydrator />
         <Outlet />
         <Scripts />
       </body>

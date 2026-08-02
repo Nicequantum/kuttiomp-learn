@@ -1,16 +1,24 @@
-import seed from "./seed-williams.json";
+import {
+  getActiveBundle,
+  getCorpusLoadState,
+  hydrateCorpus,
+  loadCorpus,
+  subscribeCorpus,
+} from "./load-corpus";
 import { CONTENT_CORPUS, IS_DEMO_HISTORICAL } from "./config";
-import type {
-  CorpusBundle,
-  LearningPath,
-  LexicalWord,
-  MasteryStage,
-} from "./types";
+import type { LearningPath, LexicalWord, MasteryStage } from "./types";
 
-const bundle = seed as CorpusBundle;
+export {
+  getActiveBundle,
+  getCorpusLoadState,
+  hydrateCorpus,
+  loadCorpus,
+  subscribeCorpus,
+};
 
 /** Production filter: only elder-approved living content. Demo keeps historical seed. */
 function visibleWords(): LexicalWord[] {
+  const bundle = getActiveBundle();
   if (CONTENT_CORPUS === "keeper_only") {
     return bundle.words.filter(
       (w) => w.source === "keeper_approved" && w.elderApproved && !w.isSacred,
@@ -20,12 +28,18 @@ function visibleWords(): LexicalWord[] {
 }
 
 export function getCorpusMeta() {
+  const bundle = getActiveBundle();
+  const state = getCorpusLoadState();
   return {
     corpus: CONTENT_CORPUS,
     isDemo: IS_DEMO_HISTORICAL,
     label: bundle.corpusLabel,
     notice: bundle.notice,
     sourceWork: bundle.sourceWork,
+    loadSource: state.source,
+    loadMessage: state.message,
+    apiOk: state.apiOk,
+    corpusVersion: state.corpusVersion,
   };
 }
 
@@ -58,6 +72,7 @@ export function getWordsByChapter(chapter: string): LexicalWord[] {
 }
 
 export function getPaths(): LearningPath[] {
+  const bundle = getActiveBundle();
   const words = new Set(visibleWords().map((w) => w.id));
   return bundle.paths
     .map((p) => ({
@@ -78,11 +93,11 @@ export function getPathWords(path: LearningPath): LexicalWord[] {
 }
 
 export function getStages(): MasteryStage[] {
-  return bundle.stages;
+  return getActiveBundle().stages;
 }
 
 export function getStage(id: number): MasteryStage | undefined {
-  return bundle.stages.find((s) => s.id === id);
+  return getActiveBundle().stages.find((s) => s.id === id);
 }
 
 export function getDomains(): { id: string; label: string; count: number }[] {
@@ -116,6 +131,7 @@ export function getFeaturedWords(limit = 6): LexicalWord[] {
     "House and Family",
     "Eating and Entertainment",
     "The Earth and Fruits",
+    "Family & people",
   ];
   const all = visibleWords();
   const picked: LexicalWord[] = [];
@@ -142,6 +158,7 @@ export function getListenQueue(limit = 12): LexicalWord[] {
     "House and Family",
     "Numbers",
     "Travel",
+    "Family & people",
   ];
   const all = visibleWords();
   const ordered: LexicalWord[] = [];

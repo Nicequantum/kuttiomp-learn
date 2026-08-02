@@ -1,5 +1,5 @@
 /**
- * Oral playback — Grok Voice Agent or REST TTS via /api/tts.
+ * Oral playback — living recording → Grok Agent/TTS → browser.
  */
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -74,6 +74,23 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
   });
 }
 
+function playUrl(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    stopSpeaking();
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => {
+      currentAudio = null;
+      resolve(true);
+    };
+    audio.onerror = () => {
+      currentAudio = null;
+      resolve(false);
+    };
+    void audio.play().catch(() => resolve(false));
+  });
+}
+
 async function grokSpeak(
   text: string,
   kind: "narragansett" | "english",
@@ -92,7 +109,6 @@ async function grokSpeak(
         const err = await res.json().catch(() => ({}));
         lastTtsError =
           (err as { message?: string }).message || `TTS HTTP ${res.status}`;
-        console.warn("[speak] synthesis failed", err);
         return false;
       }
       const blob = await res.blob();
@@ -109,27 +125,29 @@ async function grokSpeak(
     }
   }
 
-  return new Promise((resolve) => {
-    stopSpeaking();
-    const audio = new Audio(url!);
-    currentAudio = audio;
-    audio.onended = () => {
-      currentAudio = null;
-      resolve(true);
-    };
-    audio.onerror = () => {
-      currentAudio = null;
-      resolve(false);
-    };
-    void audio.play().catch(() => resolve(false));
-  });
+  return playUrl(url);
 }
 
 export async function speakWord(opts: {
   narragansett: string;
   english?: string;
   includeEnglish?: boolean;
-}): Promise<"grok" | "browser" | "none"> {
+  /** Living speaker recording from public API */
+  primaryAudioUrl?: string;
+}): Promise<"recording" | "grok" | "browser" | "none"> {
+  // 1) Living speaker recording (production path)
+  if (opts.primaryAudioUrl) {
+    const ok = await playUrl(opts.primaryAudioUrl);
+    if (ok) {
+      if (opts.includeEnglish && opts.english) {
+        if (grokAvailable === null) await checkTtsStatus();
+        if (grokAvailable) await grokSpeak(opts.english, "english");
+        else await browserSpeak(opts.english, { rate: 0.9 });
+      }
+      return "recording";
+    }
+  }
+
   if (grokAvailable === null) {
     await checkTtsStatus();
   }

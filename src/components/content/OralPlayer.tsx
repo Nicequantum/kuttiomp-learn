@@ -14,6 +14,7 @@ type Props = {
   wordId: string;
   narragansett: string;
   english: string;
+  primaryAudioUrl?: string;
   size?: "default" | "hero";
   className?: string;
   showEnglishToggle?: boolean;
@@ -23,6 +24,7 @@ export function OralPlayer({
   wordId,
   narragansett,
   english,
+  primaryAudioUrl,
   size = "default",
   className,
   showEnglishToggle = true,
@@ -34,18 +36,18 @@ export function OralPlayer({
   const markHeard = useProgressStore((s) => s.markHeard);
 
   useEffect(() => {
+    if (primaryAudioUrl) {
+      setStatusLine("Living speaker recording available");
+      return;
+    }
     void checkTtsStatus().then((s) => {
       if (!s.configured) {
-        setStatusLine("Browser voice — add XAI_API_KEY on Vercel");
+        setStatusLine("Browser voice — demo stand-in only");
         return;
       }
-      if (s.provider === "xai-voice-agent") {
-        setStatusLine("Demo cloud voice (agent path)");
-        return;
-      }
-      setStatusLine("Demo cloud voice");
+      setStatusLine("Demo cloud voice (not a living speaker)");
     });
-  }, []);
+  }, [primaryAudioUrl]);
 
   async function onPlay() {
     if (playing) {
@@ -59,11 +61,15 @@ export function OralPlayer({
       narragansett,
       english,
       includeEnglish: withEnglish,
+      primaryAudioUrl,
     });
     setLastEngine(engine);
-    if (engine === "browser") {
+    if (engine === "browser" && !primaryAudioUrl) {
       const err = getLastTtsError();
-      if (err) setStatusLine(`Cloud voice unavailable — using device voice`);
+      if (err) setStatusLine("Cloud voice unavailable — using device voice");
+    }
+    if (engine === "recording") {
+      setStatusLine("Playing living speaker recording");
     }
     setPlaying(false);
   }
@@ -84,11 +90,13 @@ export function OralPlayer({
           </span>
         </div>
         <span className="text-xs text-[var(--color-subtle)]">
-          {lastEngine === "grok"
-            ? "Cloud"
-            : lastEngine === "browser"
-              ? "Device"
-              : ""}
+          {lastEngine === "recording"
+            ? "Speaker"
+            : lastEngine === "grok"
+              ? "Demo voice"
+              : lastEngine === "browser"
+                ? "Device"
+                : ""}
         </span>
       </div>
 
@@ -123,7 +131,7 @@ export function OralPlayer({
       </div>
 
       <p className="text-[length:calc(var(--mode-font-body)*0.85)] text-[var(--color-subtle)] leading-snug">
-        {statusLine}. Not a living tribal speaker.
+        {statusLine}
       </p>
     </div>
   );

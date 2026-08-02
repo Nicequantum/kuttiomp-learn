@@ -88,6 +88,7 @@ function PathSessionPage() {
           wordId={word.id}
           narragansett={word.wordNarragansett}
           english={word.englishGloss}
+          primaryAudioUrl={word.primaryAudioUrl}
           size="hero"
         />
 

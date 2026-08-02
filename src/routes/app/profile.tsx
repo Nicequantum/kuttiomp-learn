@@ -7,7 +7,7 @@ import { MasteryPanel } from "@/components/content/MasteryPanel";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getAllWords, getCorpusMeta, getPaths } from "@/lib/content/corpus";
+import { getAllWords, getCorpusMeta, getCorpusLoadState, getPaths } from "@/lib/content/corpus";
 import { KEEPER_PORTAL_URL } from "@/lib/content/config";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
@@ -24,6 +24,7 @@ function ProfilePage() {
   const resetOnboarding = useModeStore((s) => s.resetOnboarding);
   const clearProgress = useProgressStore((s) => s.clearDemoProgress);
   const meta = getCorpusMeta();
+  const loadState = getCorpusLoadState();
   const totalWords = getAllWords().length;
   const totalPaths = getPaths().length;
   const [tts, setTts] = useState<string>("…");
@@ -136,7 +137,12 @@ function ProfilePage() {
             <Badge tone="warn">{meta.label}</Badge>
             <Badge tone="neutral">{totalWords} words</Badge>
             <Badge tone="neutral">{totalPaths} paths</Badge>
+            <Badge tone="neutral">{loadState.source}</Badge>
           </div>
+          <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+            {loadState.message}
+            {loadState.corpusVersion ? ` · version ${loadState.corpusVersion}` : ""}
+          </p>
           <p className="text-[var(--color-muted)] leading-relaxed">
             <strong className="text-[var(--color-fg)]">Source:</strong>{" "}
             {meta.sourceWork.title} ({meta.sourceWork.author},{" "}

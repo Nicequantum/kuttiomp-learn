@@ -22,6 +22,19 @@ export const KEEPER_PORTAL_URL =
   "https://kuttiomp-admin-viti.vercel.app";
 
 /**
+ * Kuttiomp FastAPI origin for Public Lexicon Contract v1.
+ * Example: https://api.your-domain.com  (no trailing slash)
+ * Leave empty until public routes ship — app stays on demo seed.
+ */
+export const API_BASE_URL = (
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? ""
+).replace(/\/$/, "");
+
+export function isApiConfigured(): boolean {
+  return Boolean(API_BASE_URL);
+}
+
+/**
  * High-resolution land photography (JPG + WebP).
  */
 export const SCENERY = {
