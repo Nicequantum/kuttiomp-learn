@@ -11,8 +11,8 @@ const modeScene: Record<LearningMode, keyof typeof SCENERY> = {
 };
 
 /**
- * Land Night stage: sharp photography with deep vignette.
- * Elder uses heavy light wash for Protocol 11 readability.
+ * Full land photography for every mode — including Elder.
+ * Elder only differs in content blocks (white cards), not a blank white page.
  */
 export function ScenicBackdrop({ className }: { className?: string }) {
   const mode = useModeStore((s) => s.mode) ?? "core_adult";
@@ -35,27 +35,25 @@ export function ScenicBackdrop({ className }: { className?: string }) {
           fetchPriority="high"
           className={cn(
             "absolute inset-0 h-full w-full object-cover object-center",
-            mode !== "elder" && "motion-safe:animate-[ken_48s_ease-in-out_infinite_alternate]",
+            "motion-safe:animate-[ken_48s_ease-in-out_infinite_alternate]",
           )}
         />
       </picture>
 
-      {/* Mode wash from CSS tokens */}
       <div
         className="absolute inset-0"
         style={{
           background: `color-mix(in oklab, var(--color-bg) var(--scene-wash), transparent)`,
         }}
       />
-      {/* Cinematic vignette */}
       <div
         className="absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse at center, transparent 20%, color-mix(in oklab, var(--color-bg) var(--scene-vignette), transparent) 100%)`,
+          background: `radial-gradient(ellipse at center, transparent 25%, color-mix(in oklab, var(--color-bg) var(--scene-vignette), transparent) 100%)`,
         }}
       />
-      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[color-mix(in_oklab,var(--color-bg)_50%,transparent)] to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[color-mix(in_oklab,var(--color-bg)_70%,transparent)] to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[color-mix(in_oklab,var(--color-bg)_45%,transparent)] to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[color-mix(in_oklab,var(--color-bg)_65%,transparent)] to-transparent" />
 
       <style>{`
         @keyframes ken {

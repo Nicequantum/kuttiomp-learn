@@ -39,7 +39,10 @@ export const Route = createRootRoute({
       { name: "description", content: APP_TAGLINE },
       { name: "theme-color", content: "#0a100e" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      {
+        name: "apple-mobile-web-app-status-bar-style",
+        content: "black-translucent",
+      },
       { name: "apple-mobile-web-app-title", content: "Kuttiomp" },
       { name: "mobile-web-app-capable", content: "yes" },
     ],
@@ -63,9 +66,8 @@ function RootDocument() {
 
   useEffect(() => {
     applyModeToDocument(mode);
-    const theme = mode === "elder" ? "#ffffff" : "#0a100e";
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme);
+    if (meta) meta.setAttribute("content", "#0a100e");
   }, [mode]);
 
   useEffect(() => {
