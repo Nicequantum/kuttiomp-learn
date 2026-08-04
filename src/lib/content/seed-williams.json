@@ -1,12 +1,12 @@
 {
   "corpus": "demo_historical",
   "corpusLabel": "Demo historical seed",
-  "notice": "This content is drawn from Roger Williams’ 1643 colonial record A Key into the Language of America. It is a historical scaffold only. Living Narragansett Knowledge Keepers and speakers hold absolute authority. Production will replace this seed with elder-approved voices.",
+  "notice": "This content is drawn from Roger Williams’ 1643 colonial record A Key into the Language of America. English glosses here are modernized for learner clarity; the historical phrasing is preserved separately. This is a historical scaffold only. Living Narragansett Knowledge Keepers and speakers hold absolute authority. Production will replace this seed with elder-approved voices.",
   "sourceWork": {
     "title": "A Key into the Language of America",
     "author": "Roger Williams",
     "year": 1643,
-    "note": "Public domain. Colonial outsider perspective with phonetic approximations and cultural limitations."
+    "note": "Public domain. Colonial outsider perspective with phonetic approximations and cultural limitations. Learner glosses modernized for demo readability; not living tribal authority."
   },
   "words": [
     {
@@ -52,7 +52,7 @@
     {
       "id": "rw-004-ascowequassunn-mmis",
       "wordNarragansett": "Ascowequassunnúmmis",
-      "englishGloss": "Good morrow.",
+      "englishGloss": "Good morning.",
       "englishHistorical": "Good morrow.",
       "chapter": "Salutation",
       "chapterNum": 1,
@@ -72,7 +72,7 @@
     {
       "id": "rw-005-askuttaaquomps-n",
       "wordNarragansett": "Askuttaaquompsín",
-      "englishGloss": "How do you do??",
+      "englishGloss": "How are you?",
       "englishHistorical": "Hou doe you?",
       "chapter": "Salutation",
       "chapterNum": 1,
@@ -132,7 +132,7 @@
     {
       "id": "rw-008-cowa-nckamish",
       "wordNarragansett": "Cowaúnckamish",
-      "englishGloss": "My service to you.",
+      "englishGloss": "My respects to you. / At your service.",
       "englishHistorical": "My service to you.",
       "chapter": "Salutation",
       "chapterNum": 1,
@@ -172,7 +172,7 @@
     {
       "id": "rw-010-nicc-wkatone",
       "wordNarragansett": "Niccàwkatone",
-      "englishGloss": "I am thirstie.",
+      "englishGloss": "I am thirsty.",
       "englishHistorical": "I am thirstie.",
       "chapter": "Eating and Entertainment",
       "chapterNum": 2,
@@ -212,7 +212,7 @@
     {
       "id": "rw-012-namitch-commetes-mmin",
       "wordNarragansett": "Namitch, commetesímmin",
-      "englishGloss": "Stay, you must eat first.",
+      "englishGloss": "Stay — you must eat first.",
       "englishHistorical": "Stay, you must eat first.",
       "chapter": "Eating and Entertainment",
       "chapterNum": 2,
@@ -252,7 +252,7 @@
     {
       "id": "rw-014-n-kehick",
       "wordNarragansett": "Nókehick",
-      "englishGloss": "Parch’d meal, which is a",
+      "englishGloss": "Parched meal (dried ground corn).",
       "englishHistorical": "Parch’d meal, which is a",
       "chapter": "Eating and Entertainment",
       "chapterNum": 2,
@@ -272,7 +272,7 @@
     {
       "id": "rw-015-aup-mmineanash",
       "wordNarragansett": "Aupúmmineanash",
-      "englishGloss": "The parch’d corne.",
+      "englishGloss": "The parched corn.",
       "englishHistorical": "The parch’d corne.",
       "chapter": "Eating and Entertainment",
       "chapterNum": 2,
@@ -292,7 +292,7 @@
     {
       "id": "rw-016-aup-minea-nawsa-mp",
       "wordNarragansett": "Aupúminea-nawsaùmp",
-      "englishGloss": "The parch’d meale boild",
+      "englishGloss": "Parched meal boiled (a soft corn porridge).",
       "englishHistorical": "The parch’d meale boild",
       "chapter": "Eating and Entertainment",
       "chapterNum": 2,
@@ -332,7 +332,7 @@
     {
       "id": "rw-018-nk-taquaum",
       "wordNarragansett": "Nkàtaquaum",
-      "englishGloss": "I am sleepie.",
+      "englishGloss": "I am sleepy.",
       "englishHistorical": "I am sleepie.",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -352,7 +352,7 @@
     {
       "id": "rw-019-kukkoveto-s",
       "wordNarragansett": "Kukkovetoùs",
-      "englishGloss": "Shall I lodge here?",
+      "englishGloss": "May I stay the night here?",
       "englishHistorical": "Shall I lodge here?",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -372,7 +372,7 @@
     {
       "id": "rw-020-kukkow-ti",
       "wordNarragansett": "Kukkowéti",
-      "englishGloss": "Will you sleep here.",
+      "englishGloss": "Will you sleep here?",
       "englishHistorical": "Will you sleepe here.",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -392,7 +392,7 @@
     {
       "id": "rw-021-wunn-gin-c-wish",
       "wordNarragansett": "Wunnégin, cówish",
-      "englishGloss": "Welcome, sleep here.",
+      "englishGloss": "Welcome — sleep here.",
       "englishHistorical": "Welcome, sleepe here.",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -412,7 +412,7 @@
     {
       "id": "rw-022-nummouaqu-men",
       "wordNarragansett": "Nummouaquômen",
-      "englishGloss": "I will lodge abroad.",
+      "englishGloss": "I will lodge outdoors.",
       "englishHistorical": "I will lodge abroad.",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -432,7 +432,7 @@
     {
       "id": "rw-023-puckqu-tchick-nickou-men",
       "wordNarragansett": "Puckquátchick nickouêmen",
-      "englishGloss": "I will sleep without the doores,",
+      "englishGloss": "I will sleep outdoors.",
       "englishHistorical": "I will sleepe without the doores,",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -452,7 +452,7 @@
     {
       "id": "rw-024-mouaqu-mitea",
       "wordNarragansett": "Mouaquómitea",
-      "englishGloss": "Let us lye abroad.",
+      "englishGloss": "Let us sleep outdoors.",
       "englishHistorical": "Let us lye abroad.",
       "chapter": "Sleep and Lodging",
       "chapterNum": 3,
@@ -492,7 +492,7 @@
     {
       "id": "rw-026-pi-ck",
       "wordNarragansett": "Piùck",
-      "englishGloss": "10",
+      "englishGloss": "Ten.",
       "englishHistorical": "10",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -512,7 +512,7 @@
     {
       "id": "rw-027-piucknabna-qu-t",
       "wordNarragansett": "Piucknabna quìt",
-      "englishGloss": "11",
+      "englishGloss": "Eleven.",
       "englishHistorical": "11",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -532,7 +532,7 @@
     {
       "id": "rw-028-piucknab-ne-se",
       "wordNarragansett": "Piucknab neèse",
-      "englishGloss": "12",
+      "englishGloss": "Twelve.",
       "englishHistorical": "12",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -552,7 +552,7 @@
     {
       "id": "rw-029-piucknab-n-sh",
       "wordNarragansett": "Piucknab nìsh",
-      "englishGloss": "13",
+      "englishGloss": "Thirteen.",
       "englishHistorical": "13",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -572,7 +572,7 @@
     {
       "id": "rw-030-piucknab-y-h",
       "wordNarragansett": "Piucknab yòh",
-      "englishGloss": "14",
+      "englishGloss": "Fourteen.",
       "englishHistorical": "14",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -592,7 +592,7 @@
     {
       "id": "rw-031-piucknab-nap-nna",
       "wordNarragansett": "Piucknab napánna",
-      "englishGloss": "15",
+      "englishGloss": "Fifteen.",
       "englishHistorical": "15",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -612,7 +612,7 @@
     {
       "id": "rw-032-piucknab-naq-tta",
       "wordNarragansett": "Piucknab naqútta",
-      "englishGloss": "16",
+      "englishGloss": "Sixteen.",
       "englishHistorical": "16",
       "chapter": "Numbers",
       "chapterNum": 4,
@@ -632,7 +632,7 @@
     {
       "id": "rw-033-ske-tomp-a-og",
       "wordNarragansett": "Skeétomp-aûog",
-      "englishGloss": "Man-men.",
+      "englishGloss": "Man; men.",
       "englishHistorical": "Man-men.",
       "chapter": "Relations of Consanguinity",
       "chapterNum": 5,
@@ -652,7 +652,7 @@
     {
       "id": "rw-034-squ-ws-suck",
       "wordNarragansett": "Squàws-suck",
-      "englishGloss": "Woman-women.",
+      "englishGloss": "Woman; women.",
       "englishHistorical": "Woman-women.",
       "chapter": "Relations of Consanguinity",
       "chapterNum": 5,
@@ -672,7 +672,7 @@
     {
       "id": "rw-035-kichizuck",
       "wordNarragansett": "Kichizuck",
-      "englishGloss": "Old men.",
+      "englishGloss": "Elders / old men.",
       "englishHistorical": "Old men.",
       "chapter": "Relations of Consanguinity",
       "chapterNum": 5,
@@ -692,7 +692,7 @@
     {
       "id": "rw-036-h-mesuck",
       "wordNarragansett": "Hômesuck",
-      "englishGloss": "Old men.",
+      "englishGloss": "Elders / old men.",
       "englishHistorical": "Old men.",
       "chapter": "Relations of Consanguinity",
       "chapterNum": 5,
@@ -712,7 +712,7 @@
     {
       "id": "rw-037-kutch-nnu",
       "wordNarragansett": "Kutchínnu",
-      "englishGloss": "A middle-aged man,",
+      "englishGloss": "A middle-aged man.",
       "englishHistorical": "A middle-aged man,",
       "chapter": "Relations of Consanguinity",
       "chapterNum": 5,
@@ -752,7 +752,7 @@
     {
       "id": "rw-039-wuske-ne",
       "wordNarragansett": "Wuskeène",
-      "englishGloss": "A youth,",
+      "englishGloss": "A youth.",
       "englishHistorical": "A youth,",
       "chapter": "Relations of Consanguinity",
       "chapterNum": 5,
@@ -792,7 +792,7 @@
     {
       "id": "rw-041-wetu",
       "wordNarragansett": "Wetu",
-      "englishGloss": "An House.",
+      "englishGloss": "A house / dwelling.",
       "englishHistorical": "An House.",
       "chapter": "House and Family",
       "chapterNum": 6,
@@ -852,7 +852,7 @@
     {
       "id": "rw-044-nickqu-num",
       "wordNarragansett": "Nickquénum",
-      "englishGloss": "I am going;",
+      "englishGloss": "I am going.",
       "englishHistorical": "I am going;",
       "chapter": "House and Family",
       "chapterNum": 6,
@@ -912,7 +912,7 @@
     {
       "id": "rw-047-wetuom-mese",
       "wordNarragansett": "Wetuomémese",
-      "englishGloss": "A little house;",
+      "englishGloss": "A little house.",
       "englishHistorical": "A little house;",
       "chapter": "House and Family",
       "chapterNum": 6,
@@ -992,7 +992,7 @@
     {
       "id": "rw-051-w-sheck",
       "wordNarragansett": "Wésheck",
-      "englishGloss": "The hayre.",
+      "englishGloss": "The hair.",
       "englishHistorical": "The hayre.",
       "chapter": "Parts of the Body",
       "chapterNum": 7,
@@ -1012,7 +1012,7 @@
     {
       "id": "rw-052-wuchechep-nnock",
       "wordNarragansett": "Wuchechepúnnock",
-      "englishGloss": "A great bunch of hayre",
+      "englishGloss": "A large bunch of hair.",
       "englishHistorical": "A great bunch of hayre",
       "chapter": "Parts of the Body",
       "chapterNum": 7,
@@ -1032,7 +1032,7 @@
     {
       "id": "rw-053-m-ppacuck",
       "wordNarragansett": "Múppacuck",
-      "englishGloss": "A long locke.",
+      "englishGloss": "A long lock of hair.",
       "englishHistorical": "A long locke.",
       "chapter": "Parts of the Body",
       "chapterNum": 7,
@@ -1052,7 +1052,7 @@
     {
       "id": "rw-054-msc-ttuck",
       "wordNarragansett": "Mscáttuck",
-      "englishGloss": "The fore-head.",
+      "englishGloss": "The forehead.",
       "englishHistorical": "The fore-head.",
       "chapter": "Parts of the Body",
       "chapterNum": 7,
@@ -1072,7 +1072,7 @@
     {
       "id": "rw-055-wuske-suck-quash",
       "wordNarragansett": "Wuskeésuck-quash",
-      "englishGloss": "Eye, or eyes.",
+      "englishGloss": "Eye; eyes.",
       "englishHistorical": "Eye, or eyes.",
       "chapter": "Parts of the Body",
       "chapterNum": 7,
@@ -1092,7 +1092,7 @@
     {
       "id": "rw-056-wucha-n",
       "wordNarragansett": "Wuchaûn",
-      "englishGloss": "The nostrills.",
+      "englishGloss": "The nostrils.",
       "englishHistorical": "The nostrills.",
       "chapter": "Parts of the Body",
       "chapterNum": 7,
@@ -1112,7 +1112,7 @@
     {
       "id": "rw-057-aunchemokauhett-ttea",
       "wordNarragansett": "Aunchemokauhettíttea",
-      "englishGloss": "Let us discourse, or tell newes.",
+      "englishGloss": "Let us talk / tell the news.",
       "englishHistorical": "Let us discourse, or tell newes.",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1132,7 +1132,7 @@
     {
       "id": "rw-058-aaunchem-kaw",
       "wordNarragansett": "Aaunchemókaw",
-      "englishGloss": "Tell me your newes.",
+      "englishGloss": "Tell me your news.",
       "englishHistorical": "Tell me your newes.",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1152,7 +1152,7 @@
     {
       "id": "rw-059-cuttaunchem-kous",
       "wordNarragansett": "Cuttaunchemókous",
-      "englishGloss": "I will tell you newes.",
+      "englishGloss": "I will tell you the news.",
       "englishHistorical": "I will tell you newes.",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1172,7 +1172,7 @@
     {
       "id": "rw-060-mautaunchemokou-an",
       "wordNarragansett": "Mautaunchemokouêan",
-      "englishGloss": "When I have done telling",
+      "englishGloss": "When I have finished telling….",
       "englishHistorical": "When I have done telling",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1192,7 +1192,7 @@
     {
       "id": "rw-061-cummautaunchem-kous",
       "wordNarragansett": "Cummautaunchemókous",
-      "englishGloss": "I have done my newes.",
+      "englishGloss": "I have finished my news.",
       "englishHistorical": "I have done my newes.",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1212,7 +1212,7 @@
     {
       "id": "rw-062-wutauich-ocou-og",
       "wordNarragansett": "Wutauichéocouôog",
-      "englishGloss": "I will tell it them.",
+      "englishGloss": "I will tell it to them.",
       "englishHistorical": "I will tell it them.",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1232,7 +1232,7 @@
     {
       "id": "rw-063-awaun-mesh-aunchem-kau",
       "wordNarragansett": "Awaun mesh aunchemókau",
-      "englishGloss": "Who brought this newes?",
+      "englishGloss": "Who brought this news?",
       "englishHistorical": "Who brought this newes?",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1252,7 +1252,7 @@
     {
       "id": "rw-064-awaun-mesh-kupp-ttouwaw",
       "wordNarragansett": "Awaun mesh kuppíttouwaw",
-      "englishGloss": "Of whom did you heare it?",
+      "englishGloss": "From whom did you hear it?",
       "englishHistorical": "Of whom did you heare it?",
       "chapter": "Discourse and News",
       "chapterNum": 8,
@@ -1292,7 +1292,7 @@
     {
       "id": "rw-066-ampat-uban",
       "wordNarragansett": "Ampatâuban",
-      "englishGloss": "It is broad day.",
+      "englishGloss": "It is broad daylight.",
       "englishHistorical": "It is broad day.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1312,7 +1312,7 @@
     {
       "id": "rw-067-p-shisha",
       "wordNarragansett": "Páshisha",
-      "englishGloss": "It is Sunne-rise.",
+      "englishGloss": "It is sunrise.",
       "englishHistorical": "It is Sunne-rise.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1332,7 +1332,7 @@
     {
       "id": "rw-068-numm-ttaq-aw",
       "wordNarragansett": "Nummáttaqúaw",
-      "englishGloss": "Fore-noone.",
+      "englishGloss": "Morning (before noon).",
       "englishHistorical": "Fore-noone.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1352,7 +1352,7 @@
     {
       "id": "rw-069-yahen-paushaq-aw",
       "wordNarragansett": "Yahen Paushaqúaw",
-      "englishGloss": "Allmost noone.",
+      "englishGloss": "Almost noon.",
       "englishHistorical": "Allmost noone.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1372,7 +1372,7 @@
     {
       "id": "rw-070-p-weshaquaw",
       "wordNarragansett": "Páweshaquaw",
-      "englishGloss": "Noone.",
+      "englishGloss": "Noon.",
       "englishHistorical": "Noone.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1392,7 +1392,7 @@
     {
       "id": "rw-071-qutt-kquaquaw",
       "wordNarragansett": "Quttùkquaquaw",
-      "englishGloss": "After dinner.",
+      "englishGloss": "After the midday meal.",
       "englishHistorical": "After dinner.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1412,7 +1412,7 @@
     {
       "id": "rw-072-naww-uwqaw",
       "wordNarragansett": "Nawwâuwqaw",
-      "englishGloss": "After-noone.",
+      "englishGloss": "Afternoon.",
       "englishHistorical": "After-noone.",
       "chapter": "Time of the Day",
       "chapterNum": 9,
@@ -1452,7 +1452,7 @@
     {
       "id": "rw-074-neesq-nnagat",
       "wordNarragansett": "Neesqúnnagat",
-      "englishGloss": "2 dayes.",
+      "englishGloss": "Two days.",
       "englishHistorical": "2 dayes.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1472,7 +1472,7 @@
     {
       "id": "rw-075-shuckqun-ckat",
       "wordNarragansett": "Shuckqunóckat",
-      "englishGloss": "3 dayes.",
+      "englishGloss": "Three days.",
       "englishHistorical": "3 dayes.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1492,7 +1492,7 @@
     {
       "id": "rw-076-piuckaq-nnagat",
       "wordNarragansett": "Piuckaqúnnagat",
-      "englishGloss": "10 dayes.",
+      "englishGloss": "Ten days.",
       "englishHistorical": "10 dayes.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1512,7 +1512,7 @@
     {
       "id": "rw-077-piuckaqunnagat-nabnaqu-t",
       "wordNarragansett": "Piuckaqunnagat nabnaquìt",
-      "englishGloss": "11 dayes.",
+      "englishGloss": "Eleven days.",
       "englishHistorical": "11 dayes.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1532,7 +1532,7 @@
     {
       "id": "rw-078-neesneechektashuck-qunn-",
       "wordNarragansett": "Neesneechektashuck qunnóckat",
-      "englishGloss": "20 dayes.",
+      "englishGloss": "Twenty days.",
       "englishHistorical": "20 dayes.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1552,7 +1552,7 @@
     {
       "id": "rw-079-s-quan",
       "wordNarragansett": "Séquan",
-      "englishGloss": "The Spring.",
+      "englishGloss": "Spring.",
       "englishHistorical": "The Spring.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1572,7 +1572,7 @@
     {
       "id": "rw-080-aukeete-mitch",
       "wordNarragansett": "Aukeeteámitch",
-      "englishGloss": "Spring, or seed-time.",
+      "englishGloss": "Spring; seed-time.",
       "englishHistorical": "Spring, or seed-time.",
       "chapter": "Seasons of the Year",
       "chapterNum": 10,
@@ -1592,7 +1592,7 @@
     {
       "id": "rw-081-m-yi",
       "wordNarragansett": "Máyi",
-      "englishGloss": "A way.",
+      "englishGloss": "A path / way.",
       "englishHistorical": "A way.",
       "chapter": "Travel",
       "chapterNum": 11,
@@ -1612,7 +1612,7 @@
     {
       "id": "rw-082-mat-mayan-nno",
       "wordNarragansett": "Mat mayanúnno",
-      "englishGloss": "There is no way.",
+      "englishGloss": "There is no path.",
       "englishHistorical": "There is no way.",
       "chapter": "Travel",
       "chapterNum": 11,
@@ -1632,7 +1632,7 @@
     {
       "id": "rw-083-peem-yag-t",
       "wordNarragansett": "Peemáyagât",
-      "englishGloss": "A little way.",
+      "englishGloss": "A short way.",
       "englishHistorical": "A little way.",
       "chapter": "Travel",
       "chapterNum": 11,
@@ -1672,7 +1672,7 @@
     {
       "id": "rw-085-mach-pscat",
       "wordNarragansett": "Machípscat",
-      "englishGloss": "A stone path.",
+      "englishGloss": "A stony path.",
       "englishHistorical": "A stone path.",
       "chapter": "Travel",
       "chapterNum": 11,
@@ -1712,7 +1712,7 @@
     {
       "id": "rw-087-kunnat-temous",
       "wordNarragansett": "Kunnatótemous",
-      "englishGloss": "I will inquire of you.",
+      "englishGloss": "I will ask you.",
       "englishHistorical": "I will inquire of you.",
       "chapter": "Travel",
       "chapterNum": 11,
@@ -1732,7 +1732,7 @@
     {
       "id": "rw-088-kokotem-innea-m-yi",
       "wordNarragansett": "Kokotemíinnea méyi",
-      "englishGloss": "Shew me the way.",
+      "englishGloss": "Show me the way.",
       "englishHistorical": "Shew me the way.",
       "chapter": "Travel",
       "chapterNum": 11,
@@ -1752,7 +1752,7 @@
     {
       "id": "rw-089-k-esuck",
       "wordNarragansett": "Kéesuck",
-      "englishGloss": "The Heavens.",
+      "englishGloss": "The heavens / sky.",
       "englishHistorical": "The Heavens.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1772,7 +1772,7 @@
     {
       "id": "rw-090-keesucqu-u",
       "wordNarragansett": "Keesucquíu",
-      "englishGloss": "Heavenward.",
+      "englishGloss": "Toward the heavens.",
       "englishHistorical": "Heavenward.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1792,7 +1792,7 @@
     {
       "id": "rw-091-a-ke-aukease-u",
       "wordNarragansett": "Aúke, Aukeaseíu",
-      "englishGloss": "Downwards.",
+      "englishGloss": "Downward; toward the earth.",
       "englishHistorical": "Downwards.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1812,7 +1812,7 @@
     {
       "id": "rw-092-nipp-wus",
       "wordNarragansett": "Nippâwus",
-      "englishGloss": "The Sun.",
+      "englishGloss": "The sun.",
       "englishHistorical": "The Sun.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1832,7 +1832,7 @@
     {
       "id": "rw-093-keesuckqu-nd",
       "wordNarragansett": "Keesuckquànd",
-      "englishGloss": "A name of the Sun.",
+      "englishGloss": "A name for the sun.",
       "englishHistorical": "A name of the Sun.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1852,7 +1852,7 @@
     {
       "id": "rw-094-munn-nnock",
       "wordNarragansett": "Munnánnock",
-      "englishGloss": "A name of the Sun.",
+      "englishGloss": "A name for the sun.",
       "englishHistorical": "A name of the Sun.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1872,7 +1872,7 @@
     {
       "id": "rw-095-pashp-shea",
       "wordNarragansett": "Pashpíshea",
-      "englishGloss": "The Moone is up.",
+      "englishGloss": "The moon is up.",
       "englishHistorical": "The Moone is up.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1892,7 +1892,7 @@
     {
       "id": "rw-096-y-ockquitteunk",
       "wordNarragansett": "Yò Ockquitteunk",
-      "englishGloss": "A new Moone.",
+      "englishGloss": "A new moon.",
       "englishHistorical": "A new Moone.",
       "chapter": "The Heavenly Lights",
       "chapterNum": 12,
@@ -1912,7 +1912,7 @@
     {
       "id": "rw-097-t-ocke-tussinn-mmin-k-es",
       "wordNarragansett": "T Ocke tussinnámmin kéesuck",
-      "englishGloss": "What thinke you of the Weather?",
+      "englishGloss": "What do you think of the weather?",
       "englishHistorical": "What thinke you of the Weather?",
       "chapter": "The Weather",
       "chapterNum": 13,
@@ -1932,7 +1932,7 @@
     {
       "id": "rw-098-wekinea-quat",
       "wordNarragansett": "Wekineaûquat",
-      "englishGloss": "Faire Weather.",
+      "englishGloss": "Fair weather.",
       "englishHistorical": "Faire Weather.",
       "chapter": "The Weather",
       "chapterNum": 13,
@@ -1952,7 +1952,7 @@
     {
       "id": "rw-099-wekinn-uquocks",
       "wordNarragansett": "Wekinnàuquocks",
-      "englishGloss": "When it is faire Weather.",
+      "englishGloss": "When the weather is fair.",
       "englishHistorical": "When it is faire Weather.",
       "chapter": "The Weather",
       "chapterNum": 13,
@@ -1972,7 +1972,7 @@
     {
       "id": "rw-100-tahk-or-t-takki",
       "wordNarragansett": "Tahkì or tátakki",
-      "englishGloss": "Cold Weather.",
+      "englishGloss": "Cold weather.",
       "englishHistorical": "Cold Weather.",
       "chapter": "The Weather",
       "chapterNum": 13,
@@ -2072,7 +2072,7 @@
     {
       "id": "rw-105-w-a-pi",
       "wordNarragansett": "W Aûpi",
-      "englishGloss": "The Wind.",
+      "englishGloss": "The wind.",
       "englishHistorical": "The Wind.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2092,7 +2092,7 @@
     {
       "id": "rw-106-w-upanash",
       "wordNarragansett": "Wâupanash",
-      "englishGloss": "The Winds.",
+      "englishGloss": "The winds.",
       "englishHistorical": "The Winds.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2132,7 +2132,7 @@
     {
       "id": "rw-108-chepew-ssin",
       "wordNarragansett": "Chepewéssin",
-      "englishGloss": "The North east.",
+      "englishGloss": "The northeast wind.",
       "englishHistorical": "The North east.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2152,7 +2152,7 @@
     {
       "id": "rw-109-s-chimoachepew-ssin",
       "wordNarragansett": "Sáchimoachepewéssin",
-      "englishGloss": "Strong North east wind.",
+      "englishGloss": "A strong northeast wind.",
       "englishHistorical": "Strong North east wind.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2172,7 +2172,7 @@
     {
       "id": "rw-110-nop-tin",
       "wordNarragansett": "Nopâtin",
-      "englishGloss": "The East wind.",
+      "englishGloss": "The east wind.",
       "englishHistorical": "The East wind.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2192,7 +2192,7 @@
     {
       "id": "rw-111-nan-ckquittin",
       "wordNarragansett": "Nanóckquittin",
-      "englishGloss": "The South east wind.",
+      "englishGloss": "The southeast wind.",
       "englishHistorical": "The South east wind.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2212,7 +2212,7 @@
     {
       "id": "rw-112-touw-ttin",
       "wordNarragansett": "Touwúttin",
-      "englishGloss": "South wind.",
+      "englishGloss": "The south wind.",
       "englishHistorical": "South wind.",
       "chapter": "The Winds",
       "chapterNum": 14,
@@ -2232,7 +2232,7 @@
     {
       "id": "rw-113-npesh-wog",
       "wordNarragansett": "NPesháwog",
-      "englishGloss": "} Fowle",
+      "englishGloss": "Birds / fowl.",
       "englishHistorical": "} Fowle",
       "chapter": "Fowl",
       "chapterNum": 15,
@@ -2252,7 +2252,7 @@
     {
       "id": "rw-114-ntauch-umen",
       "wordNarragansett": "Ntauchâumen",
-      "englishGloss": "I go a fowling or hunting.",
+      "englishGloss": "I go hunting or fowling.",
       "englishHistorical": "I goe a fowling or hunting.",
       "chapter": "Fowl",
       "chapterNum": 15,
@@ -2272,7 +2272,7 @@
     {
       "id": "rw-115-aucha-i",
       "wordNarragansett": "Auchaûi",
-      "englishGloss": "he is gone to hunt or fowle.",
+      "englishGloss": "He has gone to hunt or fowl.",
       "englishHistorical": "Hee is gone to hunt or fowle.",
       "chapter": "Fowl",
       "chapterNum": 15,
@@ -2292,7 +2292,7 @@
     {
       "id": "rw-116-pepem-i",
       "wordNarragansett": "Pepemôi",
-      "englishGloss": "He is gone to fowle.",
+      "englishGloss": "He has gone fowling.",
       "englishHistorical": "He is gone to fowle.",
       "chapter": "Fowl",
       "chapterNum": 15,
@@ -2312,7 +2312,7 @@
     {
       "id": "rw-117-w-mpissacuk",
       "wordNarragansett": "Wómpissacuk",
-      "englishGloss": "An Eagle.",
+      "englishGloss": "An eagle.",
       "englishHistorical": "An Eagle.",
       "chapter": "Fowl",
       "chapterNum": 15,
@@ -2332,7 +2332,7 @@
     {
       "id": "rw-118-wompsacuckqu-uog",
       "wordNarragansett": "Wompsacuckquâuog",
-      "englishGloss": "Eagle.",
+      "englishGloss": "Eagles.",
       "englishHistorical": "Eagle.",
       "chapter": "Fowl",
       "chapterNum": 15,
@@ -2352,7 +2352,7 @@
     {
       "id": "rw-119-n-yhom-m-uog",
       "wordNarragansett": "Néyhom, mâuog",
-      "englishGloss": "Turkies.",
+      "englishGloss": "Turkeys.",
       "englishHistorical": "Turkies.",
       "chapter": "Fowl",
       "chapterNum": 15,
