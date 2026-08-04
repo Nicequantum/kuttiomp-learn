@@ -43,15 +43,14 @@ type NavLink = { to: string; params?: Record<string, string>; label: string };
 type Props = {
   scene: LearningScene;
   largeTargets?: boolean;
-  /** Override default scene-list navigation (e.g. Full Day acts) */
   nextNav?: NavLink | null;
   prevNav?: NavLink | null;
-  /** Custom video resolver (day uploads path) */
   resolveVideo?: (
     scene: LearningScene,
   ) => Promise<{ src: string; fromUpload: boolean }>;
-  /** Progress key prefix — default "scene" */
   progressKind?: "scene" | "day-act";
+  /** Default play mode — long stories use "watch" */
+  defaultPlayMode?: PlayMode;
 };
 
 const SPEEDS = [0.75, 1, 1.25] as const;
@@ -77,11 +76,13 @@ export function ScenePlayer({
   prevNav,
   resolveVideo,
   progressKind = "scene",
+  defaultPlayMode = "learn",
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const learnToken = useRef(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSpokenLine = useRef<string | null>(null);
 
   const [videoSrc, setVideoSrc] = useState(scene.videoSrc);
   const [fromUpload, setFromUpload] = useState(false);
@@ -90,7 +91,7 @@ export function ScenePlayer({
   const [mediaDuration, setMediaDuration] = useState(scene.durationSec);
   const [voice, setVoice] = useState<VoiceTrack>("narragansett");
   const [subs, setSubs] = useState<SubtitleTrack>("english");
-  const [playMode, setPlayMode] = useState<PlayMode>("learn");
+  const [playMode, setPlayMode] = useState<PlayMode>(defaultPlayMode);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
@@ -139,7 +140,9 @@ export function ScenePlayer({
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
   const practiceDuration = scene.durationSec;
   const displayDuration =
-    playMode === "learn" ? practiceDuration : mediaDuration || practiceDuration;
+    playMode === "learn"
+      ? practiceDuration
+      : mediaDuration || practiceDuration;
 
   useEffect(() => {
     if (progressKind === "day-act") setLastDayAct(scene.id);
@@ -150,7 +153,8 @@ export function ScenePlayer({
     setPracticedLines(new Set());
     setVoice("narragansett");
     setSubs("english");
-    setPlayMode("learn");
+    setPlayMode(defaultPlayMode);
+    lastSpokenLine.current = null;
     learnToken.current += 1;
     stopSpeaking();
     const resolver = resolveVideo ?? resolveSceneVideoSrc;
@@ -162,7 +166,7 @@ export function ScenePlayer({
       learnToken.current += 1;
       stopSpeaking();
     };
-  }, [scene, setLastScene, setLastDayAct, progressKind, resolveVideo]);
+  }, [scene, setLastScene, setLastDayAct, progressKind, resolveVideo, defaultPlayMode]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -348,7 +352,10 @@ export function ScenePlayer({
     try {
       await v.play();
       setPlaying(true);
-      if (voice !== "off" && activeLine) void speakLine(activeLine, voice);
+      if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
+        lastSpokenLine.current = activeLine.id;
+        void speakLine(activeLine, voice);
+      }
     } catch {
       setPlaying(false);
     }
@@ -366,7 +373,10 @@ export function ScenePlayer({
       else {
         void videoRef.current?.play();
         setPlaying(true);
-        if (voice !== "off") void speakLine(line, voice);
+        if (voice !== "off") {
+          lastSpokenLine.current = line.id;
+          void speakLine(line, voice);
+        }
       }
     });
   }
@@ -382,6 +392,7 @@ export function ScenePlayer({
     stopLearn();
     setActiveLineIdx(0);
     setTime(0);
+    lastSpokenLine.current = null;
     if (videoRef.current) videoRef.current.currentTime = 0;
     void enterFullscreen().then(() => {
       if (playMode === "learn") void runLearnSequence(0);
@@ -418,8 +429,16 @@ export function ScenePlayer({
     );
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
-      if (playing && voice !== "off" && !speaking) {
-        void speakLine(scene.lines[idx], voice);
+      const line = scene.lines[idx];
+      if (
+        playing &&
+        voice !== "off" &&
+        !speaking &&
+        line &&
+        lastSpokenLine.current !== line.id
+      ) {
+        lastSpokenLine.current = line.id;
+        void speakLine(line, voice);
       }
     }
     if (loopLine && activeLine && practiceT >= activeLine.endSec - 0.05) {
@@ -450,6 +469,11 @@ export function ScenePlayer({
         ? ((activeLineIdx + (speaking ? 0.5 : 0)) / scene.lines.length) * 100
         : (time / displayDuration) * 100
       : 0;
+
+  const filmLabel =
+    mediaDuration >= 60
+      ? `${Math.floor(mediaDuration / 60)} min`
+      : `${Math.round(mediaDuration)}s`;
 
   const subtitleNode = useMemo(() => {
     if (subs === "off" || !activeLine) return null;
@@ -507,8 +531,8 @@ export function ScenePlayer({
         Default: <strong className="text-[var(--color-fg)]">hear Narragansett</strong>
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
-        . Play opens fullscreen. Film ~{Math.round(mediaDuration || scene.durationSec / 2)}
-        s · practice ~{practiceDuration}s with speech.
+        . Play opens fullscreen. Film ~{filmLabel}
+        {playMode === "learn" ? ` · practice across ${scene.lines.length} lines` : ""}.
       </p>
 
       <div
@@ -843,7 +867,7 @@ export function ScenePlayer({
 
       <section className="space-y-2">
         <h2 className="font-display text-title">Dialogue</h2>
-        <ul className="space-y-2">
+        <ul className="max-h-[28rem] space-y-2 overflow-y-auto pr-1">
           {scene.lines.map((line, i) => (
             <li key={line.id}>
               <button
@@ -881,5 +905,10 @@ function fmt(sec: number) {
   const s = Math.max(0, Math.floor(sec));
   const m = Math.floor(s / 60);
   const r = s % 60;
+  if (m >= 60) {
+    const h = Math.floor(m / 60);
+    const rm = m % 60;
+    return `${h}:${rm.toString().padStart(2, "0")}:${r.toString().padStart(2, "0")}`;
+  }
   return `${m}:${r.toString().padStart(2, "0")}`;
 }

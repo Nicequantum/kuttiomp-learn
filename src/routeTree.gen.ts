@@ -21,6 +21,7 @@ import { Route as AppListenRouteImport } from './routes/app/listen'
 import { Route as AppPathsRouteImport } from './routes/app/paths'
 import { Route as AppProfileRouteImport } from './routes/app/profile'
 import { Route as AppScenesRouteImport } from './routes/app/scenes'
+import { Route as AppStoriesRouteImport } from './routes/app/stories'
 import { Route as AppWordsRouteImport } from './routes/app/words'
 import { Route as AppDayIndexRouteImport } from './routes/app/day.index'
 import { Route as AppDayActIdRouteImport } from './routes/app/day.$actId'
@@ -28,6 +29,8 @@ import { Route as AppPathsIndexRouteImport } from './routes/app/paths.index'
 import { Route as AppPathsIdRouteImport } from './routes/app/paths.$id'
 import { Route as AppScenesIndexRouteImport } from './routes/app/scenes.index'
 import { Route as AppScenesIdRouteImport } from './routes/app/scenes.$id'
+import { Route as AppStoriesIndexRouteImport } from './routes/app/stories.index'
+import { Route as AppStoriesIdRouteImport } from './routes/app/stories.$id'
 import { Route as AppWordsIndexRouteImport } from './routes/app/words.index'
 import { Route as AppWordsIdRouteImport } from './routes/app/words.$id'
 
@@ -91,6 +94,11 @@ const AppScenesRoute = AppScenesRouteImport.update({
   path: '/scenes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppStoriesRoute = AppStoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppWordsRoute = AppWordsRouteImport.update({
   id: '/words',
   path: '/words',
@@ -126,6 +134,16 @@ const AppScenesIdRoute = AppScenesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppScenesRoute,
 } as any)
+const AppStoriesIndexRoute = AppStoriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppStoriesRoute,
+} as any)
+const AppStoriesIdRoute = AppStoriesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppStoriesRoute,
+} as any)
 const AppWordsIndexRoute = AppWordsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -149,15 +167,18 @@ export interface FileRoutesByFullPath {
   '/app/paths': typeof AppPathsRouteWithChildren
   '/app/profile': typeof AppProfileRoute
   '/app/scenes': typeof AppScenesRouteWithChildren
+  '/app/stories': typeof AppStoriesRouteWithChildren
   '/app/words': typeof AppWordsRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/day/$actId': typeof AppDayActIdRoute
   '/app/paths/$id': typeof AppPathsIdRoute
   '/app/scenes/$id': typeof AppScenesIdRoute
+  '/app/stories/$id': typeof AppStoriesIdRoute
   '/app/words/$id': typeof AppWordsIdRoute
   '/app/day/': typeof AppDayIndexRoute
   '/app/paths/': typeof AppPathsIndexRoute
   '/app/scenes/': typeof AppScenesIndexRoute
+  '/app/stories/': typeof AppStoriesIndexRoute
   '/app/words/': typeof AppWordsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -172,10 +193,12 @@ export interface FileRoutesByTo {
   '/app/day/$actId': typeof AppDayActIdRoute
   '/app/paths/$id': typeof AppPathsIdRoute
   '/app/scenes/$id': typeof AppScenesIdRoute
+  '/app/stories/$id': typeof AppStoriesIdRoute
   '/app/words/$id': typeof AppWordsIdRoute
   '/app/day': typeof AppDayIndexRoute
   '/app/paths': typeof AppPathsIndexRoute
   '/app/scenes': typeof AppScenesIndexRoute
+  '/app/stories': typeof AppStoriesIndexRoute
   '/app/words': typeof AppWordsIndexRoute
 }
 export interface FileRoutesById {
@@ -191,15 +214,18 @@ export interface FileRoutesById {
   '/app/paths': typeof AppPathsRouteWithChildren
   '/app/profile': typeof AppProfileRoute
   '/app/scenes': typeof AppScenesRouteWithChildren
+  '/app/stories': typeof AppStoriesRouteWithChildren
   '/app/words': typeof AppWordsRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/day/$actId': typeof AppDayActIdRoute
   '/app/paths/$id': typeof AppPathsIdRoute
   '/app/scenes/$id': typeof AppScenesIdRoute
+  '/app/stories/$id': typeof AppStoriesIdRoute
   '/app/words/$id': typeof AppWordsIdRoute
   '/app/day/': typeof AppDayIndexRoute
   '/app/paths/': typeof AppPathsIndexRoute
   '/app/scenes/': typeof AppScenesIndexRoute
+  '/app/stories/': typeof AppStoriesIndexRoute
   '/app/words/': typeof AppWordsIndexRoute
 }
 export interface FileRouteTypes {
@@ -216,15 +242,18 @@ export interface FileRouteTypes {
     | '/app/paths'
     | '/app/profile'
     | '/app/scenes'
+    | '/app/stories'
     | '/app/words'
     | '/app/'
     | '/app/day/$actId'
     | '/app/paths/$id'
     | '/app/scenes/$id'
+    | '/app/stories/$id'
     | '/app/words/$id'
     | '/app/day/'
     | '/app/paths/'
     | '/app/scenes/'
+    | '/app/stories/'
     | '/app/words/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -239,10 +268,12 @@ export interface FileRouteTypes {
     | '/app/day/$actId'
     | '/app/paths/$id'
     | '/app/scenes/$id'
+    | '/app/stories/$id'
     | '/app/words/$id'
     | '/app/day'
     | '/app/paths'
     | '/app/scenes'
+    | '/app/stories'
     | '/app/words'
   id:
     | '__root__'
@@ -257,15 +288,18 @@ export interface FileRouteTypes {
     | '/app/paths'
     | '/app/profile'
     | '/app/scenes'
+    | '/app/stories'
     | '/app/words'
     | '/app/'
     | '/app/day/$actId'
     | '/app/paths/$id'
     | '/app/scenes/$id'
+    | '/app/stories/$id'
     | '/app/words/$id'
     | '/app/day/'
     | '/app/paths/'
     | '/app/scenes/'
+    | '/app/stories/'
     | '/app/words/'
   fileRoutesById: FileRoutesById
 }
@@ -362,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppScenesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/stories': {
+      id: '/app/stories'
+      path: '/stories'
+      fullPath: '/app/stories'
+      preLoaderRoute: typeof AppStoriesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/words': {
       id: '/app/words'
       path: '/words'
@@ -410,6 +451,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/scenes/$id'
       preLoaderRoute: typeof AppScenesIdRouteImport
       parentRoute: typeof AppScenesRoute
+    }
+    '/app/stories/': {
+      id: '/app/stories/'
+      path: '/'
+      fullPath: '/app/stories/'
+      preLoaderRoute: typeof AppStoriesIndexRouteImport
+      parentRoute: typeof AppStoriesRoute
+    }
+    '/app/stories/$id': {
+      id: '/app/stories/$id'
+      path: '/$id'
+      fullPath: '/app/stories/$id'
+      preLoaderRoute: typeof AppStoriesIdRouteImport
+      parentRoute: typeof AppStoriesRoute
     }
     '/app/words/': {
       id: '/app/words/'
@@ -469,6 +524,20 @@ const AppScenesRouteWithChildren = AppScenesRoute._addFileChildren(
   AppScenesRouteChildren,
 )
 
+interface AppStoriesRouteChildren {
+  AppStoriesIdRoute: typeof AppStoriesIdRoute
+  AppStoriesIndexRoute: typeof AppStoriesIndexRoute
+}
+
+const AppStoriesRouteChildren: AppStoriesRouteChildren = {
+  AppStoriesIdRoute: AppStoriesIdRoute,
+  AppStoriesIndexRoute: AppStoriesIndexRoute,
+}
+
+const AppStoriesRouteWithChildren = AppStoriesRoute._addFileChildren(
+  AppStoriesRouteChildren,
+)
+
 interface AppWordsRouteChildren {
   AppWordsIdRoute: typeof AppWordsIdRoute
   AppWordsIndexRoute: typeof AppWordsIndexRoute
@@ -491,6 +560,7 @@ interface AppRouteChildren {
   AppPathsRoute: typeof AppPathsRouteWithChildren
   AppProfileRoute: typeof AppProfileRoute
   AppScenesRoute: typeof AppScenesRouteWithChildren
+  AppStoriesRoute: typeof AppStoriesRouteWithChildren
   AppWordsRoute: typeof AppWordsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -503,6 +573,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPathsRoute: AppPathsRouteWithChildren,
   AppProfileRoute: AppProfileRoute,
   AppScenesRoute: AppScenesRouteWithChildren,
+  AppStoriesRoute: AppStoriesRouteWithChildren,
   AppWordsRoute: AppWordsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }

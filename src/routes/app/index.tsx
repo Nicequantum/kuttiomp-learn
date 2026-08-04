@@ -5,6 +5,7 @@ import {
   Route as RouteIcon,
   Volume2,
   Sun,
+  Film,
 } from "lucide-react";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
@@ -20,6 +21,7 @@ import {
   getCorpusMeta,
 } from "@/lib/content/corpus";
 import { getDayJourneyStats } from "@/lib/content/day-journey";
+import { formatDuration, getLongStories } from "@/lib/content/long-stories";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
 import { useProgressStore } from "@/lib/progress/store";
@@ -39,6 +41,7 @@ function HomePage() {
   const lastId = useProgressStore((s) => s.lastListenWordId);
   const resumeWord = lastId ? getWordById(lastId) : undefined;
   const dayStats = getDayJourneyStats(mode);
+  const longStory = getLongStories(mode)[0];
 
   return (
     <div className="space-y-8">
@@ -70,18 +73,38 @@ function HomePage() {
 
       <OrthographyGuide compact />
 
+      {longStory && (
+        <Link
+          to="/app/stories/$id"
+          params={{ id: longStory.id }}
+          className="focus-stage pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+        >
+          <div className="flex gap-3">
+            <Film className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+            <div>
+              <p className="label-eyebrow">Long story narrative</p>
+              <p className="font-display text-title">{longStory.title}</p>
+              <p className="text-sm text-[var(--color-muted)]">
+                {formatDuration(longStory.durationSec)} continuous film ·{" "}
+                {longStory.lines.length} language lines · dawn to night
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
+        </Link>
+      )}
+
       <Link
         to="/app/day"
-        className="focus-stage pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
       >
         <div className="flex gap-3">
           <Sun className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
           <div>
-            <p className="label-eyebrow">Life-cycle video</p>
+            <p className="label-eyebrow">Life-cycle acts</p>
             <p className="font-display text-title">A full day</p>
             <p className="text-sm text-[var(--color-muted)]">
-              ~{dayStats.filmMin} min film · ~{dayStats.practiceMin} min practice
-              · {dayStats.actCount} acts from dawn to night
+              ~{dayStats.filmMin} min across {dayStats.actCount} shorter acts
             </p>
           </div>
         </div>
@@ -96,8 +119,7 @@ function HomePage() {
           <p className="label-eyebrow">Video learning</p>
           <p className="font-display text-title">Scenes</p>
           <p className="text-sm text-[var(--color-muted)]">
-            Short reconstructed scenes · dual tracks · line-by-line · upload path
-            ready
+            Short reconstructed scenes · dual tracks · line-by-line
           </p>
         </div>
         <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
