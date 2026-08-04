@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Route as RouteIcon, Volume2 } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Route as RouteIcon,
+  Volume2,
+  Sun,
+} from "lucide-react";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { MasteryPanel } from "@/components/content/MasteryPanel";
@@ -13,6 +19,7 @@ import {
   getChapters,
   getCorpusMeta,
 } from "@/lib/content/corpus";
+import { getDayJourneyStats } from "@/lib/content/day-journey";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
 import { useProgressStore } from "@/lib/progress/store";
@@ -31,6 +38,7 @@ function HomePage() {
   const chapters = getChapters();
   const lastId = useProgressStore((s) => s.lastListenWordId);
   const resumeWord = lastId ? getWordById(lastId) : undefined;
+  const dayStats = getDayJourneyStats(mode);
 
   return (
     <div className="space-y-8">
@@ -62,7 +70,24 @@ function HomePage() {
 
       <OrthographyGuide compact />
 
-      
+      <Link
+        to="/app/day"
+        className="focus-stage pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+      >
+        <div className="flex gap-3">
+          <Sun className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+          <div>
+            <p className="label-eyebrow">Life-cycle video</p>
+            <p className="font-display text-title">A full day</p>
+            <p className="text-sm text-[var(--color-muted)]">
+              ~{dayStats.filmMin} min film · ~{dayStats.practiceMin} min practice
+              · {dayStats.actCount} acts from dawn to night
+            </p>
+          </div>
+        </div>
+        <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
+      </Link>
+
       <Link
         to="/app/scenes"
         className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
@@ -71,9 +96,9 @@ function HomePage() {
           <p className="label-eyebrow">Video learning</p>
           <p className="font-display text-title">Scenes</p>
           <p className="text-sm text-[var(--color-muted)]">
-            26+ reconstructed scenes · dual subtitles · line-by-line · upload path ready
+            Short reconstructed scenes · dual tracks · line-by-line · upload path
+            ready
           </p>
-
         </div>
         <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
       </Link>

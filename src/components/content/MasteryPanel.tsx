@@ -6,12 +6,13 @@ export function MasteryPanel() {
   const practiced = useProgressStore((s) => s.practicedIds.length);
   const paths = useProgressStore((s) => s.completedPaths.length);
   const scenes = useProgressStore((s) => s.completedScenes.length);
+  const dayActs = useProgressStore((s) => s.completedDayActs.length);
   const stageNum =
-    practiced >= 80 || paths >= 6 || scenes >= 6
+    practiced >= 80 || paths >= 6 || scenes >= 6 || dayActs >= 8
       ? 4
-      : practiced >= 40 || paths >= 4 || scenes >= 4
+      : practiced >= 40 || paths >= 4 || scenes >= 4 || dayActs >= 5
         ? 3
-        : practiced >= 15 || paths >= 2 || scenes >= 2
+        : practiced >= 15 || paths >= 2 || scenes >= 2 || dayActs >= 2
           ? 2
           : 1;
   const stage = getStage(stageNum) ?? getStages()[0];
@@ -57,7 +58,7 @@ export function MasteryPanel() {
         ))}
       </div>
 
-      <dl className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-4">
+      <dl className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-5">
         <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
           <dt className="text-xs text-[var(--color-subtle)]">Heard</dt>
           <dd className="mt-1 font-display text-xl tabular-nums">{heard}</dd>
@@ -71,6 +72,10 @@ export function MasteryPanel() {
         <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
           <dt className="text-xs text-[var(--color-subtle)]">Scenes</dt>
           <dd className="mt-1 font-display text-xl tabular-nums">{scenes}</dd>
+        </div>
+        <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
+          <dt className="text-xs text-[var(--color-subtle)]">Day acts</dt>
+          <dd className="mt-1 font-display text-xl tabular-nums">{dayActs}</dd>
         </div>
         <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
           <dt className="text-xs text-[var(--color-subtle)]">Paths</dt>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Clapperboard, Play, Upload, CheckCircle2 } from "lucide-react";
+import { Clapperboard, Play, Upload, CheckCircle2, Sun } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,6 +9,7 @@ import {
   getSceneChapters,
   getRecommendedScene,
 } from "@/lib/content/scenes";
+import { getDayJourneyStats } from "@/lib/content/day-journey";
 import { useModeStore } from "@/lib/mode/store";
 import { useProgressStore } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ function ScenesIndexPage() {
   const domains = getSceneDomains();
   const seriesList = getSceneSeries();
   const chapters = getSceneChapters();
+  const dayStats = getDayJourneyStats(mode);
   const [domain, setDomain] = useState<string | null>(null);
   const [series, setSeries] = useState<string | null>(null);
   const [chapter, setChapter] = useState<number | null>(null);
@@ -57,13 +59,31 @@ function ScenesIndexPage() {
           Fullscreen line-by-line practice:{" "}
           <strong className="text-[var(--color-fg)]">hear Narragansett</strong>,{" "}
           <strong className="text-[var(--color-fg)]">read English</strong> — then
-          toggle either track. Longer dialogue context from Williams 1643.
+          toggle either track.
         </p>
         <p className="text-sm text-[var(--color-subtle)]">
           {list.length} of {scenes.length} scenes in this mode · path ordered by
           chapter
         </p>
       </header>
+
+      <Link
+        to="/app/day"
+        className="focus-stage pad-mode flex items-center justify-between gap-3"
+      >
+        <div className="flex gap-3">
+          <Sun className="mt-0.5 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+          <div>
+            <p className="label-eyebrow">Want a longer arc?</p>
+            <p className="font-display text-title">A full day</p>
+            <p className="text-sm text-[var(--color-muted)]">
+              ~{dayStats.filmMin} min film · {dayStats.actCount} acts · dawn →
+              night life cycle
+            </p>
+          </div>
+        </div>
+        <Play className="h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+      </Link>
 
       <HistoricalBanner compact />
 
@@ -139,7 +159,7 @@ function ScenesIndexPage() {
             type="button"
             onClick={() => setStyle(key)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+              "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
               style === key
                 ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                 : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -155,7 +175,7 @@ function ScenesIndexPage() {
           type="button"
           onClick={() => setSeries(null)}
           className={cn(
-            "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+            "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
             !series
               ? "border-[var(--color-primary)] text-[var(--color-primary)]"
               : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -169,7 +189,7 @@ function ScenesIndexPage() {
             type="button"
             onClick={() => setSeries(s.id === series ? null : s.id)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+              "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
               series === s.id
                 ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                 : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -185,7 +205,7 @@ function ScenesIndexPage() {
           type="button"
           onClick={() => setChapter(null)}
           className={cn(
-            "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+            "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
             chapter == null
               ? "border-[var(--color-primary)] text-[var(--color-primary)]"
               : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -199,7 +219,7 @@ function ScenesIndexPage() {
             type="button"
             onClick={() => setChapter(c.num === chapter ? null : c.num)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+              "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
               chapter === c.num
                 ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                 : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -215,7 +235,7 @@ function ScenesIndexPage() {
           type="button"
           onClick={() => setDomain(null)}
           className={cn(
-            "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+            "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
             !domain
               ? "border-[var(--color-primary)] text-[var(--color-primary)]"
               : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -229,7 +249,7 @@ function ScenesIndexPage() {
             type="button"
             onClick={() => setDomain(d.id === domain ? null : d.id)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-sm min-h-11",
+              "min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-sm",
               domain === d.id
                 ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                 : "border-[var(--color-border)] text-[var(--color-muted)]",

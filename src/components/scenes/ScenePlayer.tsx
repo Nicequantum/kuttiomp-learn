@@ -38,9 +38,20 @@ import { speakWord, stopSpeaking } from "@/lib/audio/speak";
 import { useProgressStore } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
 
+type NavLink = { to: string; params?: Record<string, string>; label: string };
+
 type Props = {
   scene: LearningScene;
   largeTargets?: boolean;
+  /** Override default scene-list navigation (e.g. Full Day acts) */
+  nextNav?: NavLink | null;
+  prevNav?: NavLink | null;
+  /** Custom video resolver (day uploads path) */
+  resolveVideo?: (
+    scene: LearningScene,
+  ) => Promise<{ src: string; fromUpload: boolean }>;
+  /** Progress key prefix — default "scene" */
+  progressKind?: "scene" | "day-act";
 };
 
 const SPEEDS = [0.75, 1, 1.25] as const;
@@ -59,7 +70,14 @@ const SUB_OPTIONS: { key: SubtitleTrack; label: string }[] = [
   { key: "off", label: "Off" },
 ];
 
-export function ScenePlayer({ scene, largeTargets }: Props) {
+export function ScenePlayer({
+  scene,
+  largeTargets,
+  nextNav,
+  prevNav,
+  resolveVideo,
+  progressKind = "scene",
+}: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
   const learnToken = useRef(0);
@@ -70,15 +88,12 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [mediaDuration, setMediaDuration] = useState(scene.durationSec);
-  /** Spoken track — always starts Narragansett */
   const [voice, setVoice] = useState<VoiceTrack>("narragansett");
-  /** Subtitles — English default so language is heard, English is read */
   const [subs, setSubs] = useState<SubtitleTrack>("english");
   const [playMode, setPlayMode] = useState<PlayMode>("learn");
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
-  /** Ambient reconstruction audio (not the language track) */
   const [ambientOn, setAmbientOn] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chromeVisible, setChromeVisible] = useState(true);
@@ -88,11 +103,38 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   );
 
   const completeScene = useProgressStore((s) => s.completeScene);
+  const completeDayAct = useProgressStore((s) => s.completeDayAct);
   const setLastScene = useProgressStore((s) => s.setLastScene);
+  const setLastDayAct = useProgressStore((s) => s.setLastDayAct);
   const markHeard = useProgressStore((s) => s.markHeard);
   const markPracticed = useProgressStore((s) => s.markPracticed);
-  const next = getNextScene(scene.id);
-  const prev = getPrevScene(scene.id);
+
+  const defaultNext = getNextScene(scene.id);
+  const defaultPrev = getPrevScene(scene.id);
+  const next =
+    nextNav === null
+      ? undefined
+      : nextNav
+        ? nextNav
+        : defaultNext
+          ? {
+              to: "/app/scenes/$id",
+              params: { id: defaultNext.id },
+              label: "Next scene",
+            }
+          : undefined;
+  const prev =
+    prevNav === null
+      ? undefined
+      : prevNav
+        ? prevNav
+        : defaultPrev
+          ? {
+              to: "/app/scenes/$id",
+              params: { id: defaultPrev.id },
+              label: "Prev",
+            }
+          : undefined;
 
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
   const practiceDuration = scene.durationSec;
@@ -100,7 +142,8 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     playMode === "learn" ? practiceDuration : mediaDuration || practiceDuration;
 
   useEffect(() => {
-    setLastScene(scene.id);
+    if (progressKind === "day-act") setLastDayAct(scene.id);
+    else setLastScene(scene.id);
     setActiveLineIdx(0);
     setTime(0);
     setPlaying(false);
@@ -110,7 +153,8 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     setPlayMode("learn");
     learnToken.current += 1;
     stopSpeaking();
-    void resolveSceneVideoSrc(scene).then((r) => {
+    const resolver = resolveVideo ?? resolveSceneVideoSrc;
+    void resolver(scene).then((r) => {
       setVideoSrc(r.src);
       setFromUpload(r.fromUpload);
     });
@@ -118,7 +162,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
       learnToken.current += 1;
       stopSpeaking();
     };
-  }, [scene, setLastScene]);
+  }, [scene, setLastScene, setLastDayAct, progressKind, resolveVideo]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -159,7 +203,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     try {
       await el.requestFullscreen?.();
     } catch {
-      /* iOS / blocked — stays inline */
+      /* blocked */
     }
   }
 
@@ -173,15 +217,20 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     }
   }
 
+  function markComplete() {
+    if (progressKind === "day-act") completeDayAct(scene.id);
+    else completeScene(scene.id);
+  }
+
   function markLinePracticed(lineId: string, wordId?: string) {
-    const practiceKey = `scene:${scene.id}:${lineId}`;
+    const practiceKey = `${progressKind}:${scene.id}:${lineId}`;
     markHeard(practiceKey);
     markPracticed(practiceKey);
     if (wordId) {
       markHeard(wordId);
       markPracticed(wordId);
     }
-    setPracticedLines((prev) => new Set(prev).add(lineId));
+    setPracticedLines((p) => new Set(p).add(lineId));
   }
 
   async function speakLine(
@@ -210,7 +259,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     }
   }
 
-  /** Map dialogue timeline → video media time (for short clips with longer scripts). */
   function mediaTimeForLine(idx: number): number {
     const v = videoRef.current;
     const md = v?.duration || mediaDuration || 1;
@@ -247,14 +295,13 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
             v.muted = !ambientOn;
             await v.play();
           } catch {
-            /* autoplay policies */
+            /* autoplay */
           }
         }
 
         if (voice !== "off") {
           await speakLine(line, voice);
         } else {
-          // visual-only: hold roughly the line slot
           const hold = Math.max(1.2, line.endSec - line.startSec) * 1000;
           await new Promise((r) => setTimeout(r, hold / speed));
         }
@@ -264,17 +311,16 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
           i -= 1;
           continue;
         }
-        // brief breath between lines
         await new Promise((r) => setTimeout(r, 350 / speed));
       }
 
       if (learnToken.current !== token) return;
       setPlaying(false);
-      completeScene(scene.id);
+      markComplete();
       if (v) v.pause();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scene, voice, loopLine, ambientOn, speed, completeScene],
+    [scene, voice, loopLine, ambientOn, speed, progressKind],
   );
 
   function stopLearn() {
@@ -288,29 +334,21 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   async function togglePlay() {
     if (playing) {
       stopLearn();
-      if (playMode === "watch") {
-        videoRef.current?.pause();
-      }
+      if (playMode === "watch") videoRef.current?.pause();
       return;
     }
-
     await enterFullscreen();
     bumpChrome();
-
     if (playMode === "learn") {
       void runLearnSequence(activeLineIdx);
       return;
     }
-
-    // watch mode — continuous video + optional voice on line change
     const v = videoRef.current;
     if (!v) return;
     try {
       await v.play();
       setPlaying(true);
-      if (voice !== "off" && activeLine) {
-        void speakLine(activeLine, voice);
-      }
+      if (voice !== "off" && activeLine) void speakLine(activeLine, voice);
     } catch {
       setPlaying(false);
     }
@@ -324,15 +362,11 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     setTime(line.startSec);
     seekMediaToLine(idx);
     void enterFullscreen().then(() => {
-      if (playMode === "learn") {
-        void runLearnSequence(idx);
-      } else {
-        const v = videoRef.current;
-        if (v) {
-          void v.play();
-          setPlaying(true);
-          if (voice !== "off") void speakLine(line, voice);
-        }
+      if (playMode === "learn") void runLearnSequence(idx);
+      else {
+        void videoRef.current?.play();
+        setPlaying(true);
+        if (voice !== "off") void speakLine(line, voice);
       }
     });
   }
@@ -360,8 +394,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
 
   async function hearLineManual(lang: "n" | "e" | "both") {
     if (!activeLine) return;
-    const wasPlaying = playing;
-    if (wasPlaying) stopLearn();
+    if (playing) stopLearn();
     const track: VoiceTrack =
       lang === "n" ? "narragansett" : lang === "e" ? "english" : "both";
     await speakLine(activeLine, track);
@@ -377,7 +410,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     const v = videoRef.current;
     if (!v) return;
     const t = v.currentTime;
-    // map media time → practice timeline for subtitle index
     const md = v.duration || 1;
     const practiceT = (t / md) * practiceDuration;
     setTime(practiceT);
@@ -408,7 +440,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   function onEnded() {
     if (playMode === "watch") {
       setPlaying(false);
-      completeScene(scene.id);
+      markComplete();
     }
   }
 
@@ -467,7 +499,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
       )}
       {fromUpload && (
         <p className="text-sm text-[var(--color-land)]">
-          Playing your uploaded community video for this scene.
+          Playing your uploaded community video for this section.
         </p>
       )}
 
@@ -475,10 +507,10 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         Default: <strong className="text-[var(--color-fg)]">hear Narragansett</strong>
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
-        . Play opens fullscreen. Switch voice or subtitles anytime.
+        . Play opens fullscreen. Film ~{Math.round(mediaDuration || scene.durationSec / 2)}
+        s · practice ~{practiceDuration}s with speech.
       </p>
 
-      {/* ——— Stage ——— */}
       <div
         ref={shellRef}
         className={cn(
@@ -517,13 +549,12 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
 
         {subtitleNode}
 
-        {/* Center play affordance when idle */}
         {!playing && chromeVisible && (
           <button
             type="button"
             onClick={() => void togglePlay()}
             className="absolute inset-0 z-10 flex items-center justify-center bg-black/25"
-            aria-label="Play scene fullscreen"
+            aria-label="Play fullscreen"
           >
             <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-primary-fg)] shadow-xl">
               <Play className="h-8 w-8" fill="currentColor" />
@@ -531,7 +562,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
           </button>
         )}
 
-        {/* Bottom chrome — auto-hides while playing so it never covers the scene */}
         <div
           className={cn(
             "absolute inset-x-0 bottom-0 z-20 transition-opacity duration-300",
@@ -590,7 +620,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
                 aria-label={
                   ambientOn ? "Mute ambient video audio" : "Unmute ambient video audio"
                 }
-                title="Ambient reconstruction audio (not the language)"
               >
                 {ambientOn ? (
                   <Volume2 className="h-4 w-4" />
@@ -615,7 +644,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         </div>
       </div>
 
-      {/* ——— Transport (outside stage for non-fullscreen) ——— */}
       {!isFullscreen && (
         <div className="flex flex-wrap items-center gap-2">
           <Button
@@ -623,12 +651,11 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
             variant="primary"
             size={largeTargets ? "lg" : "default"}
             onClick={() => void togglePlay()}
-            aria-label={playing ? "Pause" : "Play fullscreen"}
           >
             {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             {playing ? "Pause" : "Play fullscreen"}
           </Button>
-          <Button type="button" variant="secondary" onClick={restart} aria-label="Restart">
+          <Button type="button" variant="secondary" onClick={restart}>
             <RotateCcw className="h-4 w-4" />
           </Button>
           <Button
@@ -640,24 +667,23 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
           </Button>
           {prev && (
             <Button asChild variant="secondary">
-              <Link to="/app/scenes/$id" params={{ id: prev.id }}>
+              <Link to={prev.to} params={prev.params}>
                 <SkipBack className="h-4 w-4" />
-                Prev
+                {prev.label}
               </Link>
             </Button>
           )}
           {next && (
             <Button asChild variant="soft">
-              <Link to="/app/scenes/$id" params={{ id: next.id }}>
+              <Link to={next.to} params={next.params}>
                 <SkipForward className="h-4 w-4" />
-                Next scene
+                {next.label}
               </Link>
             </Button>
           )}
         </div>
       )}
 
-      {/* ——— Voice + subtitles + mode ——— */}
       <div className="surface-card pad-mode space-y-4">
         <div className="space-y-2">
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
@@ -672,7 +698,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
                 title={opt.hint}
                 onClick={() => setVoice(opt.key)}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-sm min-h-11",
+                  "min-h-11 rounded-full border px-3 py-1.5 text-sm",
                   voice === opt.key
                     ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -700,7 +726,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
                 type="button"
                 onClick={() => setSubs(opt.key)}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-sm min-h-11",
+                  "min-h-11 rounded-full border px-3 py-1.5 text-sm",
                   subs === opt.key
                     ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -731,7 +757,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
                 setPlayMode(key);
               }}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-sm min-h-11",
+                "min-h-11 rounded-full border px-3 py-1.5 text-sm",
                 playMode === key
                   ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                   : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -740,7 +766,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
               {label}
             </button>
           ))}
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)] ml-2">
+          <span className="ml-2 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
             <Gauge className="h-4 w-4" />
             Speed
           </span>
@@ -750,7 +776,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
               type="button"
               onClick={() => setSpeed(s)}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-sm tabular-nums min-h-11",
+                "min-h-11 rounded-full border px-3 py-1.5 text-sm tabular-nums",
                 speed === s
                   ? "border-[var(--color-primary)] text-[var(--color-primary)]"
                   : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -759,7 +785,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
               {s}×
             </button>
           ))}
-          <span className="ml-auto text-xs text-[var(--color-subtle)] tabular-nums">
+          <span className="ml-auto text-xs tabular-nums text-[var(--color-subtle)]">
             Practiced {practicedLines.size}/{scene.lines.length} lines
           </span>
         </div>
@@ -792,27 +818,15 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
             {activeLine.english}
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => void hearLineManual("n")}
-            >
+            <Button type="button" variant="primary" onClick={() => void hearLineManual("n")}>
               <Volume2 className="h-4 w-4" />
               Hear Narragansett
             </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => void hearLineManual("e")}
-            >
+            <Button type="button" variant="secondary" onClick={() => void hearLineManual("e")}>
               <Languages className="h-4 w-4" />
               Hear English
             </Button>
-            <Button
-              type="button"
-              variant="soft"
-              onClick={() => void hearLineManual("both")}
-            >
+            <Button type="button" variant="soft" onClick={() => void hearLineManual("both")}>
               Hear both
             </Button>
             {activeLine.wordId && (
@@ -836,7 +850,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
                 type="button"
                 onClick={() => seekLine(i)}
                 className={cn(
-                  "w-full rounded-mode border px-3 py-3 text-left transition-colors min-h-11",
+                  "min-h-11 w-full rounded-mode border px-3 py-3 text-left transition-colors",
                   i === activeLineIdx
                     ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_12%,transparent)]"
                     : "border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_80%,transparent)] hover:border-[var(--color-border-strong)]",
