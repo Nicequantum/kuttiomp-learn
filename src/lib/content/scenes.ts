@@ -18,10 +18,21 @@ function currentMode(): LearningModeId | null {
   }
 }
 
+function sortByPath(scenes: LearningScene[]): LearningScene[] {
+  return [...scenes].sort((a, b) => {
+    const ao = a.pathOrder ?? a.chapterNum * 10;
+    const bo = b.pathOrder ?? b.chapterNum * 10;
+    if (ao !== bo) return ao - bo;
+    return a.chapterNum - b.chapterNum || a.title.localeCompare(b.title);
+  });
+}
+
 export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] {
   const m = mode === undefined ? currentMode() : mode;
-  if (!m) return SCENES.filter((s) => s.modesAllowed.includes("core_adult"));
-  return SCENES.filter((s) => s.modesAllowed.includes(m));
+  const list = !m
+    ? SCENES.filter((s) => s.modesAllowed.includes("core_adult"))
+    : SCENES.filter((s) => s.modesAllowed.includes(m));
+  return sortByPath(list);
 }
 
 export function getSceneById(id: string): LearningScene | undefined {
@@ -47,7 +58,7 @@ export function getSceneDomains(): { id: string; label: string; count: number }[
     water: "Water",
     tools: "Trade",
     time: "Numbers & time",
-    flora: "Land",
+    flora: "Land & life",
     other: "Talk",
   };
   return [...map.entries()]
@@ -66,6 +77,26 @@ export function getSceneSeries(): { id: string; count: number }[] {
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
+export function getSceneChapters(): {
+  chapterNum: number;
+  chapter: string;
+  count: number;
+}[] {
+  const map = new Map<number, { chapter: string; count: number }>();
+  for (const s of getScenesForMode()) {
+    const prev = map.get(s.chapterNum);
+    if (prev) prev.count += 1;
+    else map.set(s.chapterNum, { chapter: s.chapter, count: 1 });
+  }
+  return [...map.entries()]
+    .map(([chapterNum, v]) => ({
+      chapterNum,
+      chapter: v.chapter,
+      count: v.count,
+    }))
+    .sort((a, b) => a.chapterNum - b.chapterNum);
+}
+
 export function getNextScene(
   currentId: string,
   mode?: LearningModeId | null,
@@ -74,6 +105,38 @@ export function getNextScene(
   const idx = list.findIndex((s) => s.id === currentId);
   if (idx < 0 || idx >= list.length - 1) return undefined;
   return list[idx + 1];
+}
+
+export function getPrevScene(
+  currentId: string,
+  mode?: LearningModeId | null,
+): LearningScene | undefined {
+  const list = getScenesForMode(mode);
+  const idx = list.findIndex((s) => s.id === currentId);
+  if (idx <= 0) return undefined;
+  return list[idx - 1];
+}
+
+/** First unfinished scene in path order, or first scene if all done. */
+export function getRecommendedScene(
+  completedIds: string[],
+  mode?: LearningModeId | null,
+): LearningScene | undefined {
+  const list = getScenesForMode(mode);
+  if (list.length === 0) return undefined;
+  const next = list.find((s) => !completedIds.includes(s.id));
+  return next ?? list[0];
+}
+
+export function getSceneProgress(
+  completedIds: string[],
+  mode?: LearningModeId | null,
+): { total: number; done: number; percent: number } {
+  const list = getScenesForMode(mode);
+  const total = list.length;
+  const done = list.filter((s) => completedIds.includes(s.id)).length;
+  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
+  return { total, done, percent };
 }
 
 /**

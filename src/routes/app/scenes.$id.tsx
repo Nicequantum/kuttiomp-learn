@@ -1,10 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { ScenePlayer } from "@/components/scenes/ScenePlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getSceneById, getScenesForMode } from "@/lib/content/scenes";
+import {
+  getSceneById,
+  getScenesForMode,
+  getNextScene,
+  getPrevScene,
+} from "@/lib/content/scenes";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
 
@@ -17,9 +22,11 @@ function SceneDetailPage() {
   const mode = useModeStore((s) => s.mode);
   const scene = getSceneById(id);
   const large = mode === "elder" || mode === "little_ones";
+  const next = scene ? getNextScene(scene.id, mode) : undefined;
+  const prev = scene ? getPrevScene(scene.id, mode) : undefined;
   const others = getScenesForMode(mode)
     .filter((s) => s.id !== id)
-    .slice(0, 3);
+    .slice(0, 4);
 
   if (!scene) {
     return (
@@ -53,6 +60,7 @@ function SceneDetailPage() {
       <header className="space-y-2">
         <p className="label-eyebrow text-[var(--color-primary)]">
           Ch. {scene.chapterNum} · {scene.chapter}
+          {scene.series ? ` · ${scene.series}` : ""}
         </p>
         <h1 className="font-display text-display">{scene.title}</h1>
         <p className="text-content text-[var(--color-muted)] leading-relaxed">
@@ -64,6 +72,9 @@ function SceneDetailPage() {
             {scene.style}
           </Badge>
           <Badge tone="neutral">{scene.lines.length} lines</Badge>
+          {scene.mediaStatus === "awaiting_upload" && (
+            <Badge tone="warn">Upload ready</Badge>
+          )}
         </div>
       </header>
 
@@ -74,6 +85,24 @@ function SceneDetailPage() {
       <p className="text-sm leading-relaxed text-[var(--color-subtle)]">
         {scene.reconstructionNote}
       </p>
+
+      <div className="flex flex-wrap gap-2">
+        {prev && (
+          <Button asChild variant="secondary">
+            <Link to="/app/scenes/$id" params={{ id: prev.id }}>
+              Previous: {prev.title}
+            </Link>
+          </Button>
+        )}
+        {next && (
+          <Button asChild variant="primary">
+            <Link to="/app/scenes/$id" params={{ id: next.id }}>
+              Next: {next.title}
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        )}
+      </div>
 
       {others.length > 0 && (
         <section className="space-y-2">
@@ -94,7 +123,7 @@ function SceneDetailPage() {
                 <div className="min-w-0">
                   <p className="truncate font-medium">{s.title}</p>
                   <p className="truncate text-sm text-[var(--color-muted)]">
-                    {s.chapter}
+                    Ch. {s.chapterNum} · {s.chapter}
                   </p>
                 </div>
               </Link>

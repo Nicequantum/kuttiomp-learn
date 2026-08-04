@@ -71,8 +71,9 @@ function HomePage() {
           <p className="label-eyebrow">Video learning</p>
           <p className="font-display text-title">Scenes</p>
           <p className="text-sm text-[var(--color-muted)]">
-            Reconstructed dialogues · dual subtitles · line-by-line
+            26+ reconstructed scenes · dual subtitles · line-by-line · upload path ready
           </p>
+
         </div>
         <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
       </Link>

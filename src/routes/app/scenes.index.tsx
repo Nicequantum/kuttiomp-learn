@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Clapperboard, Play, Upload } from "lucide-react";
+import { Clapperboard, Play, Upload, Sparkles } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { Badge } from "@/components/ui/badge";
 import {
   getScenesForMode,
   getSceneDomains,
   getSceneSeries,
+  getSceneChapters,
+  getRecommendedScene,
+  getSceneProgress,
 } from "@/lib/content/scenes";
 import { useModeStore } from "@/lib/mode/store";
 import { useProgressStore } from "@/lib/progress/store";
@@ -21,20 +24,25 @@ function ScenesIndexPage() {
   const scenes = getScenesForMode(mode);
   const domains = getSceneDomains();
   const seriesList = getSceneSeries();
+  const chapters = getSceneChapters();
   const [domain, setDomain] = useState<string | null>(null);
   const [series, setSeries] = useState<string | null>(null);
+  const [chapterNum, setChapterNum] = useState<number | null>(null);
   const [style, setStyle] = useState<"all" | "cinematic" | "cartoon">("all");
   const completed = useProgressStore((s) => s.completedScenes);
   const lastId = useProgressStore((s) => s.lastSceneId);
+  const progress = getSceneProgress(completed, mode);
+  const recommended = getRecommendedScene(completed, mode);
 
   const list = useMemo(() => {
     return scenes.filter((s) => {
       if (domain && s.domain !== domain) return false;
       if (series && (s.series ?? "Other") !== series) return false;
+      if (chapterNum != null && s.chapterNum !== chapterNum) return false;
       if (style !== "all" && s.style !== style) return false;
       return true;
     });
-  }, [scenes, domain, series, style]);
+  }, [scenes, domain, series, chapterNum, style]);
 
   return (
     <div className="space-y-6">
@@ -48,34 +56,86 @@ function ScenesIndexPage() {
           Your community videos can replace any clip when ready.
         </p>
         <p className="text-sm text-[var(--color-subtle)]">
-          {list.length} of {scenes.length} scenes in this mode
+          {list.length} of {scenes.length} scenes in this mode · path ordered by
+          chapter
         </p>
       </header>
 
       <HistoricalBanner compact />
 
+      <div className="surface-card pad-mode space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="label-eyebrow">Your path</p>
+            <p className="font-display text-title">
+              {progress.done} of {progress.total} watched
+            </p>
+          </div>
+          <p className="text-2xl font-display tabular-nums text-[var(--color-primary)]">
+            {progress.percent}%
+          </p>
+        </div>
+        <div
+          className="h-2 overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--color-fg)_10%,transparent)]"
+          role="progressbar"
+          aria-valuenow={progress.percent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Scenes completed"
+        >
+          <div
+            className="h-full rounded-full bg-[var(--color-primary)] transition-[width] duration-300"
+            style={{ width: `${progress.percent}%` }}
+          />
+        </div>
+      </div>
+
       <div className="surface-card pad-mode flex gap-3 text-sm leading-relaxed text-[var(--color-muted)]">
         <Clapperboard className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]" />
         <p>
-          Packaged clips are AI reconstructions. When you upload files named by
-          scene id into <code className="text-[var(--color-fg)]">uploads/</code>
-          , the player switches to your media automatically.
+          Packaged clips are AI reconstructions for learning. Drop files named by
+          scene id into <code className="text-[var(--color-fg)]">uploads/</code>{" "}
+          and the player switches to your media automatically.
         </p>
       </div>
 
-      {lastId && scenes.some((s) => s.id === lastId) && (
+      {recommended && (
         <Link
           to="/app/scenes/$id"
-          params={{ id: lastId }}
+          params={{ id: recommended.id }}
           className="focus-stage pad-mode flex items-center justify-between gap-3"
         >
-          <div>
-            <p className="label-eyebrow">Resume</p>
-            <p className="font-display text-title">Continue last scene</p>
+          <div className="min-w-0">
+            <p className="label-eyebrow inline-flex items-center gap-1">
+              <Sparkles className="h-3.5 w-3.5" />
+              {completed.includes(recommended.id) ? "Replay" : "Up next"}
+            </p>
+            <p className="font-display text-title truncate">{recommended.title}</p>
+            <p className="text-sm text-[var(--color-muted)]">
+              Ch. {recommended.chapterNum} · {recommended.chapter}
+            </p>
           </div>
-          <Play className="h-6 w-6 text-[var(--color-primary)]" />
+          <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-primary-fg)] shadow-lg">
+            <Play className="h-5 w-5" fill="currentColor" />
+          </span>
         </Link>
       )}
+
+      {lastId &&
+        lastId !== recommended?.id &&
+        scenes.some((s) => s.id === lastId) && (
+          <Link
+            to="/app/scenes/$id"
+            params={{ id: lastId }}
+            className="surface-card pad-mode flex items-center justify-between gap-3"
+          >
+            <div>
+              <p className="label-eyebrow">Resume</p>
+              <p className="font-display text-title">Continue last scene</p>
+            </div>
+            <Play className="h-6 w-6 text-[var(--color-primary)]" />
+          </Link>
+        )}
 
       <div className="flex gap-2 overflow-x-auto pb-1">
         {(
@@ -127,6 +187,39 @@ function ScenesIndexPage() {
             )}
           >
             {s.id}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        <button
+          type="button"
+          onClick={() => setChapterNum(null)}
+          className={cn(
+            "shrink-0 rounded-full border px-3 py-1.5 text-sm",
+            chapterNum == null
+              ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+              : "border-[var(--color-border)] text-[var(--color-muted)]",
+          )}
+        >
+          All chapters
+        </button>
+        {chapters.map((c) => (
+          <button
+            key={c.chapterNum}
+            type="button"
+            onClick={() =>
+              setChapterNum(c.chapterNum === chapterNum ? null : c.chapterNum)
+            }
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-sm",
+              chapterNum === c.chapterNum
+                ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+                : "border-[var(--color-border)] text-[var(--color-muted)]",
+            )}
+            title={c.chapter}
+          >
+            Ch. {c.chapterNum}
           </button>
         ))}
       </div>

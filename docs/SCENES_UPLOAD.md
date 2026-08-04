@@ -37,26 +37,45 @@ public/scenes/{scene-id}.jpg   # optional new poster frame
 
 ## Scene ids currently in the app
 
-| id | Title | Notes |
-|----|--------|--------|
-| greeting-dawn | Greeting at dawn | cinematic |
-| greeting-kids | Hello, friend (kids) | cartoon |
-| meal-share | Stay and eat | cinematic |
-| meal-kids | Share the bowl (kids) | cartoon |
-| home-fire | Home by the fire | cinematic |
-| count-shells | Counting shells | cinematic |
-| news-marsh | News by the marsh | cinematic |
-| ask-path | Show me the way | cinematic |
-| weather-sky | Reading the weather | cinematic |
-| canoe-shore | At the shore | cinematic |
-| trade-shore | Trade at the shore | Adult/Elder |
-| earth-fruits | Gifts of the earth | **awaiting your upload** |
-| fish-water | Fish and water | **awaiting your upload** |
+| id | Title | Chapter | Notes |
+|----|--------|---------|--------|
+| greeting-dawn | Greeting at dawn | 1 | cinematic |
+| greeting-kids | Hello, friend (kids) | 1 | cartoon |
+| meal-share | Stay and eat | 2 | cinematic |
+| meal-kids | Share the bowl (kids) | 2 | cartoon |
+| sleep-lodge | Rest for the night | 3 | cinematic |
+| count-shells | Counting shells | 4 | cinematic |
+| family-kin | Our family | 5 | cinematic |
+| home-fire | Home by the fire | 6 | cinematic |
+| news-marsh | News by the marsh | 8 | cinematic |
+| day-hours | Hours of the day | 9 | cinematic |
+| seasons-year | Through the year | 10 | cinematic |
+| seasons-kids | Four seasons (kids) | 10 | cartoon |
+| ask-path | Show me the way | 11 | cinematic |
+| sky-moon | Moon and stars | 12 | cinematic |
+| weather-sky | Reading the weather | 13 | cinematic |
+| wind-rise | Reading the winds | 14 | cinematic |
+| birds-marsh | Birds of the marsh | 15 | cinematic |
+| birds-kids | Bird friends (kids) | 15 | cartoon |
+| earth-fruits | Gifts of the earth | 16 | cinematic |
+| forest-deer | Deer in the forest | 17 | cinematic |
+| canoe-shore | At the shore | 18 | cinematic |
+| fish-water | Fish and fishing | 19 | cinematic |
+| trade-shore | Trade at the shore | 25 | Adult/Elder |
+| hunt-trail | On the hunt trail | 27 | cinematic, no violence |
+| wampum-count | Shells of exchange | 24 | **awaiting your upload** (Adult/Elder) |
+| clothing-words | Clothing words | 20 | **awaiting your upload** (Adult/Elder) |
 
 ## Timing dialogue to your video
 
 Edit line `startSec` / `endSec` in `src/lib/content/scenes-data.ts` for that scene so subtitles and line-step match your cut.
 
+Optional: set `wordId` on a line to link into the Williams demo lexicon Words page.
+
 ## Labels
 
 Keep the in-app notice: reconstructions and demo language until Keepers publish living forms and you swap media.
+
+## Sensitive chapters not packaged yet
+
+Religion, war, death, marriage, sickness, and government chapters stay out of the default catalog until Keepers and community media guide presentation. Upload scaffolds can be added later without inventing ceremonial content.

@@ -12,6 +12,9 @@ import {
   Languages,
   Gauge,
   SkipForward,
+  SkipBack,
+  BookOpen,
+  CheckCircle2,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
@@ -19,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import type { LearningScene, SubtitleTrack } from "@/lib/content/scenes";
 import {
   getNextScene,
+  getPrevScene,
   resolveSceneVideoSrc,
 } from "@/lib/content/scenes";
 import { speakWord, stopSpeaking } from "@/lib/audio/speak";
@@ -45,10 +49,15 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [practicedLines, setPracticedLines] = useState<Set<string>>(
+    () => new Set(),
+  );
   const completeScene = useProgressStore((s) => s.completeScene);
   const setLastScene = useProgressStore((s) => s.setLastScene);
   const markHeard = useProgressStore((s) => s.markHeard);
+  const markPracticed = useProgressStore((s) => s.markPracticed);
   const next = getNextScene(scene.id);
+  const prev = getPrevScene(scene.id);
 
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
 
@@ -56,6 +65,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
     setLastScene(scene.id);
     setActiveLineIdx(0);
     setTime(0);
+    setPracticedLines(new Set());
     void resolveSceneVideoSrc(scene).then((r) => {
       setVideoSrc(r.src);
       setFromUpload(r.fromUpload);
@@ -120,7 +130,14 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   async function hearLine(lang: "n" | "e" | "both") {
     if (!activeLine) return;
     stopSpeaking();
-    markHeard(`scene:${scene.id}:${activeLine.id}`);
+    const practiceKey = `scene:${scene.id}:${activeLine.id}`;
+    markHeard(practiceKey);
+    markPracticed(practiceKey);
+    if (activeLine.wordId) {
+      markHeard(activeLine.wordId);
+      markPracticed(activeLine.wordId);
+    }
+    setPracticedLines((prev) => new Set(prev).add(activeLine.id));
     if (lang === "e") {
       await speakWord({
         narragansett: activeLine.english,
@@ -152,6 +169,7 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   }
 
   const progress = duration > 0 ? (time / duration) * 100 : 0;
+  const linePracticeCount = practicedLines.size;
 
   const subtitleNode = useMemo(() => {
     if (subs === "off" || !activeLine) return null;
@@ -285,6 +303,14 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         <Button type="button" variant="secondary" onClick={toggleFullscreen}>
           <Maximize className="h-4 w-4" />
         </Button>
+        {prev && (
+          <Button asChild variant="secondary">
+            <Link to="/app/scenes/$id" params={{ id: prev.id }}>
+              <SkipBack className="h-4 w-4" />
+              Prev
+            </Link>
+          </Button>
+        )}
         {next && (
           <Button asChild variant="soft">
             <Link to="/app/scenes/$id" params={{ id: next.id }}>
@@ -348,6 +374,9 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
               {s}×
             </button>
           ))}
+          <span className="ml-auto text-xs text-[var(--color-subtle)] tabular-nums">
+            Practiced {linePracticeCount}/{scene.lines.length} lines
+          </span>
         </div>
       </div>
 
@@ -358,6 +387,12 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
             <Badge tone="neutral">
               Line {activeLineIdx + 1} / {scene.lines.length}
             </Badge>
+            {practicedLines.has(activeLine.id) && (
+              <Badge tone="land">
+                <CheckCircle2 className="mr-1 inline h-3 w-3" />
+                Heard
+              </Badge>
+            )}
           </div>
           <p
             lang="nax"
@@ -383,6 +418,14 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
             <Button type="button" variant="soft" onClick={() => void hearLine("both")}>
               Hear both
             </Button>
+            {activeLine.wordId && (
+              <Button asChild variant="secondary">
+                <Link to="/app/words/$id" params={{ id: activeLine.wordId }}>
+                  <BookOpen className="h-4 w-4" />
+                  Open in Words
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       )}
@@ -402,8 +445,13 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
                     : "border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_80%,transparent)] hover:border-[var(--color-border-strong)]",
                 )}
               >
-                <p className="text-xs text-[var(--color-subtle)]">
-                  {line.speaker} · {fmt(line.startSec)}
+                <p className="flex items-center gap-2 text-xs text-[var(--color-subtle)]">
+                  <span>
+                    {line.speaker} · {fmt(line.startSec)}
+                  </span>
+                  {practicedLines.has(line.id) && (
+                    <CheckCircle2 className="h-3.5 w-3.5 text-[var(--color-land)]" />
+                  )}
                 </p>
                 <p lang="nax" className="font-display text-lg text-[var(--color-fg)]">
                   {line.narragansett}
