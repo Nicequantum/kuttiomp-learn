@@ -6,6 +6,8 @@ export type {
   LearningScene,
   SceneLine,
   SubtitleTrack,
+  VoiceTrack,
+  PlayMode,
   VideoStyle,
   MediaStatus,
 } from "./scenes-data";
@@ -18,13 +20,11 @@ function currentMode(): LearningModeId | null {
   }
 }
 
-function sortByPath(scenes: LearningScene[]): LearningScene[] {
-  return [...scenes].sort((a, b) => {
-    const ao = a.pathOrder ?? a.chapterNum * 10;
-    const bo = b.pathOrder ?? b.chapterNum * 10;
-    if (ao !== bo) return ao - bo;
-    return a.chapterNum - b.chapterNum || a.title.localeCompare(b.title);
-  });
+function sortByPath(a: LearningScene, b: LearningScene) {
+  const ao = a.pathOrder ?? a.chapterNum * 10;
+  const bo = b.pathOrder ?? b.chapterNum * 10;
+  if (ao !== bo) return ao - bo;
+  return a.title.localeCompare(b.title);
 }
 
 export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] {
@@ -32,7 +32,7 @@ export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] 
   const list = !m
     ? SCENES.filter((s) => s.modesAllowed.includes("core_adult"))
     : SCENES.filter((s) => s.modesAllowed.includes(m));
-  return sortByPath(list);
+  return [...list].sort(sortByPath);
 }
 
 export function getSceneById(id: string): LearningScene | undefined {
@@ -58,7 +58,7 @@ export function getSceneDomains(): { id: string; label: string; count: number }[
     water: "Water",
     tools: "Trade",
     time: "Numbers & time",
-    flora: "Land & life",
+    flora: "Land",
     other: "Talk",
   };
   return [...map.entries()]
@@ -78,23 +78,21 @@ export function getSceneSeries(): { id: string; count: number }[] {
 }
 
 export function getSceneChapters(): {
-  chapterNum: number;
-  chapter: string;
+  num: number;
+  title: string;
   count: number;
 }[] {
-  const map = new Map<number, { chapter: string; count: number }>();
+  const map = new Map<number, { title: string; count: number }>();
   for (const s of getScenesForMode()) {
     const prev = map.get(s.chapterNum);
-    if (prev) prev.count += 1;
-    else map.set(s.chapterNum, { chapter: s.chapter, count: 1 });
+    map.set(s.chapterNum, {
+      title: s.chapter,
+      count: (prev?.count ?? 0) + 1,
+    });
   }
   return [...map.entries()]
-    .map(([chapterNum, v]) => ({
-      chapterNum,
-      chapter: v.chapter,
-      count: v.count,
-    }))
-    .sort((a, b) => a.chapterNum - b.chapterNum);
+    .map(([num, v]) => ({ num, title: v.title, count: v.count }))
+    .sort((a, b) => a.num - b.num);
 }
 
 export function getNextScene(
@@ -117,26 +115,12 @@ export function getPrevScene(
   return list[idx - 1];
 }
 
-/** First unfinished scene in path order, or first scene if all done. */
 export function getRecommendedScene(
   completedIds: string[],
   mode?: LearningModeId | null,
 ): LearningScene | undefined {
   const list = getScenesForMode(mode);
-  if (list.length === 0) return undefined;
-  const next = list.find((s) => !completedIds.includes(s.id));
-  return next ?? list[0];
-}
-
-export function getSceneProgress(
-  completedIds: string[],
-  mode?: LearningModeId | null,
-): { total: number; done: number; percent: number } {
-  const list = getScenesForMode(mode);
-  const total = list.length;
-  const done = list.filter((s) => completedIds.includes(s.id)).length;
-  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-  return { total, done, percent };
+  return list.find((s) => !completedIds.includes(s.id)) ?? list[0];
 }
 
 /**
@@ -153,7 +137,6 @@ export async function resolveSceneVideoSrc(
     const res = await fetch(scene.uploadSrc, { method: "HEAD" });
     if (res.ok) {
       const len = res.headers.get("content-length");
-      // ignore tiny README / empty
       if (!len || Number(len) > 10_000) {
         return { src: scene.uploadSrc, fromUpload: true };
       }

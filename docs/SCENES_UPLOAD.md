@@ -2,29 +2,36 @@
 
 You can replace any reconstructed clip without changing app code.
 
+## How the player works (important)
+
+| Control | Default | Options |
+|---------|---------|---------|
+| **Hear** (spoken) | **Narragansett** | Narragansett · English · Both · Off |
+| **Subtitles** | **English** | English · Narragansett · Both · Off |
+| **Mode** | **Learn** (line-by-line with speech) | Learn · Watch (continuous video) |
+
+- **Play** opens **fullscreen**; on-screen controls auto-hide so they don’t cover the picture.
+- Ambient reconstruction audio is **muted by default** (language comes from the speech track).
+- Dialogue length is the **practice timeline** (~20–30s of lines). Short video files still work: Learn mode maps each line onto the clip.
+
 ## Option A — Drop-in by scene id (recommended)
 
-1. Export your video as **MP4** (H.264 + AAC), ideally 9:16 or 16:9, under ~30 MB.
-2. Name it exactly after the scene id, for example:
+1. Export your video as **MP4** (H.264 + AAC), ideally **16:9 or 9:16**, under ~50 MB.
+2. Prefer **~24–40 seconds** when you can — enough for 6–10 spoken lines with context.
+3. Name it exactly after the scene id, for example:
    - `greeting-dawn.mp4`
    - `meal-share.mp4`
    - `earth-fruits.mp4`
-3. Put it in the repo at:
+4. Put it in the repo at:
 
 ```text
 public/scenes/uploads/{scene-id}.mp4
 ```
 
-4. Commit and redeploy (or open a PR).
-5. The player **prefers** `/scenes/uploads/{id}.mp4` when that file exists; otherwise it uses the packaged reconstruction.
+5. Commit and redeploy (or open a PR).
+6. The player **prefers** `/scenes/uploads/{id}.mp4` when that file exists; otherwise it uses the packaged reconstruction.
 
-Optional poster:
-
-```text
-public/scenes/uploads/{scene-id}.jpg
-```
-
-(Poster override can be wired later; today poster stays the packaged `.jpg` unless you also replace `public/scenes/{id}.jpg`.)
+Optional poster: replace `public/scenes/{scene-id}.jpg`.
 
 ## Option B — Replace the packaged file
 
@@ -35,47 +42,41 @@ public/scenes/{scene-id}.mp4
 public/scenes/{scene-id}.jpg   # optional new poster frame
 ```
 
-## Scene ids currently in the app
-
-| id | Title | Chapter | Notes |
-|----|--------|---------|--------|
-| greeting-dawn | Greeting at dawn | 1 | cinematic |
-| greeting-kids | Hello, friend (kids) | 1 | cartoon |
-| meal-share | Stay and eat | 2 | cinematic |
-| meal-kids | Share the bowl (kids) | 2 | cartoon |
-| sleep-lodge | Rest for the night | 3 | cinematic |
-| count-shells | Counting shells | 4 | cinematic |
-| family-kin | Our family | 5 | cinematic |
-| home-fire | Home by the fire | 6 | cinematic |
-| news-marsh | News by the marsh | 8 | cinematic |
-| day-hours | Hours of the day | 9 | cinematic |
-| seasons-year | Through the year | 10 | cinematic |
-| seasons-kids | Four seasons (kids) | 10 | cartoon |
-| ask-path | Show me the way | 11 | cinematic |
-| sky-moon | Moon and stars | 12 | cinematic |
-| weather-sky | Reading the weather | 13 | cinematic |
-| wind-rise | Reading the winds | 14 | cinematic |
-| birds-marsh | Birds of the marsh | 15 | cinematic |
-| birds-kids | Bird friends (kids) | 15 | cartoon |
-| earth-fruits | Gifts of the earth | 16 | cinematic |
-| forest-deer | Deer in the forest | 17 | cinematic |
-| canoe-shore | At the shore | 18 | cinematic |
-| fish-water | Fish and fishing | 19 | cinematic |
-| trade-shore | Trade at the shore | 25 | Adult/Elder |
-| hunt-trail | On the hunt trail | 27 | cinematic, no violence |
-| wampum-count | Shells of exchange | 24 | **awaiting your upload** (Adult/Elder) |
-| clothing-words | Clothing words | 20 | **awaiting your upload** (Adult/Elder) |
-
 ## Timing dialogue to your video
 
-Edit line `startSec` / `endSec` in `src/lib/content/scenes-data.ts` for that scene so subtitles and line-step match your cut.
+Edit line `startSec` / `endSec` (or the whole `lines` list) in `src/lib/content/scenes-data.ts` so Learn/Watch pacing matches your cut. Aim for **~3 seconds per line** so speech has room.
 
-Optional: set `wordId` on a line to link into the Williams demo lexicon Words page.
+## Scene ids currently in the app
+
+| id | Title | Practice length | Notes |
+|----|--------|-----------------|--------|
+| greeting-dawn | Greeting at dawn | ~28s | cinematic |
+| greeting-kids | Hello, friend (kids) | ~20s | cartoon |
+| meal-share | Stay and eat | ~28s | cinematic |
+| meal-kids | Share the bowl (kids) | ~20s | cartoon |
+| sleep-lodge | Rest for the night | ~28s | cinematic |
+| count-shells | Counting shells | ~30s | numbers 1–10 |
+| family-kin | Our family | ~28s | cinematic |
+| home-fire | Home by the fire | ~28s | cinematic |
+| news-marsh | News by the marsh | ~28s | cinematic |
+| day-hours | Hours of the day | ~28s | cinematic |
+| seasons-year | Through the year | ~28s | cinematic |
+| seasons-kids | Four seasons (kids) | ~20s | cartoon |
+| ask-path | Show me the way | ~28s | cinematic |
+| sky-moon | Moon and stars | ~28s | cinematic |
+| weather-sky | Reading the weather | ~28s | cinematic |
+| wind-rise | Reading the winds | ~28s | cinematic |
+| birds-marsh | Birds of the marsh | ~28s | cinematic |
+| birds-kids | Bird friends (kids) | ~18s | cartoon |
+| earth-fruits | Gifts of the earth | ~28s | cinematic |
+| forest-deer | Deer in the forest | ~24s | cinematic |
+| canoe-shore | At the shore | ~28s | cinematic |
+| fish-water | Fish and fishing | ~28s | cinematic |
+| trade-shore | Trade at the shore | ~28s | Adult/Elder |
+| hunt-trail | On the hunt trail | ~28s | no violence shown |
+| wampum-count | Shell money words | ~24s | **awaiting your upload** |
+| clothing-words | Clothing words | ~20s | **awaiting your upload** · careful |
 
 ## Labels
 
-Keep the in-app notice: reconstructions and demo language until Keepers publish living forms and you swap media.
-
-## Sensitive chapters not packaged yet
-
-Religion, war, death, marriage, sickness, and government chapters stay out of the default catalog until Keepers and community media guide presentation. Upload scaffolds can be added later without inventing ceremonial content.
+Keep the in-app notice: reconstructions and demo language until Keepers publish living forms and you swap media. Spoken Narragansett in the app is **practice synthesis** until living recordings land.
