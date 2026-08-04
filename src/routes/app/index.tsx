@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Route as RouteIcon, Volume2, BookMarked } from "lucide-react";
+import { ArrowRight, BookOpen, Route as RouteIcon, Volume2 } from "lucide-react";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { MasteryPanel } from "@/components/content/MasteryPanel";
@@ -9,11 +9,13 @@ import {
   getFeaturedWords,
   getPaths,
   getAllWords,
+  getWordById,
+  getChapters,
+  getCorpusMeta,
 } from "@/lib/content/corpus";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
 import { useProgressStore } from "@/lib/progress/store";
-import { getWordById } from "@/lib/content/corpus";
 
 export const Route = createFileRoute("/app/")({
   component: HomePage,
@@ -23,8 +25,10 @@ function HomePage() {
   const mode = useModeStore((s) => s.mode);
   const meta = mode ? MODES[mode] : MODES.core_adult;
   const featured = getFeaturedWords(mode === "little_ones" ? 4 : 5);
-  const paths = getPaths().slice(0, 2);
+  const paths = getPaths().slice(0, 3);
   const total = getAllWords().length;
+  const seedTotal = getCorpusMeta().totalInSeed ?? total;
+  const chapters = getChapters();
   const lastId = useProgressStore((s) => s.lastListenWordId);
   const resumeWord = lastId ? getWordById(lastId) : undefined;
 
@@ -46,75 +50,61 @@ function HomePage() {
               ? "Large text, clear audio, one calm step at a time."
               : "Listen first. Meaning second. Living speakers replace every historical placeholder."}
         </p>
+        <p className="text-sm text-[var(--color-subtle)]">
+          {total} forms in your mode
+          {seedTotal !== total ? ` · ${seedTotal} in full seed` : ""}
+          {" · "}
+          {chapters.filter((c) => c.count > 0).length} chapters open
+        </p>
       </header>
 
-      <Link to="/app/listen" className="block">
-        <div className="focus-stage pad-mode flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <p className="label-eyebrow">Primary action</p>
-            <p className="font-display text-title">
-              {resumeWord ? "Resume listening" : "Continue listening"}
-            </p>
-            <p className="text-sm text-[var(--color-muted)]">
-              {resumeWord
-                ? `Pick up at “${resumeWord.wordNarragansett}”`
-                : "Focus mode — one form at a time, oral first"}
-            </p>
-          </div>
-          <Button size="lg" className="shrink-0 shadow-[0_0_28px_var(--color-glow)]">
-            Start
-            <ArrowRight className="h-5 w-5" />
-          </Button>
+      <HistoricalBanner compact />
+
+      <OrthographyGuide compact />
+
+      <Link
+        to="/app/key"
+        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+      >
+        <div>
+          <p className="label-eyebrow">Full book seed</p>
+          <p className="font-display text-title">The Key (1643)</p>
+          <p className="text-sm text-[var(--color-muted)]">
+            All 32 chapters · modern English glosses · historical spellings
+          </p>
         </div>
+        <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
       </Link>
 
-      <HistoricalBanner compact={meta.id === "little_ones"} />
+      <Link
+        to="/app/listen"
+        className="focus-stage pad-mode flex items-center justify-between gap-4 hover:border-[var(--color-border-strong)]"
+      >
+        <div className="space-y-1">
+          <p className="label-eyebrow">Primary action</p>
+          <p className="font-display text-title">
+            {resumeWord ? "Resume listening" : "Continue listening"}
+          </p>
+          <p className="text-sm text-[var(--color-muted)]">
+            {resumeWord
+              ? `Pick up at “${resumeWord.wordNarragansett}”`
+              : "Focus mode — one form at a time, oral first"}
+          </p>
+        </div>
+        <Volume2 className="h-8 w-8 text-[var(--color-primary)]" aria-hidden />
+      </Link>
 
       <MasteryPanel />
 
-      <section className="space-y-3" aria-labelledby="start-heading">
-        <h2 id="start-heading" className="font-display text-title">
-          Explore
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Link
-            to="/app/listen"
-            className="surface-card pad-mode flex flex-col gap-2 transition-colors hover:border-[var(--color-border-strong)]"
-          >
-            <Volume2 className="h-5 w-5 text-[var(--color-primary)]" />
-            <p className="font-medium">Listen</p>
-            <p className="text-sm text-[var(--color-muted)]">Oral focus</p>
-          </Link>
-          <Link
-            to="/app/words"
-            className="surface-card pad-mode flex flex-col gap-2 transition-colors hover:border-[var(--color-border-strong)]"
-          >
-            <BookOpen className="h-5 w-5 text-[var(--color-primary)]" />
-            <p className="font-medium">Words</p>
-            <p className="text-sm text-[var(--color-muted)]">{total} demo entries</p>
-          </Link>
-          <Link
-            to="/app/paths"
-            className="surface-card pad-mode flex flex-col gap-2 transition-colors hover:border-[var(--color-border-strong)]"
-          >
-            <RouteIcon className="h-5 w-5 text-[var(--color-primary)]" />
-            <p className="font-medium">Paths</p>
-            <p className="text-sm text-[var(--color-muted)]">Guided topics</p>
-          </Link>
-        </div>
-      </section>
-
-      <section className="space-y-3" aria-labelledby="featured-heading">
-        <div className="flex items-end justify-between gap-2">
-          <h2 id="featured-heading" className="font-display text-title">
-            Featured forms
-          </h2>
-          <Link
-            to="/app/words"
-            className="text-sm font-medium text-[var(--color-primary)]"
-          >
-            All words
-          </Link>
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-title">Featured forms</h2>
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/app/words" search={{}}>
+              All words
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
         <div className="grid gap-3">
           {featured.map((w) => (
@@ -123,30 +113,54 @@ function HomePage() {
         </div>
       </section>
 
-      <OrthographyGuide compact />
-
       {paths.length > 0 && (
-        <section className="space-y-3" aria-labelledby="paths-heading">
-          <h2 id="paths-heading" className="font-display text-title">
-            Paths
-          </h2>
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-title">Paths</h2>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/app/paths">
+                Browse
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
           <div className="grid gap-3">
             {paths.map((p) => (
               <Link
                 key={p.id}
                 to="/app/paths/$id"
                 params={{ id: p.id }}
-                className="surface-card pad-mode block transition-colors hover:border-[var(--color-border-strong)]"
+                className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
               >
-                <p className="font-medium">{p.title}</p>
-                <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  {p.description}
-                </p>
+                <div>
+                  <p className="font-medium">{p.title}</p>
+                  <p className="text-sm text-[var(--color-muted)]">
+                    {p.wordIds.length} forms · stage {p.stage}
+                  </p>
+                </div>
+                <RouteIcon
+                  className="h-5 w-5 text-[var(--color-subtle)]"
+                  aria-hidden
+                />
               </Link>
             ))}
           </div>
         </section>
       )}
+
+      <section className="surface-card pad-mode flex gap-3">
+        <BookOpen
+          className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]"
+          aria-hidden
+        />
+        <div>
+          <p className="font-medium">Demo scaffold</p>
+          <p className="text-sm text-[var(--color-muted)] leading-relaxed">
+            Full Williams Key seed with modern English. When Keepers publish,
+            living forms replace this scaffold.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

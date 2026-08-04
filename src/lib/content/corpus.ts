@@ -6,7 +6,14 @@ import {
   subscribeCorpus,
 } from "./load-corpus";
 import { CONTENT_CORPUS, IS_DEMO_HISTORICAL } from "./config";
-import type { LearningPath, LexicalWord, MasteryStage } from "./types";
+import type {
+  CorpusChapter,
+  LearningModeId,
+  LearningPath,
+  LexicalWord,
+  MasteryStage,
+} from "./types";
+import { useModeStore } from "@/lib/mode/store";
 
 export {
   getActiveBundle,
@@ -16,15 +23,41 @@ export {
   subscribeCorpus,
 };
 
-/** Production filter: only elder-approved living content. Demo keeps historical seed. */
-function visibleWords(): LexicalWord[] {
+function currentMode(): LearningModeId | null {
+  try {
+    return useModeStore.getState().mode;
+  } catch {
+    return null;
+  }
+}
+
+function visibleWords(modeOverride?: LearningModeId | null): LexicalWord[] {
   const bundle = getActiveBundle();
+  const mode = modeOverride === undefined ? currentMode() : modeOverride;
+
   if (CONTENT_CORPUS === "keeper_only") {
     return bundle.words.filter(
       (w) => w.source === "keeper_approved" && w.elderApproved && !w.isSacred,
     );
   }
-  return bundle.words.filter((w) => !w.isSacred);
+
+  let list = bundle.words.filter(
+    (w) => w.source === "historical_seed" || w.source === "keeper_approved",
+  );
+
+  if (mode === "little_ones" || mode === "young_learner") {
+    list = list.filter((w) => {
+      if (w.isSacred) return false;
+      const sens = w.sensitivity ?? "everyday";
+      if (sens === "sensitive") return false;
+      if (w.modesAllowed && w.modesAllowed.length > 0) {
+        return w.modesAllowed.includes(mode);
+      }
+      return true;
+    });
+  }
+
+  return list;
 }
 
 export function getCorpusMeta() {
@@ -40,6 +73,7 @@ export function getCorpusMeta() {
     loadMessage: state.message,
     apiOk: state.apiOk,
     corpusVersion: state.corpusVersion,
+    totalInSeed: bundle.words.length,
   };
 }
 
@@ -48,7 +82,13 @@ export function getAllWords(): LexicalWord[] {
 }
 
 export function getWordById(id: string): LexicalWord | undefined {
-  return visibleWords().find((w) => w.id === id);
+  const mode = currentMode();
+  const fromVisible = visibleWords().find((w) => w.id === id);
+  if (fromVisible) return fromVisible;
+  if (mode === "core_adult" || mode === "elder" || !mode) {
+    return getActiveBundle().words.find((w) => w.id === id);
+  }
+  return undefined;
 }
 
 export function searchWords(query: string): LexicalWord[] {
@@ -69,6 +109,38 @@ export function getWordsByDomain(domain: string): LexicalWord[] {
 
 export function getWordsByChapter(chapter: string): LexicalWord[] {
   return visibleWords().filter((w) => w.chapter === chapter);
+}
+
+export function getWordsByChapterNum(num: number): LexicalWord[] {
+  return visibleWords().filter((w) => w.chapterNum === num);
+}
+
+export function getChapters(): CorpusChapter[] {
+  const bundle = getActiveBundle();
+  if (bundle.chapters?.length) {
+    const counts = new Map<number, number>();
+    for (const w of visibleWords()) {
+      counts.set(w.chapterNum, (counts.get(w.chapterNum) ?? 0) + 1);
+    }
+    return bundle.chapters.map((c) => ({
+      ...c,
+      count: counts.get(c.num) ?? 0,
+    }));
+  }
+  const map = new Map<number, CorpusChapter>();
+  for (const w of visibleWords()) {
+    const prev = map.get(w.chapterNum);
+    if (prev) prev.count += 1;
+    else
+      map.set(w.chapterNum, {
+        num: w.chapterNum,
+        title: w.chapter,
+        domain: w.semanticDomain,
+        sensitivity: w.sensitivity ?? "everyday",
+        count: 1,
+      });
+  }
+  return [...map.values()].sort((a, b) => a.num - b.num);
 }
 
 export function getPaths(): LearningPath[] {
@@ -117,6 +189,9 @@ export function getDomains(): { id: string; label: string; count: number }[] {
     tools: "Tools & trade",
     governance: "Community",
     medicine: "Care",
+    ceremony: "Ceremony",
+    spiritual: "Spirit",
+    color: "Color & paint",
     other: "Everyday",
   };
   return [...map.entries()]
@@ -127,17 +202,16 @@ export function getDomains(): { id: string; label: string; count: number }[] {
 export function getFeaturedWords(limit = 6): LexicalWord[] {
   const preferredChapters = [
     "Salutation",
+    "Eating and Entertainment",
     "Relations of Consanguinity",
     "House and Family",
-    "Eating and Entertainment",
-    "The Earth and Fruits",
-    "Family & people",
+    "Earth and Fruits",
+    "Travel",
   ];
   const all = visibleWords();
   const picked: LexicalWord[] = [];
   for (const ch of preferredChapters) {
-    const hits = all.filter((w) => w.chapter === ch);
-    for (const hit of hits) {
+    for (const hit of all.filter((w) => w.chapter === ch)) {
       if (picked.length >= limit) break;
       if (!picked.some((x) => x.id === hit.id)) picked.push(hit);
     }
@@ -153,12 +227,12 @@ export function getFeaturedWords(limit = 6): LexicalWord[] {
 export function getListenQueue(limit = 12): LexicalWord[] {
   const preferred = [
     "Salutation",
-    "Relations of Consanguinity",
     "Eating and Entertainment",
+    "Relations of Consanguinity",
     "House and Family",
     "Numbers",
     "Travel",
-    "Family & people",
+    "The Weather",
   ];
   const all = visibleWords();
   const ordered: LexicalWord[] = [];

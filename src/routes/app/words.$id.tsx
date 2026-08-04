@@ -26,7 +26,7 @@ function WordDetailPage() {
       <div className="space-y-4">
         <p className="text-[var(--color-muted)]">Word not found.</p>
         <Button asChild variant="secondary">
-          <Link to="/app/words">Back to words</Link>
+          <Link to="/app/words" search={{}}>Back to words</Link>
         </Button>
       </div>
     );
@@ -35,7 +35,7 @@ function WordDetailPage() {
   return (
     <div className="space-y-5">
       <Link
-        to="/app/words"
+        to="/app/words" search={{}}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-fg)]"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -66,6 +66,15 @@ function WordDetailPage() {
 
       {word.source === "historical_seed" && (
         <OrthographyGuide compact />
+      )}
+      {word.scholarlyNote && (
+        <section className="surface-card pad-mode space-y-2">
+          <h2 className="font-display text-lg">Reading note</h2>
+          <p className="text-[var(--color-muted)] leading-relaxed text-sm">{word.scholarlyNote}</p>
+          {word.sensitivity && word.sensitivity !== "everyday" && (
+            <Badge tone="warn">{word.sensitivity} chapter</Badge>
+          )}
+        </section>
       )}
 
       <OralPlayer

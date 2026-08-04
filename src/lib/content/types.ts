@@ -1,13 +1,18 @@
 export type ContentSource = "historical_seed" | "keeper_approved";
 export type CorpusMode = "demo_historical" | "keeper_only";
 export type ContentAuthority = "colonial_record" | "living_speaker";
+export type ContentSensitivity = "everyday" | "careful" | "sensitive";
+export type LearningModeId =
+  | "little_ones"
+  | "young_learner"
+  | "core_adult"
+  | "elder";
 
 export type LexicalWord = {
   id: string;
   wordNarragansett: string;
   englishGloss: string;
   englishHistorical?: string;
-  /** Demo seed chapter label; production may mirror domain */
   chapter: string;
   chapterNum: number;
   semanticDomain: string;
@@ -20,11 +25,16 @@ export type LexicalWord = {
   speakerAttribution: string;
   orthographyNote: string;
   seasonalUsage: string[];
-  /** Living speaker recording when published from Keepers */
   primaryAudioUrl?: string;
   speakerId?: string;
   category?: string;
   updatedAt?: string;
+  /** Williams chapter sensitivity for mode filtering */
+  sensitivity?: ContentSensitivity;
+  /** Which learning modes may see this form in demo */
+  modesAllowed?: LearningModeId[];
+  /** Scholarly framing — not living orthography corrections */
+  scholarlyNote?: string;
 };
 
 export type LearningPath = {
@@ -43,6 +53,14 @@ export type MasteryStage = {
   description: string;
 };
 
+export type CorpusChapter = {
+  num: number;
+  title: string;
+  domain: string;
+  sensitivity: ContentSensitivity;
+  count: number;
+};
+
 export type CorpusBundle = {
   corpus: CorpusMode;
   corpusLabel: string;
@@ -56,9 +74,9 @@ export type CorpusBundle = {
   words: LexicalWord[];
   paths: LearningPath[];
   stages: MasteryStage[];
+  chapters?: CorpusChapter[];
 };
 
-/** Runtime load status for UI honesty */
 export type CorpusLoadState = {
   mode: CorpusMode;
   source: "seed" | "api" | "seed+api" | "empty";

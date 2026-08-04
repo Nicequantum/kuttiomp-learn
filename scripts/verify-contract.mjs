@@ -54,7 +54,7 @@ assert(
 const seed = JSON.parse(
   readFileSync(new URL("../src/lib/content/seed-williams.json", import.meta.url)),
 );
-assert(Array.isArray(seed.words) && seed.words.length > 50, "seed has substantial lexicon");
+assert(Array.isArray(seed.words) && seed.words.length > 500, "seed has substantial lexicon");
 assert(
   seed.words.every((w) => w.source === "historical_seed"),
   "seed rows marked historical_seed",

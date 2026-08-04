@@ -1,40 +1,55 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { WordCard } from "@/components/content/WordCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { getDomains, searchWords } from "@/lib/content/corpus";
+import { getDomains, searchWords, getChapters } from "@/lib/content/corpus";
 import { cn } from "@/lib/utils";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 
+type WordsSearch = {
+  chapter?: string;
+};
+
 export const Route = createFileRoute("/app/words/")({
   component: WordsPage,
+  validateSearch: (search: Record<string, unknown>): WordsSearch => ({
+    chapter: typeof search.chapter === "string" ? search.chapter : undefined,
+  }),
 });
 
 function WordsPage() {
+  const { chapter: chapterParam } = Route.useSearch();
   const [q, setQ] = useState("");
   const [domain, setDomain] = useState<string | null>(null);
+  const [chapter, setChapter] = useState<string | null>(chapterParam ?? null);
   const domains = getDomains();
+  const chapters = getChapters().filter((c) => c.count > 0);
+
+  useEffect(() => {
+    setChapter(chapterParam ?? null);
+  }, [chapterParam]);
 
   const results = useMemo(() => {
     let list = searchWords(q);
     if (domain) list = list.filter((w) => w.semanticDomain === domain);
+    if (chapter) list = list.filter((w) => w.chapter === chapter);
     return list;
-  }, [q, domain]);
+  }, [q, domain, chapter]);
 
   return (
     <div className="space-y-5">
       <header className="space-y-2">
         <h1 className="font-display text-display">Words</h1>
         <p className="text-content text-[var(--color-muted)]">
-          Search English or Narragansett. Search English or Narragansett. Historical demo forms and any living mock/API forms appear together.
+          Search modern English or Narragansett (Williams spelling). Full Key
+          seed — living forms appear when published.
         </p>
       </header>
 
       <HistoricalBanner compact />
-
       <OrthographyGuide compact />
 
       <div className="relative">
@@ -66,7 +81,7 @@ function WordsPage() {
               : "border-[var(--color-border)] text-[var(--color-muted)]",
           )}
         >
-          All
+          All domains
         </button>
         {domains.map((d) => (
           <button
@@ -86,6 +101,43 @@ function WordsPage() {
         ))}
       </div>
 
+      {chapters.length > 0 && (
+        <div
+          className="flex gap-2 overflow-x-auto pb-1"
+          role="listbox"
+          aria-label="Chapters"
+        >
+          <button
+            type="button"
+            onClick={() => setChapter(null)}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-sm",
+              !chapter
+                ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+                : "border-[var(--color-border)] text-[var(--color-muted)]",
+            )}
+          >
+            All chapters
+          </button>
+          {chapters.map((c) => (
+            <button
+              key={c.num}
+              type="button"
+              onClick={() => setChapter(c.title === chapter ? null : c.title)}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1.5 text-sm",
+                chapter === c.title
+                  ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+                  : "border-[var(--color-border)] text-[var(--color-muted)]",
+              )}
+            >
+              {c.num}. {c.title}
+              <span className="ml-1 opacity-70">{c.count}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--color-subtle)]">
           {results.length} result{results.length === 1 ? "" : "s"}
@@ -94,12 +146,17 @@ function WordsPage() {
       </div>
 
       <div className="grid gap-3">
-        {results.map((w) => (
+        {results.slice(0, 80).map((w) => (
           <WordCard key={w.id} word={w} />
         ))}
+        {results.length > 80 && (
+          <p className="text-center text-sm text-[var(--color-subtle)]">
+            Showing 80 of {results.length}. Narrow with search or filters.
+          </p>
+        )}
         {results.length === 0 && (
           <div className="surface-card pad-mode text-center text-[var(--color-muted)]">
-            No matches. Try a shorter search or clear the domain filter.
+            No matches. Try a shorter search or clear filters.
           </div>
         )}
       </div>
