@@ -11,10 +11,16 @@ import {
   Volume2,
   Languages,
   Gauge,
+  SkipForward,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { LearningScene, SubtitleTrack } from "@/lib/content/scenes";
+import {
+  getNextScene,
+  resolveSceneVideoSrc,
+} from "@/lib/content/scenes";
 import { speakWord, stopSpeaking } from "@/lib/audio/speak";
 import { useProgressStore } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
@@ -29,6 +35,8 @@ const SPEEDS = [0.75, 1, 1.25] as const;
 export function ScenePlayer({ scene, largeTargets }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
+  const [videoSrc, setVideoSrc] = useState(scene.videoSrc);
+  const [fromUpload, setFromUpload] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(scene.durationSec);
@@ -40,18 +48,25 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
   const completeScene = useProgressStore((s) => s.completeScene);
   const setLastScene = useProgressStore((s) => s.setLastScene);
   const markHeard = useProgressStore((s) => s.markHeard);
+  const next = getNextScene(scene.id);
 
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
 
   useEffect(() => {
     setLastScene(scene.id);
-  }, [scene.id, setLastScene]);
+    setActiveLineIdx(0);
+    setTime(0);
+    void resolveSceneVideoSrc(scene).then((r) => {
+      setVideoSrc(r.src);
+      setFromUpload(r.fromUpload);
+    });
+  }, [scene, setLastScene]);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
     v.playbackRate = speed;
-  }, [speed]);
+  }, [speed, videoSrc]);
 
   const onTime = useCallback(() => {
     const v = videoRef.current;
@@ -172,19 +187,35 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
 
   return (
     <div className="space-y-4">
+      {scene.mediaStatus === "awaiting_upload" && !fromUpload && (
+        <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-warn)_12%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]">
+          Stand-in video — drop your file at{" "}
+          <code className="text-[var(--color-fg)]">{scene.uploadSrc}</code> to
+          replace it.
+        </p>
+      )}
+      {fromUpload && (
+        <p className="text-sm text-[var(--color-land)]">
+          Playing your uploaded community video for this scene.
+        </p>
+      )}
+
       <div
         ref={shellRef}
         className="relative overflow-hidden rounded-mode-lg border border-[var(--color-border)] bg-black shadow-[var(--shadow-elevated)]"
       >
         <video
           ref={videoRef}
+          key={videoSrc}
           className="aspect-video w-full object-cover"
-          src={scene.videoSrc}
+          src={videoSrc}
           poster={scene.posterSrc}
           playsInline
           muted={muted}
           onTimeUpdate={onTime}
-          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || scene.durationSec)}
+          onLoadedMetadata={(e) =>
+            setDuration(e.currentTarget.duration || scene.durationSec)
+          }
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onEnded={onEnded}
@@ -192,7 +223,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         />
         {subtitleNode}
 
-        {/* scrub */}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-3 pb-2 pt-8">
           <input
             type="range"
@@ -217,7 +247,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         </div>
       </div>
 
-      {/* transport */}
       <div className="flex flex-wrap items-center gap-2">
         <Button
           type="button"
@@ -256,9 +285,16 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         <Button type="button" variant="secondary" onClick={toggleFullscreen}>
           <Maximize className="h-4 w-4" />
         </Button>
+        {next && (
+          <Button asChild variant="soft">
+            <Link to="/app/scenes/$id" params={{ id: next.id }}>
+              <SkipForward className="h-4 w-4" />
+              Next scene
+            </Link>
+          </Button>
+        )}
       </div>
 
-      {/* captions + speed */}
       <div className="surface-card pad-mode space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
@@ -315,7 +351,6 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
         </div>
       </div>
 
-      {/* active line + dual hear */}
       {activeLine && (
         <div className="focus-stage pad-mode space-y-3">
           <div className="flex flex-wrap gap-2">
@@ -337,34 +372,21 @@ export function ScenePlayer({ scene, largeTargets }: Props) {
             {activeLine.english}
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => void hearLine("n")}
-            >
+            <Button type="button" variant="primary" onClick={() => void hearLine("n")}>
               <Volume2 className="h-4 w-4" />
               Hear Narragansett
             </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => void hearLine("e")}
-            >
+            <Button type="button" variant="secondary" onClick={() => void hearLine("e")}>
               <Languages className="h-4 w-4" />
               Hear English
             </Button>
-            <Button
-              type="button"
-              variant="soft"
-              onClick={() => void hearLine("both")}
-            >
+            <Button type="button" variant="soft" onClick={() => void hearLine("both")}>
               Hear both
             </Button>
           </div>
         </div>
       )}
 
-      {/* transcript */}
       <section className="space-y-2">
         <h2 className="font-display text-title">Dialogue</h2>
         <ul className="space-y-2">
