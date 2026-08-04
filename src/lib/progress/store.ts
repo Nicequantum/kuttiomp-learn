@@ -12,29 +12,38 @@ type ProgressState = {
   heardIds: string[];
   practicedIds: string[];
   completedPaths: string[];
+  completedScenes: string[];
   wordProgress: Record<string, WordProgress>;
-  /** Last word opened in listen/focus — resume support */
   lastListenWordId: string | null;
   lastListenIndex: number;
+  lastSceneId: string | null;
   markHeard: (id: string) => void;
   markRevealed: (id: string) => void;
   markPracticed: (id: string) => void;
   setListenCursor: (wordId: string, index: number) => void;
   completePath: (pathId: string) => void;
+  completeScene: (sceneId: string) => void;
+  setLastScene: (sceneId: string) => void;
   clearDemoProgress: () => void;
   stats: () => {
     heard: number;
     practiced: number;
     paths: number;
+    scenes: number;
     stage: number;
   };
 };
 
-function stageFromCounts(heard: number, practiced: number, paths: number) {
-  if (practiced >= 80 || paths >= 6) return 4;
-  if (practiced >= 40 || paths >= 4) return 3;
-  if (practiced >= 15 || paths >= 2) return 2;
-  if (heard >= 5 || practiced >= 3) return 1;
+function stageFromCounts(
+  heard: number,
+  practiced: number,
+  paths: number,
+  scenes: number,
+) {
+  if (practiced >= 80 || paths >= 6 || scenes >= 6) return 4;
+  if (practiced >= 40 || paths >= 4 || scenes >= 4) return 3;
+  if (practiced >= 15 || paths >= 2 || scenes >= 2) return 2;
+  if (heard >= 5 || practiced >= 3 || scenes >= 1) return 1;
   return 1;
 }
 
@@ -44,9 +53,11 @@ export const useProgressStore = create<ProgressState>()(
       heardIds: [],
       practicedIds: [],
       completedPaths: [],
+      completedScenes: [],
       wordProgress: {},
       lastListenWordId: null,
       lastListenIndex: 0,
+      lastSceneId: null,
       markHeard: (id) =>
         set((s) => {
           const prev = s.wordProgress[id] ?? {
@@ -118,29 +129,40 @@ export const useProgressStore = create<ProgressState>()(
             ? s.completedPaths
             : [...s.completedPaths, pathId],
         })),
+      completeScene: (sceneId) =>
+        set((s) => ({
+          completedScenes: s.completedScenes.includes(sceneId)
+            ? s.completedScenes
+            : [...s.completedScenes, sceneId],
+          lastSceneId: sceneId,
+        })),
+      setLastScene: (sceneId) => set({ lastSceneId: sceneId }),
       clearDemoProgress: () =>
         set({
           heardIds: [],
           practicedIds: [],
           completedPaths: [],
+          completedScenes: [],
           wordProgress: {},
           lastListenWordId: null,
           lastListenIndex: 0,
+          lastSceneId: null,
         }),
       stats: () => {
         const s = get();
+        const heard = s.heardIds.length;
+        const practiced = s.practicedIds.length;
+        const paths = s.completedPaths.length;
+        const scenes = s.completedScenes.length;
         return {
-          heard: s.heardIds.length,
-          practiced: s.practicedIds.length,
-          paths: s.completedPaths.length,
-          stage: stageFromCounts(
-            s.heardIds.length,
-            s.practicedIds.length,
-            s.completedPaths.length,
-          ),
+          heard,
+          practiced,
+          paths,
+          scenes,
+          stage: stageFromCounts(heard, practiced, paths, scenes),
         };
       },
     }),
-    { name: "kuttiomp-learn-progress" },
+    { name: "kuttiomp-progress-v2" },
   ),
 );

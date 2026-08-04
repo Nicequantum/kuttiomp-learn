@@ -62,6 +62,21 @@ function HomePage() {
 
       <OrthographyGuide compact />
 
+      
+      <Link
+        to="/app/scenes"
+        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+      >
+        <div>
+          <p className="label-eyebrow">Video learning</p>
+          <p className="font-display text-title">Scenes</p>
+          <p className="text-sm text-[var(--color-muted)]">
+            Reconstructed dialogues · dual subtitles · line-by-line
+          </p>
+        </div>
+        <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
+      </Link>
+
       <Link
         to="/app/key"
         className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"

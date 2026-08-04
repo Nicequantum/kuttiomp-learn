@@ -1,37 +1,37 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, Home, Route, UserRound, Volume2 } from "lucide-react";
+import { BookOpen, Clapperboard, Home, UserRound, Volume2 } from "lucide-react";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
 import { APP_NAME } from "@/lib/content/config";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { key: "home", to: "/app", icon: Home, match: (p: string) => p === "/app" },
+  { key: "home" as const, to: "/app", icon: Home, match: (p: string) => p === "/app" },
   {
-    key: "listen",
+    key: "scenes" as const,
+    to: "/app/scenes",
+    icon: Clapperboard,
+    match: (p: string) => p.startsWith("/app/scenes"),
+  },
+  {
+    key: "listen" as const,
     to: "/app/listen",
     icon: Volume2,
     match: (p: string) => p.startsWith("/app/listen"),
   },
   {
-    key: "words",
+    key: "words" as const,
     to: "/app/words",
     icon: BookOpen,
     match: (p: string) => p.startsWith("/app/words"),
   },
   {
-    key: "paths",
-    to: "/app/paths",
-    icon: Route,
-    match: (p: string) => p.startsWith("/app/paths"),
-  },
-  {
-    key: "profile",
+    key: "profile" as const,
     to: "/app/profile",
     icon: UserRound,
     match: (p: string) => p.startsWith("/app/profile"),
   },
-] as const;
+];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
