@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Upload } from "lucide-react";
 import { MODE_LIST, MODES, type LearningMode } from "@/lib/mode/modes";
 import { useModeStore } from "@/lib/mode/store";
 import { useProgressStore } from "@/lib/progress/store";
@@ -70,6 +70,23 @@ function ProfilePage() {
         </p>
         <Link to="/app/guide" className="mt-3 inline-flex min-h-[var(--mode-target)] items-center font-medium text-[var(--color-primary)] underline-offset-4 hover:underline">
           Open reading guide
+        </Link>
+      </section>
+
+      <section className="surface-card pad-mode">
+        <p className="font-medium inline-flex items-center gap-2">
+          <Upload className="h-4 w-4 text-[var(--color-primary)]" aria-hidden />
+          Community media
+        </p>
+        <p className="mt-1 text-sm text-[var(--color-muted)] leading-relaxed">
+          Drop-in MP4 paths for Scenes, Full Day acts, and Stories. Community
+          files always win over reconstructions when present.
+        </p>
+        <Link
+          to="/app/media"
+          className="mt-3 inline-flex min-h-[var(--mode-target)] items-center font-medium text-[var(--color-primary)] underline-offset-4 hover:underline"
+        >
+          Open media catalog
         </Link>
       </section>
 

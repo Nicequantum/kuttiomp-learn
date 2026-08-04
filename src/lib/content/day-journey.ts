@@ -6,6 +6,7 @@ import {
   type DayAct,
   type DayActId,
 } from "./day-journey-data";
+import { resolveCommunityMedia } from "@/lib/media/community-media";
 
 export type { DayAct, DayActId } from "./day-journey-data";
 export { DAY_JOURNEY, DAY_ACTS } from "./day-journey-data";
@@ -74,21 +75,11 @@ export function getDayJourneyStats(mode?: LearningModeId | null) {
 export async function resolveDayActVideoSrc(
   act: DayAct,
 ): Promise<{ src: string; fromUpload: boolean }> {
-  if (typeof window === "undefined") {
-    return { src: act.videoSrc, fromUpload: false };
-  }
-  try {
-    const res = await fetch(act.uploadSrc, { method: "HEAD" });
-    if (res.ok) {
-      const len = res.headers.get("content-length");
-      if (!len || Number(len) > 10_000) {
-        return { src: act.uploadSrc, fromUpload: true };
-      }
-    }
-  } catch {
-    /* default */
-  }
-  return { src: act.videoSrc, fromUpload: false };
+  const r = await resolveCommunityMedia({
+    packagedSrc: act.videoSrc,
+    uploadSrc: act.uploadSrc,
+  });
+  return { src: r.src, fromUpload: r.fromUpload };
 }
 
 /** Convert a DayAct into a LearningScene-shaped object for ScenePlayer reuse */

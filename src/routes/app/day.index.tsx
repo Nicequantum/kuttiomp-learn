@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play, Sun, CheckCircle2, ArrowRight } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { VideoProductGuide } from "@/components/content/VideoProductGuide";
 import { Badge } from "@/components/ui/badge";
 import {
   DAY_JOURNEY,
@@ -34,15 +35,23 @@ function DayJourneyIndexPage() {
     <div className="space-y-6">
       <header className="space-y-2">
         <p className="label-eyebrow text-[var(--color-primary)]">
-          Life-cycle path
+          Full Day · acts you advance
         </p>
         <h1 className="font-display text-display">{DAY_JOURNEY.title}</h1>
         <p className="text-content text-[var(--color-muted)] leading-relaxed">
-          {DAY_JOURNEY.subtitle}. {DAY_JOURNEY.summary}
+          {DAY_JOURNEY.subtitle}. {DAY_JOURNEY.summary} This is{" "}
+          <strong className="text-[var(--color-fg)]">not</strong> the continuous
+          long story — for one end-to-end film, open{" "}
+          <Link to="/app/stories" className="text-[var(--color-primary)]">
+            Stories
+          </Link>
+          .
         </p>
       </header>
 
       <HistoricalBanner compact />
+
+      <VideoProductGuide active="day" compact />
 
       <div className="surface-card pad-mode space-y-3">
         <div className="flex items-start gap-3">
@@ -52,16 +61,16 @@ function DayJourneyIndexPage() {
               <strong className="text-[var(--color-fg)]">
                 ~{stats.filmMin} minutes of film
               </strong>{" "}
-              across {stats.actCount} acts ·{" "}
+              ({stats.filmSec}s packaged across {stats.actCount} acts) ·{" "}
               <strong className="text-[var(--color-fg)]">
-                ~{stats.practiceMin} minutes of practice
+                ~{stats.practiceMin} minutes of Learn practice
               </strong>{" "}
-              with Narragansett speech · {stats.lines} lines from many Williams
-              chapters.
+              · {stats.lines} language lines · Host + Guest speakers throughout.
             </p>
             <p>
-              Each AI shot is ≤12s; acts are stitched into multi-minute films.
-              Your uploads can replace any act with real 10–30+ minute footage.
+              Film length is the stitched act file. Practice length is the
+              line-paced Learn window (may be longer). You advance each act
+              yourself. Community uploads can replace any act file when ready.
             </p>
             <p className="text-[var(--color-subtle)]">
               Living ceremony is not staged here — evening is discourse/news
@@ -120,7 +129,6 @@ function DayJourneyIndexPage() {
         </Link>
       )}
 
-      {/* Timeline */}
       <ol className="relative space-y-0 border-l border-[var(--color-border)] pl-4">
         {acts.map((act, i) => {
           const done = completed.includes(act.id);
@@ -156,7 +164,10 @@ function DayJourneyIndexPage() {
                     </p>
                     <div className="flex flex-wrap gap-1.5 pt-0.5">
                       <Badge tone="neutral">
-                        ~{Math.round(act.durationSec / 60)} min film
+                        {act.durationSec}s film
+                      </Badge>
+                      <Badge tone="neutral">
+                        {act.practiceSec}s practice
                       </Badge>
                       <Badge tone="neutral">{act.lines.length} lines</Badge>
                       {done && <Badge tone="land">Done</Badge>}
@@ -175,9 +186,13 @@ function DayJourneyIndexPage() {
       </ol>
 
       <p className="text-sm text-[var(--color-subtle)] leading-relaxed">
-        Prefer short lessons?{" "}
+        Prefer short chapter drills?{" "}
         <Link to="/app/scenes" className="text-[var(--color-primary)]">
-          Open individual Scenes
+          Open Scenes
+        </Link>
+        . Prefer one continuous film?{" "}
+        <Link to="/app/stories" className="text-[var(--color-primary)]">
+          Open Stories
         </Link>
         .
       </p>

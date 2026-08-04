@@ -14,11 +14,14 @@ type ProgressState = {
   completedPaths: string[];
   completedScenes: string[];
   completedDayActs: string[];
+  completedStories: string[];
   wordProgress: Record<string, WordProgress>;
   lastListenWordId: string | null;
   lastListenIndex: number;
   lastSceneId: string | null;
   lastDayActId: string | null;
+  lastStoryId: string | null;
+  lastStoryPositionSec: number;
   markHeard: (id: string) => void;
   markRevealed: (id: string) => void;
   markPracticed: (id: string) => void;
@@ -26,8 +29,11 @@ type ProgressState = {
   completePath: (pathId: string) => void;
   completeScene: (sceneId: string) => void;
   completeDayAct: (actId: string) => void;
+  completeStory: (storyId: string) => void;
   setLastScene: (sceneId: string) => void;
   setLastDayAct: (actId: string) => void;
+  setStoryPosition: (storyId: string, sec: number) => void;
+  clearStoryPosition: (storyId?: string) => void;
   clearDemoProgress: () => void;
   stats: () => {
     heard: number;
@@ -35,6 +41,7 @@ type ProgressState = {
     paths: number;
     scenes: number;
     dayActs: number;
+    stories: number;
     stage: number;
   };
 };
@@ -45,8 +52,16 @@ function stageFromCounts(
   paths: number,
   scenes: number,
   dayActs: number,
+  stories: number,
 ) {
-  if (practiced >= 80 || paths >= 6 || scenes >= 6 || dayActs >= 8) return 4;
+  if (
+    practiced >= 80 ||
+    paths >= 6 ||
+    scenes >= 6 ||
+    dayActs >= 8 ||
+    stories >= 1
+  )
+    return 4;
   if (practiced >= 40 || paths >= 4 || scenes >= 4 || dayActs >= 5) return 3;
   if (practiced >= 15 || paths >= 2 || scenes >= 2 || dayActs >= 2) return 2;
   if (heard >= 5 || practiced >= 3 || scenes >= 1 || dayActs >= 1) return 1;
@@ -61,11 +76,14 @@ export const useProgressStore = create<ProgressState>()(
       completedPaths: [],
       completedScenes: [],
       completedDayActs: [],
+      completedStories: [],
       wordProgress: {},
       lastListenWordId: null,
       lastListenIndex: 0,
       lastSceneId: null,
       lastDayActId: null,
+      lastStoryId: null,
+      lastStoryPositionSec: 0,
       markHeard: (id) =>
         set((s) => {
           const prev = s.wordProgress[id] ?? {
@@ -151,8 +169,26 @@ export const useProgressStore = create<ProgressState>()(
             : [...s.completedDayActs, actId],
           lastDayActId: actId,
         })),
+      completeStory: (storyId) =>
+        set((s) => ({
+          completedStories: s.completedStories.includes(storyId)
+            ? s.completedStories
+            : [...s.completedStories, storyId],
+          lastStoryId: storyId,
+          lastStoryPositionSec: 0,
+        })),
       setLastScene: (sceneId) => set({ lastSceneId: sceneId }),
       setLastDayAct: (actId) => set({ lastDayActId: actId }),
+      setStoryPosition: (storyId, sec) =>
+        set({
+          lastStoryId: storyId,
+          lastStoryPositionSec: Math.max(0, sec),
+        }),
+      clearStoryPosition: (storyId) =>
+        set((s) => {
+          if (storyId && s.lastStoryId && s.lastStoryId !== storyId) return s;
+          return { lastStoryPositionSec: 0 };
+        }),
       clearDemoProgress: () =>
         set({
           heardIds: [],
@@ -160,11 +196,14 @@ export const useProgressStore = create<ProgressState>()(
           completedPaths: [],
           completedScenes: [],
           completedDayActs: [],
+          completedStories: [],
           wordProgress: {},
           lastListenWordId: null,
           lastListenIndex: 0,
           lastSceneId: null,
           lastDayActId: null,
+          lastStoryId: null,
+          lastStoryPositionSec: 0,
         }),
       stats: () => {
         const s = get();
@@ -173,16 +212,25 @@ export const useProgressStore = create<ProgressState>()(
         const paths = s.completedPaths.length;
         const scenes = s.completedScenes.length;
         const dayActs = s.completedDayActs.length;
+        const stories = s.completedStories.length;
         return {
           heard,
           practiced,
           paths,
           scenes,
           dayActs,
-          stage: stageFromCounts(heard, practiced, paths, scenes, dayActs),
+          stories,
+          stage: stageFromCounts(
+            heard,
+            practiced,
+            paths,
+            scenes,
+            dayActs,
+            stories,
+          ),
         };
       },
     }),
-    { name: "kuttiomp-progress-v3" },
+    { name: "kuttiomp-progress-v4" },
   ),
 );

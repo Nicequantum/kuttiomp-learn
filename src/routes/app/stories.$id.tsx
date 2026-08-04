@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Film } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { VideoProductGuide } from "@/components/content/VideoProductGuide";
 import { ScenePlayer } from "@/components/scenes/ScenePlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/content/long-stories";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
+import { useProgressStore } from "@/lib/progress/store";
 
 export const Route = createFileRoute("/app/stories/$id")({
   component: LongStoryPage,
@@ -22,6 +24,7 @@ function LongStoryPage() {
   const mode = useModeStore((s) => s.mode);
   const story = getLongStoryById(id);
   const large = mode === "elder" || mode === "little_ones";
+  const completed = useProgressStore((s) => s.completedStories.includes(id));
 
   if (!story) {
     return (
@@ -56,7 +59,7 @@ function LongStoryPage() {
       <header className="space-y-2">
         <p className="label-eyebrow inline-flex items-center gap-1.5 text-[var(--color-primary)]">
           <Film className="h-3.5 w-3.5" />
-          Long story narrative
+          Stories · continuous film
         </p>
         <h1 className="font-display text-display">{story.title}</h1>
         <p className="text-content text-[var(--color-muted)] leading-relaxed">
@@ -72,24 +75,24 @@ function LongStoryPage() {
           <Badge tone="neutral">
             {story.chapters.length} Williams chapters
           </Badge>
+          {completed && <Badge tone="land">Watched</Badge>}
         </div>
       </header>
 
       <HistoricalBanner compact />
 
       <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)] leading-relaxed">
-        Press <strong className="text-[var(--color-fg)]">Play full film</strong> —
-        one continuous {formatDuration(story.durationSec)} video of the same Host
-        and Guest from dawn to night. No recycled practice shorts; language lines
-        track as the film runs. Opens fullscreen. Switch to{" "}
-        <strong className="text-[var(--color-fg)]">Learn</strong> only if you want
-        line-by-line practice.
+        <strong className="text-[var(--color-fg)]">Watch</strong> plays the full{" "}
+        {formatDuration(story.durationSec)} film end to end — Host and Guest only,
+        language lines timed to each shot. Your place is saved if you leave.
+        Switch to <strong className="text-[var(--color-fg)]">Learn</strong> for
+        line-by-line practice without forcing continuous autoplay.
       </p>
 
       <ScenePlayer
         scene={scene}
         largeTargets={large}
-        progressKind="scene"
+        progressKind="story"
         defaultPlayMode="watch"
         continuousFilm
         nextNav={null}
@@ -113,6 +116,8 @@ function LongStoryPage() {
           ))}
         </div>
       </section>
+
+      <VideoProductGuide active="stories" compact />
 
       <p className="text-sm leading-relaxed text-[var(--color-subtle)]">
         {story.reconstructionNote}

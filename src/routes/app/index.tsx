@@ -6,12 +6,16 @@ import {
   Volume2,
   Sun,
   Film,
+  Clapperboard,
+  Upload,
 } from "lucide-react";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { MasteryPanel } from "@/components/content/MasteryPanel";
+import { VideoProductGuide } from "@/components/content/VideoProductGuide";
 import { WordCard } from "@/components/content/WordCard";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   getFeaturedWords,
   getPaths,
@@ -42,6 +46,19 @@ function HomePage() {
   const resumeWord = lastId ? getWordById(lastId) : undefined;
   const dayStats = getDayJourneyStats(mode);
   const longStory = getLongStories(mode)[0];
+  const completedStories = useProgressStore((s) => s.completedStories);
+  const lastStoryId = useProgressStore((s) => s.lastStoryId);
+  const lastStoryPositionSec = useProgressStore((s) => s.lastStoryPositionSec);
+  const completedDayActs = useProgressStore((s) => s.completedDayActs);
+  const completedScenes = useProgressStore((s) => s.completedScenes);
+
+  const storyInProgress =
+    longStory &&
+    lastStoryId === longStory.id &&
+    lastStoryPositionSec >= 5 &&
+    !completedStories.includes(longStory.id);
+  const storyDone =
+    longStory && completedStories.includes(longStory.id);
 
   return (
     <div className="space-y-8">
@@ -73,58 +90,125 @@ function HomePage() {
 
       <OrthographyGuide compact />
 
-      {longStory && (
+      <section className="space-y-3">
+        <div className="flex items-end justify-between gap-2">
+          <h2 className="font-display text-title">Video learning</h2>
+          <p className="text-xs text-[var(--color-subtle)]">
+            Three surfaces · different jobs
+          </p>
+        </div>
+
+        {longStory && (
+          <Link
+            to="/app/stories/$id"
+            params={{ id: longStory.id }}
+            className="focus-stage pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+          >
+            <div className="flex gap-3 min-w-0">
+              <Film className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+              <div className="min-w-0">
+                <p className="label-eyebrow">Stories · continuous film</p>
+                <p className="font-display text-title">{longStory.title}</p>
+                <p className="text-sm text-[var(--color-muted)]">
+                  {formatDuration(longStory.durationSec)} one file ·{" "}
+                  {longStory.lines.length} language lines · Host + Guest · dawn
+                  to night
+                </p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {storyInProgress && (
+                    <Badge tone="neutral">
+                      In progress ·{" "}
+                      {Math.floor(lastStoryPositionSec / 60)}:
+                      {String(Math.floor(lastStoryPositionSec % 60)).padStart(
+                        2,
+                        "0",
+                      )}
+                    </Badge>
+                  )}
+                  {storyDone && <Badge tone="land">Watched</Badge>}
+                  {!storyInProgress && !storyDone && (
+                    <Badge tone="land">Play end to end</Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+            <ArrowRight
+              className="h-5 w-5 shrink-0 text-[var(--color-subtle)]"
+              aria-hidden
+            />
+          </Link>
+        )}
+
         <Link
-          to="/app/stories/$id"
-          params={{ id: longStory.id }}
-          className="focus-stage pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+          to="/app/day"
+          className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
         >
-          <div className="flex gap-3">
-            <Film className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
-            <div>
-              <p className="label-eyebrow">Long story narrative · short movie</p>
-              <p className="font-display text-title">{longStory.title}</p>
+          <div className="flex gap-3 min-w-0">
+            <Sun className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+            <div className="min-w-0">
+              <p className="label-eyebrow">Full Day · acts you advance</p>
+              <p className="font-display text-title">A full day</p>
               <p className="text-sm text-[var(--color-muted)]">
-                {formatDuration(longStory.durationSec)} continuous film ·{" "}
-                {longStory.lines.length} language lines · dawn to night · one
-                video
+                ~{dayStats.filmMin} min across {dayStats.actCount} separate acts
+                — not one continuous story file
+              </p>
+              <p className="mt-1 text-xs tabular-nums text-[var(--color-subtle)]">
+                {completedDayActs.length} acts marked
               </p>
             </div>
           </div>
-          <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
+          <ArrowRight
+            className="h-5 w-5 shrink-0 text-[var(--color-subtle)]"
+            aria-hidden
+          />
         </Link>
-      )}
 
-      <Link
-        to="/app/day"
-        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
-      >
-        <div className="flex gap-3">
-          <Sun className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
-          <div>
-            <p className="label-eyebrow">Life-cycle acts</p>
-            <p className="font-display text-title">A full day</p>
-            <p className="text-sm text-[var(--color-muted)]">
-              ~{dayStats.filmMin} min across {dayStats.actCount} shorter acts
-            </p>
+        <Link
+          to="/app/scenes"
+          className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+        >
+          <div className="flex gap-3 min-w-0">
+            <Clapperboard className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+            <div className="min-w-0">
+              <p className="label-eyebrow">Scenes · short practice</p>
+              <p className="font-display text-title">Scenes</p>
+              <p className="text-sm text-[var(--color-muted)]">
+                Short reconstructed clips · dual tracks · line-by-line Learn
+              </p>
+              <p className="mt-1 text-xs tabular-nums text-[var(--color-subtle)]">
+                {completedScenes.length} short scenes marked
+              </p>
+            </div>
           </div>
-        </div>
-        <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
-      </Link>
+          <ArrowRight
+            className="h-5 w-5 shrink-0 text-[var(--color-subtle)]"
+            aria-hidden
+          />
+        </Link>
 
-      <Link
-        to="/app/scenes"
-        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
-      >
-        <div>
-          <p className="label-eyebrow">Video learning</p>
-          <p className="font-display text-title">Scenes</p>
-          <p className="text-sm text-[var(--color-muted)]">
-            Short reconstructed scenes · dual tracks · line-by-line
-          </p>
-        </div>
-        <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
-      </Link>
+        <VideoProductGuide compact />
+
+        <Link
+          to="/app/media"
+          className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+        >
+          <div className="flex gap-3 min-w-0">
+            <Upload className="mt-1 h-5 w-5 shrink-0 text-[var(--color-primary)]" />
+            <div className="min-w-0">
+              <p className="label-eyebrow">Keepers</p>
+              <p className="font-display text-title">Community media</p>
+              <p className="text-sm text-[var(--color-muted)]">
+                Replace any reconstruction with a real recording — catalog of
+                every slot
+              </p>
+            </div>
+          </div>
+          <ArrowRight
+            className="h-5 w-5 shrink-0 text-[var(--color-subtle)]"
+            aria-hidden
+          />
+        </Link>
+      </section>
 
       <Link
         to="/app/key"

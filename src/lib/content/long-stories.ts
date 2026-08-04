@@ -2,6 +2,7 @@ import { useModeStore } from "@/lib/mode/store";
 import type { LearningModeId } from "./types";
 import { LONG_STORIES, type LongStory } from "./long-stories-data";
 import type { LearningScene } from "./scenes-data";
+import { resolveCommunityMedia } from "@/lib/media/community-media";
 
 export type { LongStory } from "./long-stories-data";
 export { LONG_STORIES } from "./long-stories-data";
@@ -16,7 +17,8 @@ function currentMode(): LearningModeId | null {
 
 export function getLongStories(mode?: LearningModeId | null): LongStory[] {
   const m = mode === undefined ? currentMode() : mode;
-  if (!m) return LONG_STORIES.filter((s) => s.modesAllowed.includes("core_adult"));
+  if (!m)
+    return LONG_STORIES.filter((s) => s.modesAllowed.includes("core_adult"));
   return LONG_STORIES.filter((s) => s.modesAllowed.includes(m));
 }
 
@@ -32,21 +34,11 @@ export function getLongStoryById(id: string): LongStory | undefined {
 export async function resolveLongStoryVideoSrc(
   story: LongStory,
 ): Promise<{ src: string; fromUpload: boolean }> {
-  if (typeof window === "undefined") {
-    return { src: story.videoSrc, fromUpload: false };
-  }
-  try {
-    const res = await fetch(story.uploadSrc, { method: "HEAD" });
-    if (res.ok) {
-      const len = res.headers.get("content-length");
-      if (!len || Number(len) > 10_000) {
-        return { src: story.uploadSrc, fromUpload: true };
-      }
-    }
-  } catch {
-    /* default */
-  }
-  return { src: story.videoSrc, fromUpload: false };
+  const r = await resolveCommunityMedia({
+    packagedSrc: story.videoSrc,
+    uploadSrc: story.uploadSrc,
+  });
+  return { src: r.src, fromUpload: r.fromUpload };
 }
 
 export function longStoryAsScene(story: LongStory): LearningScene {
@@ -63,7 +55,7 @@ export function longStoryAsScene(story: LongStory): LearningScene {
     videoSrc: story.videoSrc,
     posterSrc: story.posterSrc,
     uploadSrc: story.uploadSrc,
-    durationSec: story.practiceSec,
+    durationSec: story.durationSec,
     lines: story.lines,
     reconstructionNote: story.reconstructionNote,
     tags: ["long-story", "narrative"],

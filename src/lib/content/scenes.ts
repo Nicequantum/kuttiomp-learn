@@ -1,6 +1,7 @@
 import { useModeStore } from "@/lib/mode/store";
 import type { LearningModeId } from "./types";
 import { SCENES, type LearningScene } from "./scenes-data";
+import { resolveCommunityMedia } from "@/lib/media/community-media";
 
 export type {
   LearningScene,
@@ -124,25 +125,15 @@ export function getRecommendedScene(
 }
 
 /**
- * Prefer community upload when the browser can load it; fall back to packaged video.
+ * Prefer community upload when the browser can load a real video file.
  * Call from client components only.
  */
 export async function resolveSceneVideoSrc(
   scene: LearningScene,
 ): Promise<{ src: string; fromUpload: boolean }> {
-  if (typeof window === "undefined") {
-    return { src: scene.videoSrc, fromUpload: false };
-  }
-  try {
-    const res = await fetch(scene.uploadSrc, { method: "HEAD" });
-    if (res.ok) {
-      const len = res.headers.get("content-length");
-      if (!len || Number(len) > 10_000) {
-        return { src: scene.uploadSrc, fromUpload: true };
-      }
-    }
-  } catch {
-    /* use default */
-  }
-  return { src: scene.videoSrc, fromUpload: false };
+  const r = await resolveCommunityMedia({
+    packagedSrc: scene.videoSrc,
+    uploadSrc: scene.uploadSrc,
+  });
+  return { src: r.src, fromUpload: r.fromUpload };
 }

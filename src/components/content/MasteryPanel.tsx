@@ -7,14 +7,8 @@ export function MasteryPanel() {
   const paths = useProgressStore((s) => s.completedPaths.length);
   const scenes = useProgressStore((s) => s.completedScenes.length);
   const dayActs = useProgressStore((s) => s.completedDayActs.length);
-  const stageNum =
-    practiced >= 80 || paths >= 6 || scenes >= 6 || dayActs >= 8
-      ? 4
-      : practiced >= 40 || paths >= 4 || scenes >= 4 || dayActs >= 5
-        ? 3
-        : practiced >= 15 || paths >= 2 || scenes >= 2 || dayActs >= 2
-          ? 2
-          : 1;
+  const stories = useProgressStore((s) => s.completedStories.length);
+  const stageNum = useProgressStore((s) => s.stats().stage);
   const stage = getStage(stageNum) ?? getStages()[0];
   const stages = getStages();
 
@@ -58,7 +52,7 @@ export function MasteryPanel() {
         ))}
       </div>
 
-      <dl className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-5">
+      <dl className="mt-4 grid grid-cols-2 gap-3 text-center sm:grid-cols-3 lg:grid-cols-6">
         <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
           <dt className="text-xs text-[var(--color-subtle)]">Heard</dt>
           <dd className="mt-1 font-display text-xl tabular-nums">{heard}</dd>
@@ -76,6 +70,10 @@ export function MasteryPanel() {
         <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
           <dt className="text-xs text-[var(--color-subtle)]">Day acts</dt>
           <dd className="mt-1 font-display text-xl tabular-nums">{dayActs}</dd>
+        </div>
+        <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
+          <dt className="text-xs text-[var(--color-subtle)]">Stories</dt>
+          <dd className="mt-1 font-display text-xl tabular-nums">{stories}</dd>
         </div>
         <div className="rounded-mode bg-[color-mix(in_oklab,var(--color-fg)_4%,transparent)] px-2 py-3">
           <dt className="text-xs text-[var(--color-subtle)]">Paths</dt>

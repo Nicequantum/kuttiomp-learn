@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload } from "lucide-react";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { VideoProductGuide } from "@/components/content/VideoProductGuide";
 
 export const Route = createFileRoute("/app/guide")({
   component: GuidePage,
@@ -28,6 +29,24 @@ function GuidePage() {
       </header>
 
       <HistoricalBanner />
+
+      <VideoProductGuide />
+
+      <Link
+        to="/app/media"
+        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+      >
+        <div className="flex gap-3">
+          <Upload className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]" />
+          <div>
+            <p className="font-medium">Community media</p>
+            <p className="text-sm text-[var(--color-muted)]">
+              How Keepers replace reconstructions with real recordings — full
+              slot catalog and live file check.
+            </p>
+          </div>
+        </div>
+      </Link>
 
       <OrthographyGuide />
     </div>

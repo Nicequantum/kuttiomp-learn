@@ -1,5 +1,11 @@
-Drop community scene videos here as {scene-id}.mp4
-Example: greeting-dawn.mp4, earth-fruits.mp4, wampum-count.mp4
+Community short-scene videos — drop {scene-id}.mp4 here.
 
-The player prefers these over packaged reconstructions.
-See docs/SCENES_UPLOAD.md for the full id list and timing notes.
+Examples:
+  greeting-dawn.mp4
+  meal-share.mp4
+  wampum-count.mp4
+
+The player prefers these over packaged reconstructions when the file is a real
+video (not an HTML fallback).
+
+Full list + Day/Story paths: open App → Community media, or docs/COMMUNITY_MEDIA.md

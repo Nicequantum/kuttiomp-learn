@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Clapperboard, Film, Play, Upload, CheckCircle2, Sun } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { VideoProductGuide } from "@/components/content/VideoProductGuide";
 import { Badge } from "@/components/ui/badge";
 import {
   getScenesForMode,
@@ -54,24 +55,30 @@ function ScenesIndexPage() {
     <div className="space-y-6">
       <header className="space-y-2">
         <p className="label-eyebrow text-[var(--color-primary)]">
-          Live video learning
+          Scenes · short practice
         </p>
         <h1 className="font-display text-display">Scenes</h1>
         <p className="text-content text-[var(--color-muted)] leading-relaxed">
-          Short practice clips:{" "}
+          Short chapter drills:{" "}
           <strong className="text-[var(--color-fg)]">hear Narragansett</strong>,{" "}
-          <strong className="text-[var(--color-fg)]">read English</strong> — then
-          toggle either track. Full-length film lives under{" "}
+          <strong className="text-[var(--color-fg)]">read English</strong> —
+          then toggle either track. These are not the continuous long film (
           <Link to="/app/stories" className="text-[var(--color-primary)]">
             Stories
           </Link>
-          .
+          ) and not the multi-act day path (
+          <Link to="/app/day" className="text-[var(--color-primary)]">
+            Full Day
+          </Link>
+          ).
         </p>
         <p className="text-sm text-[var(--color-subtle)]">
-          {list.length} of {scenes.length} short scenes in this mode · path ordered by
-          chapter
+          {list.length} of {scenes.length} short scenes in this mode · path
+          ordered by chapter
         </p>
       </header>
+
+      <VideoProductGuide active="scenes" compact />
 
       {longStory && (
         <Link
@@ -82,11 +89,11 @@ function ScenesIndexPage() {
           <div className="flex gap-3">
             <Film className="mt-0.5 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
             <div>
-              <p className="label-eyebrow">Long story narrative</p>
+              <p className="label-eyebrow">Want the continuous film?</p>
               <p className="font-display text-title">{longStory.title}</p>
               <p className="text-sm text-[var(--color-muted)]">
-                {formatDuration(longStory.durationSec)} continuous film ·{" "}
-                {longStory.lines.length} language lines · one file
+                {formatDuration(longStory.durationSec)} · one file ·{" "}
+                {longStory.lines.length} language lines
               </p>
             </div>
           </div>
@@ -101,24 +108,41 @@ function ScenesIndexPage() {
         <div className="flex gap-3">
           <Sun className="mt-0.5 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
           <div>
-            <p className="label-eyebrow">Multi-minute acts</p>
+            <p className="label-eyebrow">Want the multi-act day path?</p>
             <p className="font-display text-title">A full day</p>
             <p className="text-sm text-[var(--color-muted)]">
-              ~{dayStats.filmMin} min film · {dayStats.actCount} acts · dawn →
-              night life cycle
+              ~{dayStats.filmMin} min · {dayStats.actCount} acts you advance
             </p>
           </div>
         </div>
         <Play className="h-6 w-6 shrink-0 text-[var(--color-primary)]" />
       </Link>
 
+      <Link
+        to="/app/media"
+        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
+      >
+        <div className="flex gap-3">
+          <Upload className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]" />
+          <div>
+            <p className="label-eyebrow">Keepers</p>
+            <p className="font-display text-title">Replace with community media</p>
+            <p className="text-sm text-[var(--color-muted)]">
+              Drop-in MP4 paths · live catalog · preferred when present
+            </p>
+          </div>
+        </div>
+      </Link>
+
       <HistoricalBanner compact />
 
       <div className="surface-card pad-mode space-y-2">
         <div className="flex items-center justify-between gap-2 text-sm">
-          <span className="font-medium text-[var(--color-fg)]">Your path</span>
+          <span className="font-medium text-[var(--color-fg)]">
+            Short scenes path
+          </span>
           <span className="tabular-nums text-[var(--color-muted)]">
-            {doneCount} of {scenes.length} watched · {pathPct}%
+            {doneCount} of {scenes.length} · {pathPct}%
           </span>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-[color-mix(in_oklab,var(--color-fg)_10%,transparent)]">
@@ -133,9 +157,13 @@ function ScenesIndexPage() {
         <Clapperboard className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]" />
         <p>
           Play opens fullscreen. Controls auto-hide so the picture stays clear.
-          Drop files named by scene id into{" "}
-          <code className="text-[var(--color-fg)]">uploads/</code> to replace
-          any reconstruction.
+          Community files go in{" "}
+          <code className="text-[var(--color-fg)]">public/scenes/uploads/</code>
+          {" "}— see the{" "}
+          <Link to="/app/media" className="text-[var(--color-primary)]">
+            media catalog
+          </Link>
+          .
         </p>
       </div>
 

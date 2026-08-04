@@ -18,6 +18,7 @@ import { Route as AppDayRouteImport } from './routes/app/day'
 import { Route as AppGuideRouteImport } from './routes/app/guide'
 import { Route as AppKeyRouteImport } from './routes/app/key'
 import { Route as AppListenRouteImport } from './routes/app/listen'
+import { Route as AppMediaRouteImport } from './routes/app/media'
 import { Route as AppPathsRouteImport } from './routes/app/paths'
 import { Route as AppProfileRouteImport } from './routes/app/profile'
 import { Route as AppScenesRouteImport } from './routes/app/scenes'
@@ -77,6 +78,11 @@ const AppKeyRoute = AppKeyRouteImport.update({
 const AppListenRoute = AppListenRouteImport.update({
   id: '/listen',
   path: '/listen',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMediaRoute = AppMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPathsRoute = AppPathsRouteImport.update({
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/app/guide': typeof AppGuideRoute
   '/app/key': typeof AppKeyRoute
   '/app/listen': typeof AppListenRoute
+  '/app/media': typeof AppMediaRoute
   '/app/paths': typeof AppPathsRouteWithChildren
   '/app/profile': typeof AppProfileRoute
   '/app/scenes': typeof AppScenesRouteWithChildren
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/app/guide': typeof AppGuideRoute
   '/app/key': typeof AppKeyRoute
   '/app/listen': typeof AppListenRoute
+  '/app/media': typeof AppMediaRoute
   '/app/profile': typeof AppProfileRoute
   '/app': typeof AppIndexRoute
   '/app/day/$actId': typeof AppDayActIdRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/app/guide': typeof AppGuideRoute
   '/app/key': typeof AppKeyRoute
   '/app/listen': typeof AppListenRoute
+  '/app/media': typeof AppMediaRoute
   '/app/paths': typeof AppPathsRouteWithChildren
   '/app/profile': typeof AppProfileRoute
   '/app/scenes': typeof AppScenesRouteWithChildren
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/app/guide'
     | '/app/key'
     | '/app/listen'
+    | '/app/media'
     | '/app/paths'
     | '/app/profile'
     | '/app/scenes'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/app/guide'
     | '/app/key'
     | '/app/listen'
+    | '/app/media'
     | '/app/profile'
     | '/app'
     | '/app/day/$actId'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/app/guide'
     | '/app/key'
     | '/app/listen'
+    | '/app/media'
     | '/app/paths'
     | '/app/profile'
     | '/app/scenes'
@@ -373,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/listen'
       fullPath: '/app/listen'
       preLoaderRoute: typeof AppListenRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/media': {
+      id: '/app/media'
+      path: '/media'
+      fullPath: '/app/media'
+      preLoaderRoute: typeof AppMediaRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/paths': {
@@ -557,6 +576,7 @@ interface AppRouteChildren {
   AppGuideRoute: typeof AppGuideRoute
   AppKeyRoute: typeof AppKeyRoute
   AppListenRoute: typeof AppListenRoute
+  AppMediaRoute: typeof AppMediaRoute
   AppPathsRoute: typeof AppPathsRouteWithChildren
   AppProfileRoute: typeof AppProfileRoute
   AppScenesRoute: typeof AppScenesRouteWithChildren
@@ -570,6 +590,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGuideRoute: AppGuideRoute,
   AppKeyRoute: AppKeyRoute,
   AppListenRoute: AppListenRoute,
+  AppMediaRoute: AppMediaRoute,
   AppPathsRoute: AppPathsRouteWithChildren,
   AppProfileRoute: AppProfileRoute,
   AppScenesRoute: AppScenesRouteWithChildren,

@@ -1,0 +1,2817 @@
+{
+  "filmId": "one-day-story",
+  "title": "One day",
+  "version": "v4.1-continuous",
+  "durationSec": 1511.87,
+  "targetDurationSec": 1512,
+  "aspect": "9:16",
+  "resolution": {
+    "width": 480,
+    "height": 720
+  },
+  "fps": 24,
+  "shotDurationSec": 12,
+  "shotCount": 126,
+  "videoPath": "export/one-day-story.mp4",
+  "posterPath": "export/one-day-story.jpg",
+  "castLock": [
+    "host",
+    "guest",
+    "both",
+    "nature"
+  ],
+  "speakersAllowed": [
+    "Host",
+    "Guest",
+    "Both"
+  ],
+  "playbackContract": {
+    "modeDefault": "watch",
+    "continuousRequired": true,
+    "learnModeIndependent": true,
+    "resumePositionRequired": true,
+    "seekByShot": true,
+    "ttsMustNotBlockVideoClock": true,
+    "ambientDefault": false,
+    "fullscreenOnPlay": true,
+    "stallRecovery": "resume-same-position",
+    "endBehavior": "natural-end-mark-complete",
+    "errorUiRequired": true,
+    "progressStoreKeys": [
+      "lastStoryId",
+      "lastStoryPositionSec",
+      "completedStories"
+    ]
+  },
+  "lineCountMerged": 114,
+  "lines": [
+    {
+      "id": "L001",
+      "speaker": "Host",
+      "narragansett": "Páshisha",
+      "english": "It is sunrise.",
+      "startSec": 0,
+      "endSec": 12,
+      "shotIds": [
+        "S000"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L002",
+      "speaker": "Host",
+      "narragansett": "Mautàbon, Chicháuquat wompan",
+      "english": "It is day.",
+      "startSec": 12,
+      "endSec": 24,
+      "shotIds": [
+        "S001"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L003",
+      "speaker": "Host",
+      "narragansett": "Wetu",
+      "english": "A house / dwelling.",
+      "startSec": 24,
+      "endSec": 36,
+      "shotIds": [
+        "S002"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L004",
+      "speaker": "Host",
+      "narragansett": "Wetuômuck",
+      "english": "At home.",
+      "startSec": 36,
+      "endSec": 48,
+      "shotIds": [
+        "S003"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L005",
+      "speaker": "Host",
+      "narragansett": "Tokêtuck",
+      "english": "Let us wake.",
+      "startSec": 48,
+      "endSec": 72,
+      "shotIds": [
+        "S004",
+        "S005"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L006",
+      "speaker": "Host",
+      "narragansett": "Nkàtaquaum",
+      "english": "I am sleepy.",
+      "startSec": 72,
+      "endSec": 84,
+      "shotIds": [
+        "S006"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L007",
+      "speaker": "Host",
+      "narragansett": "Wuddtúckqunash, ponamáuta",
+      "english": "Let us lay on wood.",
+      "startSec": 84,
+      "endSec": 96,
+      "shotIds": [
+        "S007"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L008",
+      "speaker": "Host",
+      "narragansett": "Nummáttaqúaw",
+      "english": "Morning (before noon).",
+      "startSec": 96,
+      "endSec": 108,
+      "shotIds": [
+        "S008"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L009",
+      "speaker": "Host",
+      "narragansett": "Wunnégin",
+      "english": "Welcome.",
+      "startSec": 108,
+      "endSec": 120,
+      "shotIds": [
+        "S009"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L010",
+      "speaker": "Host",
+      "narragansett": "Ascowequassunnúmmis",
+      "english": "Good morning.",
+      "startSec": 120,
+      "endSec": 132,
+      "shotIds": [
+        "S010"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L011",
+      "speaker": "Guest",
+      "narragansett": "Askuttaaquompsín",
+      "english": "How are you?",
+      "startSec": 132,
+      "endSec": 144,
+      "shotIds": [
+        "S011"
+      ],
+      "actId": "dawn"
+    },
+    {
+      "id": "L012",
+      "speaker": "Host",
+      "narragansett": "Asnpaumpmaúntam",
+      "english": "I am very well.",
+      "startSec": 144,
+      "endSec": 156,
+      "shotIds": [
+        "S012"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L013",
+      "speaker": "Guest",
+      "narragansett": "Taubút paump maúntaman",
+      "english": "I am glad you are well.",
+      "startSec": 156,
+      "endSec": 168,
+      "shotIds": [
+        "S013"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L014",
+      "speaker": "Guest",
+      "narragansett": "Nósh",
+      "english": "My father. (respectful address)",
+      "startSec": 168,
+      "endSec": 180,
+      "shotIds": [
+        "S014"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L015",
+      "speaker": "Host",
+      "narragansett": "Okásu",
+      "english": "A mother. (speaking of kin)",
+      "startSec": 180,
+      "endSec": 204,
+      "shotIds": [
+        "S015",
+        "S016"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L016",
+      "speaker": "Host",
+      "narragansett": "Nippápoos",
+      "english": "My child. (of the family)",
+      "startSec": 204,
+      "endSec": 216,
+      "shotIds": [
+        "S017"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L017",
+      "speaker": "Guest",
+      "narragansett": "Hômes",
+      "english": "An old man (elder).",
+      "startSec": 216,
+      "endSec": 228,
+      "shotIds": [
+        "S018"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L018",
+      "speaker": "Host",
+      "narragansett": "Wénise",
+      "english": "An old woman (elder).",
+      "startSec": 228,
+      "endSec": 240,
+      "shotIds": [
+        "S019"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L019",
+      "speaker": "Both",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you.",
+      "startSec": 240,
+      "endSec": 252,
+      "shotIds": [
+        "S020"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L020",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you.",
+      "startSec": 252,
+      "endSec": 264,
+      "shotIds": [
+        "S021"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L021",
+      "speaker": "Guest",
+      "narragansett": "Niccàwkatone",
+      "english": "I am thirsty.",
+      "startSec": 264,
+      "endSec": 276,
+      "shotIds": [
+        "S022"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L022",
+      "speaker": "Host",
+      "narragansett": "Nip, or nipéwese",
+      "english": "Some water.",
+      "startSec": 276,
+      "endSec": 288,
+      "shotIds": [
+        "S023"
+      ],
+      "actId": "kin"
+    },
+    {
+      "id": "L023",
+      "speaker": "Host",
+      "narragansett": "Namitch, commetesímmin",
+      "english": "Stay — you must eat first.",
+      "startSec": 288,
+      "endSec": 300,
+      "shotIds": [
+        "S024"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L024",
+      "speaker": "Host",
+      "narragansett": "Téaquacumméich",
+      "english": "What will you eat?",
+      "startSec": 300,
+      "endSec": 324,
+      "shotIds": [
+        "S025",
+        "S026"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L025",
+      "speaker": "Guest",
+      "narragansett": "Aupúminea-nawsaùmp",
+      "english": "Parched meal boiled (soft corn porridge).",
+      "startSec": 324,
+      "endSec": 336,
+      "shotIds": [
+        "S027"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L026",
+      "speaker": "Host",
+      "narragansett": "Wunnégin",
+      "english": "Welcome.",
+      "startSec": 336,
+      "endSec": 348,
+      "shotIds": [
+        "S028"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L027",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you.",
+      "startSec": 348,
+      "endSec": 360,
+      "shotIds": [
+        "S029"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L028",
+      "speaker": "Host",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you.",
+      "startSec": 360,
+      "endSec": 372,
+      "shotIds": [
+        "S030"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L029",
+      "speaker": "Guest",
+      "narragansett": "Taubút paump maúntaman",
+      "english": "I am glad (of this).",
+      "startSec": 372,
+      "endSec": 384,
+      "shotIds": [
+        "S031"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L030",
+      "speaker": "Guest",
+      "narragansett": "Nickquénum",
+      "english": "I am going.",
+      "startSec": 384,
+      "endSec": 396,
+      "shotIds": [
+        "S032"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L031",
+      "speaker": "Guest",
+      "narragansett": "Nnatotemúckaun",
+      "english": "I will ask the way.",
+      "startSec": 396,
+      "endSec": 408,
+      "shotIds": [
+        "S033"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L032",
+      "speaker": "Guest",
+      "narragansett": "Kunnatótemous",
+      "english": "I will inquire of you.",
+      "startSec": 408,
+      "endSec": 420,
+      "shotIds": [
+        "S034"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L033",
+      "speaker": "Guest",
+      "narragansett": "Kokotemíinnea méyi",
+      "english": "Show me the way.",
+      "startSec": 420,
+      "endSec": 432,
+      "shotIds": [
+        "S035"
+      ],
+      "actId": "meal"
+    },
+    {
+      "id": "L034",
+      "speaker": "Host",
+      "narragansett": "Mishimmáyagat",
+      "english": "A great path.",
+      "startSec": 432,
+      "endSec": 456,
+      "shotIds": [
+        "S036",
+        "S037"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L035",
+      "speaker": "Host",
+      "narragansett": "Peemáyagât",
+      "english": "A short way.",
+      "startSec": 456,
+      "endSec": 468,
+      "shotIds": [
+        "S038"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L036",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you.",
+      "startSec": 468,
+      "endSec": 480,
+      "shotIds": [
+        "S039"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L037",
+      "speaker": "Guest",
+      "narragansett": "Nqénowhick wouttín",
+      "english": "I stay for a wind.",
+      "startSec": 480,
+      "endSec": 492,
+      "shotIds": [
+        "S040"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L038",
+      "speaker": "Host",
+      "narragansett": "Wunnágehan",
+      "english": "Fair wind.",
+      "startSec": 492,
+      "endSec": 504,
+      "shotIds": [
+        "S041"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L039",
+      "speaker": "Guest",
+      "narragansett": "Nquít",
+      "english": "One.",
+      "startSec": 504,
+      "endSec": 516,
+      "shotIds": [
+        "S042"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L040",
+      "speaker": "Guest",
+      "narragansett": "Neèse",
+      "english": "Two.",
+      "startSec": 516,
+      "endSec": 528,
+      "shotIds": [
+        "S043"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L041",
+      "speaker": "Guest",
+      "narragansett": "Nìsh",
+      "english": "Three.",
+      "startSec": 528,
+      "endSec": 540,
+      "shotIds": [
+        "S044"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L042",
+      "speaker": "Guest",
+      "narragansett": "Yòh",
+      "english": "Four.",
+      "startSec": 540,
+      "endSec": 552,
+      "shotIds": [
+        "S045"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L043",
+      "speaker": "Guest",
+      "narragansett": "Napánna",
+      "english": "Five.",
+      "startSec": 552,
+      "endSec": 576,
+      "shotIds": [
+        "S046",
+        "S047"
+      ],
+      "actId": "path"
+    },
+    {
+      "id": "L044",
+      "speaker": "Host",
+      "narragansett": "Piùck",
+      "english": "Ten.",
+      "startSec": 576,
+      "endSec": 588,
+      "shotIds": [
+        "S048"
+      ],
+      "actId": "numbers"
+    },
+    {
+      "id": "L045",
+      "speaker": "Host",
+      "narragansett": "Aûke",
+      "english": "Earth or land.",
+      "startSec": 588,
+      "endSec": 600,
+      "shotIds": [
+        "S049"
+      ],
+      "actId": "numbers"
+    },
+    {
+      "id": "L046",
+      "speaker": "Host",
+      "narragansett": "Séquan",
+      "english": "Spring.",
+      "startSec": 600,
+      "endSec": 612,
+      "shotIds": [
+        "S050"
+      ],
+      "actId": "numbers"
+    },
+    {
+      "id": "L047",
+      "speaker": "Host",
+      "narragansett": "Aukeeteámitch",
+      "english": "Spring — seed-time.",
+      "startSec": 612,
+      "endSec": 624,
+      "shotIds": [
+        "S051"
+      ],
+      "actId": "numbers"
+    },
+    {
+      "id": "L048",
+      "speaker": "Guest",
+      "narragansett": "Ewáchim neash",
+      "english": "Corn.",
+      "startSec": 624,
+      "endSec": 636,
+      "shotIds": [
+        "S052"
+      ],
+      "actId": "numbers"
+    },
+    {
+      "id": "L049",
+      "speaker": "Host",
+      "narragansett": "Scannémeneash",
+      "english": "Seed corn.",
+      "startSec": 636,
+      "endSec": 648,
+      "shotIds": [
+        "S053"
+      ],
+      "actId": "numbers"
+    },
+    {
+      "id": "L050",
+      "speaker": "Both",
+      "narragansett": "Aukeeteaûmen",
+      "english": "To plant corn.",
+      "startSec": 648,
+      "endSec": 660,
+      "shotIds": [
+        "S054"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L051",
+      "speaker": "Host",
+      "narragansett": "Petascúnnemun",
+      "english": "To hill the corn.",
+      "startSec": 660,
+      "endSec": 672,
+      "shotIds": [
+        "S055"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L052",
+      "speaker": "Guest",
+      "narragansett": "Kepenúmmin",
+      "english": "To gather corn.",
+      "startSec": 672,
+      "endSec": 684,
+      "shotIds": [
+        "S056"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L053",
+      "speaker": "Host",
+      "narragansett": "Sókenug",
+      "english": "A heap of corn.",
+      "startSec": 684,
+      "endSec": 708,
+      "shotIds": [
+        "S057",
+        "S058"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L054",
+      "speaker": "Guest",
+      "narragansett": "Néepun",
+      "english": "Summer.",
+      "startSec": 708,
+      "endSec": 720,
+      "shotIds": [
+        "S059"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L055",
+      "speaker": "Host",
+      "narragansett": "Taquònck",
+      "english": "Fall / harvest.",
+      "startSec": 720,
+      "endSec": 732,
+      "shotIds": [
+        "S060"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L056",
+      "speaker": "Guest",
+      "narragansett": "Papóne",
+      "english": "Winter.",
+      "startSec": 732,
+      "endSec": 744,
+      "shotIds": [
+        "S061"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L057",
+      "speaker": "Host",
+      "narragansett": "Ntauchaûmen",
+      "english": "I go to hunt.",
+      "startSec": 744,
+      "endSec": 756,
+      "shotIds": [
+        "S062"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L058",
+      "speaker": "Both",
+      "narragansett": "Auchaûtuck",
+      "english": "Let us hunt.",
+      "startSec": 756,
+      "endSec": 768,
+      "shotIds": [
+        "S063"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L059",
+      "speaker": "Guest",
+      "narragansett": "Attuck, quock",
+      "english": "Deer.",
+      "startSec": 768,
+      "endSec": 780,
+      "shotIds": [
+        "S064"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L060",
+      "speaker": "Host",
+      "narragansett": "Wawwúnnes",
+      "english": "A young buck.",
+      "startSec": 780,
+      "endSec": 792,
+      "shotIds": [
+        "S065"
+      ],
+      "actId": "land"
+    },
+    {
+      "id": "L061",
+      "speaker": "Guest",
+      "narragansett": "Nkéke, nkéquock",
+      "english": "Otter, otters.",
+      "startSec": 792,
+      "endSec": 804,
+      "shotIds": [
+        "S066"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L062",
+      "speaker": "Host",
+      "narragansett": "Npunnowwâumen",
+      "english": "I must go to my traps.",
+      "startSec": 804,
+      "endSec": 828,
+      "shotIds": [
+        "S067",
+        "S068"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L063",
+      "speaker": "Guest",
+      "narragansett": "Apè hana",
+      "english": "Trap, traps.",
+      "startSec": 828,
+      "endSec": 840,
+      "shotIds": [
+        "S069"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L064",
+      "speaker": "Host",
+      "narragansett": "Ntaumpauchaúmen",
+      "english": "I come from hunting.",
+      "startSec": 840,
+      "endSec": 852,
+      "shotIds": [
+        "S070"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L065",
+      "speaker": "Guest",
+      "narragansett": "Néyhom, mâuog",
+      "english": "Turkey, turkeys.",
+      "startSec": 852,
+      "endSec": 864,
+      "shotIds": [
+        "S071"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L066",
+      "speaker": "Host",
+      "narragansett": "Hònck, hònckock",
+      "english": "Goose, geese.",
+      "startSec": 864,
+      "endSec": 876,
+      "shotIds": [
+        "S072"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L067",
+      "speaker": "Guest",
+      "narragansett": "Chógan èuck",
+      "english": "Blackbird, blackbirds.",
+      "startSec": 876,
+      "endSec": 888,
+      "shotIds": [
+        "S073"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L068",
+      "speaker": "Host",
+      "narragansett": "Wunnùp, pash",
+      "english": "Wing, wings.",
+      "startSec": 888,
+      "endSec": 900,
+      "shotIds": [
+        "S074"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L069",
+      "speaker": "Guest",
+      "narragansett": "Nickquénum",
+      "english": "I am going.",
+      "startSec": 900,
+      "endSec": 912,
+      "shotIds": [
+        "S075"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L070",
+      "speaker": "Guest",
+      "narragansett": "Acâwmuck nóteshem",
+      "english": "I came over the water.",
+      "startSec": 912,
+      "endSec": 924,
+      "shotIds": [
+        "S076"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L071",
+      "speaker": "Host",
+      "narragansett": "Namaùus,-suck",
+      "english": "Fish, fishes.",
+      "startSec": 924,
+      "endSec": 936,
+      "shotIds": [
+        "S077"
+      ],
+      "actId": "forest"
+    },
+    {
+      "id": "L072",
+      "speaker": "Guest",
+      "narragansett": "Ntaûmen",
+      "english": "I am fishing.",
+      "startSec": 936,
+      "endSec": 960,
+      "shotIds": [
+        "S078",
+        "S079"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L073",
+      "speaker": "Host",
+      "narragansett": "Nnattuckqunnûwem",
+      "english": "I go a fishing.",
+      "startSec": 960,
+      "endSec": 972,
+      "shotIds": [
+        "S080"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L074",
+      "speaker": "Guest",
+      "narragansett": "Missúckeke-kéquock",
+      "english": "Bass.",
+      "startSec": 972,
+      "endSec": 984,
+      "shotIds": [
+        "S081"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L075",
+      "speaker": "Host",
+      "narragansett": "Mishquammaùquock",
+      "english": "Red fish, salmon.",
+      "startSec": 984,
+      "endSec": 996,
+      "shotIds": [
+        "S082"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L076",
+      "speaker": "Guest",
+      "narragansett": "Aúmanep",
+      "english": "A fishing line.",
+      "startSec": 996,
+      "endSec": 1008,
+      "shotIds": [
+        "S083"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L077",
+      "speaker": "Host",
+      "narragansett": "W Aûpi",
+      "english": "The wind.",
+      "startSec": 1008,
+      "endSec": 1020,
+      "shotIds": [
+        "S084"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L078",
+      "speaker": "Guest",
+      "narragansett": "Wunnágehan",
+      "english": "Fair wind.",
+      "startSec": 1020,
+      "endSec": 1032,
+      "shotIds": [
+        "S085"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L079",
+      "speaker": "Host",
+      "narragansett": "Nqénowhick wouttín",
+      "english": "I stay for a wind.",
+      "startSec": 1032,
+      "endSec": 1044,
+      "shotIds": [
+        "S086"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L080",
+      "speaker": "Guest",
+      "narragansett": "Nippâwus",
+      "english": "The sun.",
+      "startSec": 1044,
+      "endSec": 1056,
+      "shotIds": [
+        "S087"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L081",
+      "speaker": "Host",
+      "narragansett": "T Ocke tussinnámmin kéesuck",
+      "english": "What do you think of the weather?",
+      "startSec": 1056,
+      "endSec": 1080,
+      "shotIds": [
+        "S088",
+        "S089"
+      ],
+      "actId": "water"
+    },
+    {
+      "id": "L082",
+      "speaker": "Guest",
+      "narragansett": "Wekineaûquat",
+      "english": "Fair weather.",
+      "startSec": 1080,
+      "endSec": 1092,
+      "shotIds": [
+        "S090"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L083",
+      "speaker": "Host",
+      "narragansett": "Tahkì or tátakki",
+      "english": "Cold weather.",
+      "startSec": 1092,
+      "endSec": 1104,
+      "shotIds": [
+        "S091"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L084",
+      "speaker": "Guest",
+      "narragansett": "Kussúttah",
+      "english": "It is hot.",
+      "startSec": 1104,
+      "endSec": 1116,
+      "shotIds": [
+        "S092"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L085",
+      "speaker": "Host",
+      "narragansett": "Nanúmmatin",
+      "english": "The north wind.",
+      "startSec": 1116,
+      "endSec": 1128,
+      "shotIds": [
+        "S093"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L086",
+      "speaker": "Guest",
+      "narragansett": "Touwúttin",
+      "english": "South wind.",
+      "startSec": 1128,
+      "endSec": 1140,
+      "shotIds": [
+        "S094"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L087",
+      "speaker": "Both",
+      "narragansett": "Kéesuck",
+      "english": "The heavens.",
+      "startSec": 1140,
+      "endSec": 1152,
+      "shotIds": [
+        "S095"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L088",
+      "speaker": "Host",
+      "narragansett": "Yahen wàiyàuw",
+      "english": "Almost sunset.",
+      "startSec": 1152,
+      "endSec": 1164,
+      "shotIds": [
+        "S096"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L089",
+      "speaker": "Guest",
+      "narragansett": "Wayaàwi",
+      "english": "The sun is set.",
+      "startSec": 1164,
+      "endSec": 1176,
+      "shotIds": [
+        "S097"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L090",
+      "speaker": "Guest",
+      "narragansett": "Aunchemokauhettíttea",
+      "english": "Let us talk / tell the news.",
+      "startSec": 1176,
+      "endSec": 1188,
+      "shotIds": [
+        "S098"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L091",
+      "speaker": "Guest",
+      "narragansett": "Aaunchemókaw",
+      "english": "Tell me your news.",
+      "startSec": 1188,
+      "endSec": 1212,
+      "shotIds": [
+        "S099",
+        "S100"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L092",
+      "speaker": "Host",
+      "narragansett": "Cuttaunchemókous",
+      "english": "I will tell you the news.",
+      "startSec": 1212,
+      "endSec": 1224,
+      "shotIds": [
+        "S101"
+      ],
+      "actId": "sky"
+    },
+    {
+      "id": "L093",
+      "speaker": "Host",
+      "narragansett": "Cummautaunchemókous",
+      "english": "I have finished my news.",
+      "startSec": 1224,
+      "endSec": 1236,
+      "shotIds": [
+        "S102"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L094",
+      "speaker": "Guest",
+      "narragansett": "Taubút paump maúntaman",
+      "english": "I am glad (to hear it).",
+      "startSec": 1236,
+      "endSec": 1248,
+      "shotIds": [
+        "S103"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L095",
+      "speaker": "Host",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you.",
+      "startSec": 1248,
+      "endSec": 1260,
+      "shotIds": [
+        "S104"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L096",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you.",
+      "startSec": 1260,
+      "endSec": 1272,
+      "shotIds": [
+        "S105"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L097",
+      "speaker": "Host",
+      "narragansett": "Wetuômuck",
+      "english": "At home.",
+      "startSec": 1272,
+      "endSec": 1284,
+      "shotIds": [
+        "S106"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L098",
+      "speaker": "Guest",
+      "narragansett": "Nanepaùshat",
+      "english": "The moon.",
+      "startSec": 1284,
+      "endSec": 1296,
+      "shotIds": [
+        "S107"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L099",
+      "speaker": "Host",
+      "narragansett": "Anóckqus, anócksuck",
+      "english": "A star, stars.",
+      "startSec": 1296,
+      "endSec": 1308,
+      "shotIds": [
+        "S108"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L100",
+      "speaker": "Guest",
+      "narragansett": "Mishánnock",
+      "english": "The morning star.",
+      "startSec": 1308,
+      "endSec": 1332,
+      "shotIds": [
+        "S109",
+        "S110"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L101",
+      "speaker": "Host",
+      "narragansett": "Póppakunnetch, auchaugotch",
+      "english": "Dark night.",
+      "startSec": 1332,
+      "endSec": 1344,
+      "shotIds": [
+        "S111"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L102",
+      "speaker": "Guest",
+      "narragansett": "Yo nickowémen?",
+      "english": "Shall I sleep here?",
+      "startSec": 1344,
+      "endSec": 1356,
+      "shotIds": [
+        "S112"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L103",
+      "speaker": "Host",
+      "narragansett": "Wunnégin, cówish",
+      "english": "Welcome — sleep here.",
+      "startSec": 1356,
+      "endSec": 1368,
+      "shotIds": [
+        "S113"
+      ],
+      "actId": "evening"
+    },
+    {
+      "id": "L104",
+      "speaker": "Guest",
+      "narragansett": "Nsowwushkâwmen",
+      "english": "I am weary.",
+      "startSec": 1368,
+      "endSec": 1380,
+      "shotIds": [
+        "S114"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L105",
+      "speaker": "Guest",
+      "narragansett": "Nkàtaquaum",
+      "english": "I am sleepy.",
+      "startSec": 1380,
+      "endSec": 1392,
+      "shotIds": [
+        "S115"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L106",
+      "speaker": "Host",
+      "narragansett": "Cowwêtuck",
+      "english": "Let us sleep.",
+      "startSec": 1392,
+      "endSec": 1404,
+      "shotIds": [
+        "S116"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L107",
+      "speaker": "Both",
+      "narragansett": "Wuddtúckqunash, ponamáuta",
+      "english": "Let us lay on wood.",
+      "startSec": 1404,
+      "endSec": 1416,
+      "shotIds": [
+        "S117"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L108",
+      "speaker": "Both",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you.",
+      "startSec": 1416,
+      "endSec": 1428,
+      "shotIds": [
+        "S118"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L109",
+      "speaker": "Host",
+      "narragansett": "Páshisha",
+      "english": "It is sunrise. (the day remembered)",
+      "startSec": 1428,
+      "endSec": 1440,
+      "shotIds": [
+        "S119"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L110",
+      "speaker": "Guest",
+      "narragansett": "Wayaàwi",
+      "english": "The sun is set.",
+      "startSec": 1440,
+      "endSec": 1464,
+      "shotIds": [
+        "S120",
+        "S121"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L111",
+      "speaker": "Both",
+      "narragansett": "Wetuômuck",
+      "english": "At home.",
+      "startSec": 1464,
+      "endSec": 1476,
+      "shotIds": [
+        "S122"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L112",
+      "speaker": "Both",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you.",
+      "startSec": 1476,
+      "endSec": 1488,
+      "shotIds": [
+        "S123"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L113",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you.",
+      "startSec": 1488,
+      "endSec": 1500,
+      "shotIds": [
+        "S124"
+      ],
+      "actId": "night"
+    },
+    {
+      "id": "L114",
+      "speaker": "Host",
+      "narragansett": "Wunnégin",
+      "english": "Welcome.",
+      "startSec": 1500,
+      "endSec": 1512,
+      "shotIds": [
+        "S125"
+      ],
+      "actId": "night"
+    }
+  ],
+  "shots": [
+    {
+      "index": 0,
+      "id": "S000",
+      "actId": "dawn",
+      "startSec": 0,
+      "endSec": 12,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Páshisha",
+      "english": "It is sunrise."
+    },
+    {
+      "index": 1,
+      "id": "S001",
+      "actId": "dawn",
+      "startSec": 12,
+      "endSec": 24,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Mautàbon, Chicháuquat wompan",
+      "english": "It is day."
+    },
+    {
+      "index": 2,
+      "id": "S002",
+      "actId": "dawn",
+      "startSec": 24,
+      "endSec": 36,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wetu",
+      "english": "A house / dwelling."
+    },
+    {
+      "index": 3,
+      "id": "S003",
+      "actId": "dawn",
+      "startSec": 36,
+      "endSec": 48,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wetuômuck",
+      "english": "At home."
+    },
+    {
+      "index": 4,
+      "id": "S004",
+      "actId": "dawn",
+      "startSec": 48,
+      "endSec": 60,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Tokêtuck",
+      "english": "Let us wake."
+    },
+    {
+      "index": 5,
+      "id": "S005",
+      "actId": "dawn",
+      "startSec": 60,
+      "endSec": 72,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Tokêtuck",
+      "english": "Let us wake."
+    },
+    {
+      "index": 6,
+      "id": "S006",
+      "actId": "dawn",
+      "startSec": 72,
+      "endSec": 84,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Nkàtaquaum",
+      "english": "I am sleepy."
+    },
+    {
+      "index": 7,
+      "id": "S007",
+      "actId": "dawn",
+      "startSec": 84,
+      "endSec": 96,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Wuddtúckqunash, ponamáuta",
+      "english": "Let us lay on wood."
+    },
+    {
+      "index": 8,
+      "id": "S008",
+      "actId": "dawn",
+      "startSec": 96,
+      "endSec": 108,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Nummáttaqúaw",
+      "english": "Morning (before noon)."
+    },
+    {
+      "index": 9,
+      "id": "S009",
+      "actId": "dawn",
+      "startSec": 108,
+      "endSec": 120,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wunnégin",
+      "english": "Welcome."
+    },
+    {
+      "index": 10,
+      "id": "S010",
+      "actId": "dawn",
+      "startSec": 120,
+      "endSec": 132,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Ascowequassunnúmmis",
+      "english": "Good morning."
+    },
+    {
+      "index": 11,
+      "id": "S011",
+      "actId": "dawn",
+      "startSec": 132,
+      "endSec": 144,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Askuttaaquompsín",
+      "english": "How are you?"
+    },
+    {
+      "index": 12,
+      "id": "S012",
+      "actId": "kin",
+      "startSec": 144,
+      "endSec": 156,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Asnpaumpmaúntam",
+      "english": "I am very well."
+    },
+    {
+      "index": 13,
+      "id": "S013",
+      "actId": "kin",
+      "startSec": 156,
+      "endSec": 168,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Taubút paump maúntaman",
+      "english": "I am glad you are well."
+    },
+    {
+      "index": 14,
+      "id": "S014",
+      "actId": "kin",
+      "startSec": 168,
+      "endSec": 180,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Nósh",
+      "english": "My father. (respectful address)"
+    },
+    {
+      "index": 15,
+      "id": "S015",
+      "actId": "kin",
+      "startSec": 180,
+      "endSec": 192,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Okásu",
+      "english": "A mother. (speaking of kin)"
+    },
+    {
+      "index": 16,
+      "id": "S016",
+      "actId": "kin",
+      "startSec": 192,
+      "endSec": 204,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Okásu",
+      "english": "A mother. (speaking of kin)"
+    },
+    {
+      "index": 17,
+      "id": "S017",
+      "actId": "kin",
+      "startSec": 204,
+      "endSec": 216,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Nippápoos",
+      "english": "My child. (of the family)"
+    },
+    {
+      "index": 18,
+      "id": "S018",
+      "actId": "kin",
+      "startSec": 216,
+      "endSec": 228,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Hômes",
+      "english": "An old man (elder)."
+    },
+    {
+      "index": 19,
+      "id": "S019",
+      "actId": "kin",
+      "startSec": 228,
+      "endSec": 240,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wénise",
+      "english": "An old woman (elder)."
+    },
+    {
+      "index": 20,
+      "id": "S020",
+      "actId": "kin",
+      "startSec": 240,
+      "endSec": 252,
+      "cast": "guest",
+      "speaker": "Both",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you."
+    },
+    {
+      "index": 21,
+      "id": "S021",
+      "actId": "kin",
+      "startSec": 252,
+      "endSec": 264,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you."
+    },
+    {
+      "index": 22,
+      "id": "S022",
+      "actId": "kin",
+      "startSec": 264,
+      "endSec": 276,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Niccàwkatone",
+      "english": "I am thirsty."
+    },
+    {
+      "index": 23,
+      "id": "S023",
+      "actId": "kin",
+      "startSec": 276,
+      "endSec": 288,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Nip, or nipéwese",
+      "english": "Some water."
+    },
+    {
+      "index": 24,
+      "id": "S024",
+      "actId": "meal",
+      "startSec": 288,
+      "endSec": 300,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Namitch, commetesímmin",
+      "english": "Stay — you must eat first."
+    },
+    {
+      "index": 25,
+      "id": "S025",
+      "actId": "meal",
+      "startSec": 300,
+      "endSec": 312,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Téaquacumméich",
+      "english": "What will you eat?"
+    },
+    {
+      "index": 26,
+      "id": "S026",
+      "actId": "meal",
+      "startSec": 312,
+      "endSec": 324,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Téaquacumméich",
+      "english": "What will you eat?"
+    },
+    {
+      "index": 27,
+      "id": "S027",
+      "actId": "meal",
+      "startSec": 324,
+      "endSec": 336,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Aupúminea-nawsaùmp",
+      "english": "Parched meal boiled (soft corn porridge)."
+    },
+    {
+      "index": 28,
+      "id": "S028",
+      "actId": "meal",
+      "startSec": 336,
+      "endSec": 348,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wunnégin",
+      "english": "Welcome."
+    },
+    {
+      "index": 29,
+      "id": "S029",
+      "actId": "meal",
+      "startSec": 348,
+      "endSec": 360,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you."
+    },
+    {
+      "index": 30,
+      "id": "S030",
+      "actId": "meal",
+      "startSec": 360,
+      "endSec": 372,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you."
+    },
+    {
+      "index": 31,
+      "id": "S031",
+      "actId": "meal",
+      "startSec": 372,
+      "endSec": 384,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Taubút paump maúntaman",
+      "english": "I am glad (of this)."
+    },
+    {
+      "index": 32,
+      "id": "S032",
+      "actId": "meal",
+      "startSec": 384,
+      "endSec": 396,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Nickquénum",
+      "english": "I am going."
+    },
+    {
+      "index": 33,
+      "id": "S033",
+      "actId": "meal",
+      "startSec": 396,
+      "endSec": 408,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Nnatotemúckaun",
+      "english": "I will ask the way."
+    },
+    {
+      "index": 34,
+      "id": "S034",
+      "actId": "meal",
+      "startSec": 408,
+      "endSec": 420,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Kunnatótemous",
+      "english": "I will inquire of you."
+    },
+    {
+      "index": 35,
+      "id": "S035",
+      "actId": "meal",
+      "startSec": 420,
+      "endSec": 432,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Kokotemíinnea méyi",
+      "english": "Show me the way."
+    },
+    {
+      "index": 36,
+      "id": "S036",
+      "actId": "path",
+      "startSec": 432,
+      "endSec": 444,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Mishimmáyagat",
+      "english": "A great path."
+    },
+    {
+      "index": 37,
+      "id": "S037",
+      "actId": "path",
+      "startSec": 444,
+      "endSec": 456,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Mishimmáyagat",
+      "english": "A great path."
+    },
+    {
+      "index": 38,
+      "id": "S038",
+      "actId": "path",
+      "startSec": 456,
+      "endSec": 468,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Peemáyagât",
+      "english": "A short way."
+    },
+    {
+      "index": 39,
+      "id": "S039",
+      "actId": "path",
+      "startSec": 468,
+      "endSec": 480,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you."
+    },
+    {
+      "index": 40,
+      "id": "S040",
+      "actId": "path",
+      "startSec": 480,
+      "endSec": 492,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Nqénowhick wouttín",
+      "english": "I stay for a wind."
+    },
+    {
+      "index": 41,
+      "id": "S041",
+      "actId": "path",
+      "startSec": 492,
+      "endSec": 504,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Wunnágehan",
+      "english": "Fair wind."
+    },
+    {
+      "index": 42,
+      "id": "S042",
+      "actId": "path",
+      "startSec": 504,
+      "endSec": 516,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Nquít",
+      "english": "One."
+    },
+    {
+      "index": 43,
+      "id": "S043",
+      "actId": "path",
+      "startSec": 516,
+      "endSec": 528,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Neèse",
+      "english": "Two."
+    },
+    {
+      "index": 44,
+      "id": "S044",
+      "actId": "path",
+      "startSec": 528,
+      "endSec": 540,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Nìsh",
+      "english": "Three."
+    },
+    {
+      "index": 45,
+      "id": "S045",
+      "actId": "path",
+      "startSec": 540,
+      "endSec": 552,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Yòh",
+      "english": "Four."
+    },
+    {
+      "index": 46,
+      "id": "S046",
+      "actId": "path",
+      "startSec": 552,
+      "endSec": 564,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Napánna",
+      "english": "Five."
+    },
+    {
+      "index": 47,
+      "id": "S047",
+      "actId": "path",
+      "startSec": 564,
+      "endSec": 576,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Napánna",
+      "english": "Five."
+    },
+    {
+      "index": 48,
+      "id": "S048",
+      "actId": "numbers",
+      "startSec": 576,
+      "endSec": 588,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Piùck",
+      "english": "Ten."
+    },
+    {
+      "index": 49,
+      "id": "S049",
+      "actId": "numbers",
+      "startSec": 588,
+      "endSec": 600,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Aûke",
+      "english": "Earth or land."
+    },
+    {
+      "index": 50,
+      "id": "S050",
+      "actId": "numbers",
+      "startSec": 600,
+      "endSec": 612,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Séquan",
+      "english": "Spring."
+    },
+    {
+      "index": 51,
+      "id": "S051",
+      "actId": "numbers",
+      "startSec": 612,
+      "endSec": 624,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Aukeeteámitch",
+      "english": "Spring — seed-time."
+    },
+    {
+      "index": 52,
+      "id": "S052",
+      "actId": "numbers",
+      "startSec": 624,
+      "endSec": 636,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Ewáchim neash",
+      "english": "Corn."
+    },
+    {
+      "index": 53,
+      "id": "S053",
+      "actId": "numbers",
+      "startSec": 636,
+      "endSec": 648,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Scannémeneash",
+      "english": "Seed corn."
+    },
+    {
+      "index": 54,
+      "id": "S054",
+      "actId": "land",
+      "startSec": 648,
+      "endSec": 660,
+      "cast": "host",
+      "speaker": "Both",
+      "narragansett": "Aukeeteaûmen",
+      "english": "To plant corn."
+    },
+    {
+      "index": 55,
+      "id": "S055",
+      "actId": "land",
+      "startSec": 660,
+      "endSec": 672,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Petascúnnemun",
+      "english": "To hill the corn."
+    },
+    {
+      "index": 56,
+      "id": "S056",
+      "actId": "land",
+      "startSec": 672,
+      "endSec": 684,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Kepenúmmin",
+      "english": "To gather corn."
+    },
+    {
+      "index": 57,
+      "id": "S057",
+      "actId": "land",
+      "startSec": 684,
+      "endSec": 696,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Sókenug",
+      "english": "A heap of corn."
+    },
+    {
+      "index": 58,
+      "id": "S058",
+      "actId": "land",
+      "startSec": 696,
+      "endSec": 708,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Sókenug",
+      "english": "A heap of corn."
+    },
+    {
+      "index": 59,
+      "id": "S059",
+      "actId": "land",
+      "startSec": 708,
+      "endSec": 720,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Néepun",
+      "english": "Summer."
+    },
+    {
+      "index": 60,
+      "id": "S060",
+      "actId": "land",
+      "startSec": 720,
+      "endSec": 732,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Taquònck",
+      "english": "Fall / harvest."
+    },
+    {
+      "index": 61,
+      "id": "S061",
+      "actId": "land",
+      "startSec": 732,
+      "endSec": 744,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Papóne",
+      "english": "Winter."
+    },
+    {
+      "index": 62,
+      "id": "S062",
+      "actId": "land",
+      "startSec": 744,
+      "endSec": 756,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Ntauchaûmen",
+      "english": "I go to hunt."
+    },
+    {
+      "index": 63,
+      "id": "S063",
+      "actId": "land",
+      "startSec": 756,
+      "endSec": 768,
+      "cast": "host",
+      "speaker": "Both",
+      "narragansett": "Auchaûtuck",
+      "english": "Let us hunt."
+    },
+    {
+      "index": 64,
+      "id": "S064",
+      "actId": "land",
+      "startSec": 768,
+      "endSec": 780,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Attuck, quock",
+      "english": "Deer."
+    },
+    {
+      "index": 65,
+      "id": "S065",
+      "actId": "land",
+      "startSec": 780,
+      "endSec": 792,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Wawwúnnes",
+      "english": "A young buck."
+    },
+    {
+      "index": 66,
+      "id": "S066",
+      "actId": "forest",
+      "startSec": 792,
+      "endSec": 804,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Nkéke, nkéquock",
+      "english": "Otter, otters."
+    },
+    {
+      "index": 67,
+      "id": "S067",
+      "actId": "forest",
+      "startSec": 804,
+      "endSec": 816,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Npunnowwâumen",
+      "english": "I must go to my traps."
+    },
+    {
+      "index": 68,
+      "id": "S068",
+      "actId": "forest",
+      "startSec": 816,
+      "endSec": 828,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Npunnowwâumen",
+      "english": "I must go to my traps."
+    },
+    {
+      "index": 69,
+      "id": "S069",
+      "actId": "forest",
+      "startSec": 828,
+      "endSec": 840,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Apè hana",
+      "english": "Trap, traps."
+    },
+    {
+      "index": 70,
+      "id": "S070",
+      "actId": "forest",
+      "startSec": 840,
+      "endSec": 852,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Ntaumpauchaúmen",
+      "english": "I come from hunting."
+    },
+    {
+      "index": 71,
+      "id": "S071",
+      "actId": "forest",
+      "startSec": 852,
+      "endSec": 864,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Néyhom, mâuog",
+      "english": "Turkey, turkeys."
+    },
+    {
+      "index": 72,
+      "id": "S072",
+      "actId": "forest",
+      "startSec": 864,
+      "endSec": 876,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Hònck, hònckock",
+      "english": "Goose, geese."
+    },
+    {
+      "index": 73,
+      "id": "S073",
+      "actId": "forest",
+      "startSec": 876,
+      "endSec": 888,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Chógan èuck",
+      "english": "Blackbird, blackbirds."
+    },
+    {
+      "index": 74,
+      "id": "S074",
+      "actId": "forest",
+      "startSec": 888,
+      "endSec": 900,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Wunnùp, pash",
+      "english": "Wing, wings."
+    },
+    {
+      "index": 75,
+      "id": "S075",
+      "actId": "forest",
+      "startSec": 900,
+      "endSec": 912,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Nickquénum",
+      "english": "I am going."
+    },
+    {
+      "index": 76,
+      "id": "S076",
+      "actId": "forest",
+      "startSec": 912,
+      "endSec": 924,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Acâwmuck nóteshem",
+      "english": "I came over the water."
+    },
+    {
+      "index": 77,
+      "id": "S077",
+      "actId": "forest",
+      "startSec": 924,
+      "endSec": 936,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Namaùus,-suck",
+      "english": "Fish, fishes."
+    },
+    {
+      "index": 78,
+      "id": "S078",
+      "actId": "water",
+      "startSec": 936,
+      "endSec": 948,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Ntaûmen",
+      "english": "I am fishing."
+    },
+    {
+      "index": 79,
+      "id": "S079",
+      "actId": "water",
+      "startSec": 948,
+      "endSec": 960,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Ntaûmen",
+      "english": "I am fishing."
+    },
+    {
+      "index": 80,
+      "id": "S080",
+      "actId": "water",
+      "startSec": 960,
+      "endSec": 972,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Nnattuckqunnûwem",
+      "english": "I go a fishing."
+    },
+    {
+      "index": 81,
+      "id": "S081",
+      "actId": "water",
+      "startSec": 972,
+      "endSec": 984,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Missúckeke-kéquock",
+      "english": "Bass."
+    },
+    {
+      "index": 82,
+      "id": "S082",
+      "actId": "water",
+      "startSec": 984,
+      "endSec": 996,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Mishquammaùquock",
+      "english": "Red fish, salmon."
+    },
+    {
+      "index": 83,
+      "id": "S083",
+      "actId": "water",
+      "startSec": 996,
+      "endSec": 1008,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Aúmanep",
+      "english": "A fishing line."
+    },
+    {
+      "index": 84,
+      "id": "S084",
+      "actId": "water",
+      "startSec": 1008,
+      "endSec": 1020,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "W Aûpi",
+      "english": "The wind."
+    },
+    {
+      "index": 85,
+      "id": "S085",
+      "actId": "water",
+      "startSec": 1020,
+      "endSec": 1032,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Wunnágehan",
+      "english": "Fair wind."
+    },
+    {
+      "index": 86,
+      "id": "S086",
+      "actId": "water",
+      "startSec": 1032,
+      "endSec": 1044,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Nqénowhick wouttín",
+      "english": "I stay for a wind."
+    },
+    {
+      "index": 87,
+      "id": "S087",
+      "actId": "water",
+      "startSec": 1044,
+      "endSec": 1056,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Nippâwus",
+      "english": "The sun."
+    },
+    {
+      "index": 88,
+      "id": "S088",
+      "actId": "water",
+      "startSec": 1056,
+      "endSec": 1068,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "T Ocke tussinnámmin kéesuck",
+      "english": "What do you think of the weather?"
+    },
+    {
+      "index": 89,
+      "id": "S089",
+      "actId": "water",
+      "startSec": 1068,
+      "endSec": 1080,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "T Ocke tussinnámmin kéesuck",
+      "english": "What do you think of the weather?"
+    },
+    {
+      "index": 90,
+      "id": "S090",
+      "actId": "sky",
+      "startSec": 1080,
+      "endSec": 1092,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Wekineaûquat",
+      "english": "Fair weather."
+    },
+    {
+      "index": 91,
+      "id": "S091",
+      "actId": "sky",
+      "startSec": 1092,
+      "endSec": 1104,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Tahkì or tátakki",
+      "english": "Cold weather."
+    },
+    {
+      "index": 92,
+      "id": "S092",
+      "actId": "sky",
+      "startSec": 1104,
+      "endSec": 1116,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Kussúttah",
+      "english": "It is hot."
+    },
+    {
+      "index": 93,
+      "id": "S093",
+      "actId": "sky",
+      "startSec": 1116,
+      "endSec": 1128,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Nanúmmatin",
+      "english": "The north wind."
+    },
+    {
+      "index": 94,
+      "id": "S094",
+      "actId": "sky",
+      "startSec": 1128,
+      "endSec": 1140,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Touwúttin",
+      "english": "South wind."
+    },
+    {
+      "index": 95,
+      "id": "S095",
+      "actId": "sky",
+      "startSec": 1140,
+      "endSec": 1152,
+      "cast": "guest",
+      "speaker": "Both",
+      "narragansett": "Kéesuck",
+      "english": "The heavens."
+    },
+    {
+      "index": 96,
+      "id": "S096",
+      "actId": "sky",
+      "startSec": 1152,
+      "endSec": 1164,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Yahen wàiyàuw",
+      "english": "Almost sunset."
+    },
+    {
+      "index": 97,
+      "id": "S097",
+      "actId": "sky",
+      "startSec": 1164,
+      "endSec": 1176,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Wayaàwi",
+      "english": "The sun is set."
+    },
+    {
+      "index": 98,
+      "id": "S098",
+      "actId": "sky",
+      "startSec": 1176,
+      "endSec": 1188,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Aunchemokauhettíttea",
+      "english": "Let us talk / tell the news."
+    },
+    {
+      "index": 99,
+      "id": "S099",
+      "actId": "sky",
+      "startSec": 1188,
+      "endSec": 1200,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Aaunchemókaw",
+      "english": "Tell me your news."
+    },
+    {
+      "index": 100,
+      "id": "S100",
+      "actId": "sky",
+      "startSec": 1200,
+      "endSec": 1212,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Aaunchemókaw",
+      "english": "Tell me your news."
+    },
+    {
+      "index": 101,
+      "id": "S101",
+      "actId": "sky",
+      "startSec": 1212,
+      "endSec": 1224,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Cuttaunchemókous",
+      "english": "I will tell you the news."
+    },
+    {
+      "index": 102,
+      "id": "S102",
+      "actId": "evening",
+      "startSec": 1224,
+      "endSec": 1236,
+      "cast": "both",
+      "speaker": "Host",
+      "narragansett": "Cummautaunchemókous",
+      "english": "I have finished my news."
+    },
+    {
+      "index": 103,
+      "id": "S103",
+      "actId": "evening",
+      "startSec": 1236,
+      "endSec": 1248,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Taubút paump maúntaman",
+      "english": "I am glad (to hear it)."
+    },
+    {
+      "index": 104,
+      "id": "S104",
+      "actId": "evening",
+      "startSec": 1248,
+      "endSec": 1260,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you."
+    },
+    {
+      "index": 105,
+      "id": "S105",
+      "actId": "evening",
+      "startSec": 1260,
+      "endSec": 1272,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you."
+    },
+    {
+      "index": 106,
+      "id": "S106",
+      "actId": "evening",
+      "startSec": 1272,
+      "endSec": 1284,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wetuômuck",
+      "english": "At home."
+    },
+    {
+      "index": 107,
+      "id": "S107",
+      "actId": "evening",
+      "startSec": 1284,
+      "endSec": 1296,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Nanepaùshat",
+      "english": "The moon."
+    },
+    {
+      "index": 108,
+      "id": "S108",
+      "actId": "evening",
+      "startSec": 1296,
+      "endSec": 1308,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Anóckqus, anócksuck",
+      "english": "A star, stars."
+    },
+    {
+      "index": 109,
+      "id": "S109",
+      "actId": "evening",
+      "startSec": 1308,
+      "endSec": 1320,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Mishánnock",
+      "english": "The morning star."
+    },
+    {
+      "index": 110,
+      "id": "S110",
+      "actId": "evening",
+      "startSec": 1320,
+      "endSec": 1332,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Mishánnock",
+      "english": "The morning star."
+    },
+    {
+      "index": 111,
+      "id": "S111",
+      "actId": "evening",
+      "startSec": 1332,
+      "endSec": 1344,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Póppakunnetch, auchaugotch",
+      "english": "Dark night."
+    },
+    {
+      "index": 112,
+      "id": "S112",
+      "actId": "evening",
+      "startSec": 1344,
+      "endSec": 1356,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Yo nickowémen?",
+      "english": "Shall I sleep here?"
+    },
+    {
+      "index": 113,
+      "id": "S113",
+      "actId": "evening",
+      "startSec": 1356,
+      "endSec": 1368,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Wunnégin, cówish",
+      "english": "Welcome — sleep here."
+    },
+    {
+      "index": 114,
+      "id": "S114",
+      "actId": "night",
+      "startSec": 1368,
+      "endSec": 1380,
+      "cast": "nature",
+      "speaker": "Guest",
+      "narragansett": "Nsowwushkâwmen",
+      "english": "I am weary."
+    },
+    {
+      "index": 115,
+      "id": "S115",
+      "actId": "night",
+      "startSec": 1380,
+      "endSec": 1392,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Nkàtaquaum",
+      "english": "I am sleepy."
+    },
+    {
+      "index": 116,
+      "id": "S116",
+      "actId": "night",
+      "startSec": 1392,
+      "endSec": 1404,
+      "cast": "guest",
+      "speaker": "Host",
+      "narragansett": "Cowwêtuck",
+      "english": "Let us sleep."
+    },
+    {
+      "index": 117,
+      "id": "S117",
+      "actId": "night",
+      "startSec": 1404,
+      "endSec": 1416,
+      "cast": "host",
+      "speaker": "Both",
+      "narragansett": "Wuddtúckqunash, ponamáuta",
+      "english": "Let us lay on wood."
+    },
+    {
+      "index": 118,
+      "id": "S118",
+      "actId": "night",
+      "startSec": 1416,
+      "endSec": 1428,
+      "cast": "guest",
+      "speaker": "Both",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you."
+    },
+    {
+      "index": 119,
+      "id": "S119",
+      "actId": "night",
+      "startSec": 1428,
+      "endSec": 1440,
+      "cast": "host",
+      "speaker": "Host",
+      "narragansett": "Páshisha",
+      "english": "It is sunrise. (the day remembered)"
+    },
+    {
+      "index": 120,
+      "id": "S120",
+      "actId": "night",
+      "startSec": 1440,
+      "endSec": 1452,
+      "cast": "guest",
+      "speaker": "Guest",
+      "narragansett": "Wayaàwi",
+      "english": "The sun is set."
+    },
+    {
+      "index": 121,
+      "id": "S121",
+      "actId": "night",
+      "startSec": 1452,
+      "endSec": 1464,
+      "cast": "host",
+      "speaker": "Guest",
+      "narragansett": "Wayaàwi",
+      "english": "The sun is set."
+    },
+    {
+      "index": 122,
+      "id": "S122",
+      "actId": "night",
+      "startSec": 1464,
+      "endSec": 1476,
+      "cast": "both",
+      "speaker": "Both",
+      "narragansett": "Wetuômuck",
+      "english": "At home."
+    },
+    {
+      "index": 123,
+      "id": "S123",
+      "actId": "night",
+      "startSec": 1476,
+      "endSec": 1488,
+      "cast": "nature",
+      "speaker": "Both",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you."
+    },
+    {
+      "index": 124,
+      "id": "S124",
+      "actId": "night",
+      "startSec": 1488,
+      "endSec": 1500,
+      "cast": "both",
+      "speaker": "Guest",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you."
+    },
+    {
+      "index": 125,
+      "id": "S125",
+      "actId": "night",
+      "startSec": 1500,
+      "endSec": 1512,
+      "cast": "nature",
+      "speaker": "Host",
+      "narragansett": "Wunnégin",
+      "english": "Welcome."
+    }
+  ]
+}
