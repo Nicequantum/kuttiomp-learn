@@ -77,10 +77,10 @@ function LongStoryPage() {
       <HistoricalBanner compact />
 
       <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]">
-        Defaults to <strong className="text-[var(--color-fg)]">Watch</strong> for
-        the full {formatDuration(story.durationSec)} film. Switch to{" "}
-        <strong className="text-[var(--color-fg)]">Learn</strong> for
-        line-by-line Narragansett. Play opens fullscreen; controls auto-hide.
+        Press <strong className="text-[var(--color-fg)]">Play full film</strong> — one continuous{" "}
+        {formatDuration(story.durationSec)} video, no skipping between scenes. Opens fullscreen.
+        Subtitles track the language as the film runs. Switch to{" "}
+        <strong className="text-[var(--color-fg)]">Learn</strong> only if you want line-by-line practice.
       </p>
 
       <ScenePlayer
@@ -88,6 +88,7 @@ function LongStoryPage() {
         largeTargets={large}
         progressKind="scene"
         defaultPlayMode="watch"
+        continuousFilm
         nextNav={null}
         prevNav={null}
         resolveVideo={(s) =>

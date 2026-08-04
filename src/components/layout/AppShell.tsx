@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, Clapperboard, Home, UserRound, Volume2 } from "lucide-react";
+import { BookOpen, Clapperboard, Film, Home, Volume2 } from "lucide-react";
 import { useModeStore } from "@/lib/mode/store";
 import { MODES } from "@/lib/mode/modes";
 import { APP_NAME } from "@/lib/content/config";
@@ -8,10 +8,17 @@ import { cn } from "@/lib/utils";
 const tabs = [
   { key: "home" as const, to: "/app", icon: Home, match: (p: string) => p === "/app" },
   {
+    key: "stories" as const,
+    to: "/app/stories",
+    icon: Film,
+    match: (p: string) => p.startsWith("/app/stories"),
+  },
+  {
     key: "scenes" as const,
     to: "/app/scenes",
     icon: Clapperboard,
-    match: (p: string) => p.startsWith("/app/scenes"),
+    match: (p: string) =>
+      p.startsWith("/app/scenes") || p.startsWith("/app/day"),
   },
   {
     key: "listen" as const,
@@ -24,12 +31,6 @@ const tabs = [
     to: "/app/words",
     icon: BookOpen,
     match: (p: string) => p.startsWith("/app/words"),
-  },
-  {
-    key: "profile" as const,
-    to: "/app/profile",
-    icon: UserRound,
-    match: (p: string) => p.startsWith("/app/profile"),
   },
 ];
 

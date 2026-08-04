@@ -51,6 +51,8 @@ type Props = {
   progressKind?: "scene" | "day-act";
   /** Default play mode — long stories use "watch" */
   defaultPlayMode?: PlayMode;
+  /** Continuous cinema film: no line-skipping, fluid autoplay end-to-end */
+  continuousFilm?: boolean;
 };
 
 const SPEEDS = [0.75, 1, 1.25] as const;
@@ -77,6 +79,7 @@ export function ScenePlayer({
   resolveVideo,
   progressKind = "scene",
   defaultPlayMode = "learn",
+  continuousFilm = false,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -96,7 +99,9 @@ export function ScenePlayer({
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
   const [ambientOn, setAmbientOn] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  /** native = Fullscreen API; css = fixed overlay (iframe-safe) */
+  const [fsMode, setFsMode] = useState<"none" | "native" | "css">("none");
+  const isFullscreen = fsMode !== "none";
   const [chromeVisible, setChromeVisible] = useState(true);
   const [speaking, setSpeaking] = useState(false);
   const [practicedLines, setPracticedLines] = useState<Set<string>>(
@@ -178,10 +183,27 @@ export function ScenePlayer({
 
   useEffect(() => {
     function onFs() {
-      setIsFullscreen(Boolean(document.fullscreenElement));
+      if (document.fullscreenElement) setFsMode("native");
+      else setFsMode((m) => (m === "native" ? "none" : m));
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setFsMode((m) => {
+          if (m === "css") {
+            document.body.style.overflow = "";
+            return "none";
+          }
+          return m;
+        });
+      }
     }
     document.addEventListener("fullscreenchange", onFs);
-    return () => document.removeEventListener("fullscreenchange", onFs);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFs);
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const bumpChrome = useCallback(() => {
@@ -203,12 +225,24 @@ export function ScenePlayer({
 
   async function enterFullscreen() {
     const el = shellRef.current;
-    if (!el || document.fullscreenElement) return;
-    try {
-      await el.requestFullscreen?.();
-    } catch {
-      /* blocked */
+    if (!el) return;
+    if (document.fullscreenElement === el) {
+      setFsMode("native");
+      return;
     }
+    // Prefer native Fullscreen API when available
+    if (el.requestFullscreen && !document.fullscreenElement) {
+      try {
+        await el.requestFullscreen();
+        setFsMode("native");
+        return;
+      } catch {
+        /* iframe / policy — fall through to CSS */
+      }
+    }
+    // CSS fullscreen: works inside live preview iframes where FS API is blocked
+    document.body.style.overflow = "hidden";
+    setFsMode("css");
   }
 
   async function exitFullscreen() {
@@ -219,6 +253,8 @@ export function ScenePlayer({
         /* ignore */
       }
     }
+    document.body.style.overflow = "";
+    setFsMode("none");
   }
 
   function markComplete() {
@@ -335,23 +371,26 @@ export function ScenePlayer({
     videoRef.current?.pause();
   }
 
-  async function togglePlay() {
-    if (playing) {
-      stopLearn();
-      if (playMode === "watch") videoRef.current?.pause();
-      return;
+  async function playContinuousFrom(startAt?: number) {
+    const v = videoRef.current;
+    if (!v) return;
+    learnToken.current += 1; // cancel any learn loop
+    stopSpeaking();
+    setSpeaking(false);
+    if (typeof startAt === "number" && Number.isFinite(startAt)) {
+      try {
+        v.currentTime = Math.max(0, startAt);
+      } catch {
+        /* ignore */
+      }
     }
     await enterFullscreen();
     bumpChrome();
-    if (playMode === "learn") {
-      void runLearnSequence(activeLineIdx);
-      return;
-    }
-    const v = videoRef.current;
-    if (!v) return;
     try {
+      v.muted = !ambientOn;
       await v.play();
       setPlaying(true);
+      // Optional soft TTS over continuous film — never pause/seek the video
       if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
         lastSpokenLine.current = activeLine.id;
         void speakLine(activeLine, voice);
@@ -361,6 +400,25 @@ export function ScenePlayer({
     }
   }
 
+  async function togglePlay() {
+    if (playing) {
+      learnToken.current += 1;
+      stopSpeaking();
+      setSpeaking(false);
+      setPlaying(false);
+      videoRef.current?.pause();
+      return;
+    }
+    // Continuous film always plays end-to-end (no line stepping)
+    if (playMode === "watch" || continuousFilm) {
+      await playContinuousFrom();
+      return;
+    }
+    await enterFullscreen();
+    bumpChrome();
+    void runLearnSequence(activeLineIdx);
+  }
+
   function seekLine(idx: number) {
     const line = scene.lines[idx];
     if (!line) return;
@@ -368,16 +426,17 @@ export function ScenePlayer({
     setActiveLineIdx(idx);
     setTime(line.startSec);
     seekMediaToLine(idx);
-    void enterFullscreen().then(() => {
-      if (playMode === "learn") void runLearnSequence(idx);
-      else {
-        void videoRef.current?.play();
-        setPlaying(true);
-        if (voice !== "off") {
-          lastSpokenLine.current = line.id;
-          void speakLine(line, voice);
-        }
+    // Continuous / watch: jump to that moment and keep fluid playback
+    if (playMode === "watch" || continuousFilm) {
+      void playContinuousFrom(mediaTimeForLine(idx));
+      if (voice !== "off") {
+        lastSpokenLine.current = line.id;
+        void speakLine(line, voice);
       }
+      return;
+    }
+    void enterFullscreen().then(() => {
+      void runLearnSequence(idx);
     });
   }
 
@@ -394,12 +453,12 @@ export function ScenePlayer({
     setTime(0);
     lastSpokenLine.current = null;
     if (videoRef.current) videoRef.current.currentTime = 0;
+    if (playMode === "watch" || continuousFilm) {
+      void playContinuousFrom(0);
+      return;
+    }
     void enterFullscreen().then(() => {
-      if (playMode === "learn") void runLearnSequence(0);
-      else {
-        void videoRef.current?.play();
-        setPlaying(true);
-      }
+      void runLearnSequence(0);
     });
   }
 
@@ -412,21 +471,30 @@ export function ScenePlayer({
   }
 
   function toggleFullscreenBtn() {
-    if (document.fullscreenElement) void exitFullscreen();
+    // Native FS or CSS overlay both count as fullscreen
+    if (document.fullscreenElement || fsMode !== "none") void exitFullscreen();
     else void enterFullscreen();
   }
 
   const onTime = useCallback(() => {
-    if (playMode !== "watch") return;
+    // Continuous film / watch mode: advance only by video clock — never pause or skip
+    if (playMode !== "watch" && !continuousFilm) return;
     const v = videoRef.current;
     if (!v) return;
     const t = v.currentTime;
-    const md = v.duration || 1;
-    const practiceT = (t / md) * practiceDuration;
+    const md = v.duration || mediaDuration || 1;
+    // Map media time → practice timeline (1:1 for long films)
+    const practiceT =
+      practiceDuration > 0 ? (t / Math.max(0.01, md)) * practiceDuration : t;
     setTime(practiceT);
-    const idx = scene.lines.findIndex(
+    setMediaDuration(md);
+    let idx = scene.lines.findIndex(
       (l) => practiceT >= l.startSec && practiceT < l.endSec,
     );
+    if (idx < 0 && scene.lines.length) {
+      // past last line end — keep last line active until film ends
+      idx = scene.lines.length - 1;
+    }
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
       const line = scene.lines[idx];
@@ -438,28 +506,38 @@ export function ScenePlayer({
         lastSpokenLine.current !== line.id
       ) {
         lastSpokenLine.current = line.id;
+        // Fire-and-forget TTS — video keeps rolling
         void speakLine(line, voice);
       }
     }
-    if (loopLine && activeLine && practiceT >= activeLine.endSec - 0.05) {
+    // Loop line only when explicitly enabled (off for continuous films)
+    if (
+      loopLine &&
+      !continuousFilm &&
+      activeLine &&
+      practiceT >= activeLine.endSec - 0.05
+    ) {
       v.currentTime = mediaTimeForLine(activeLineIdx);
     }
   }, [
     playMode,
+    continuousFilm,
     scene.lines,
     activeLineIdx,
     loopLine,
     activeLine,
     practiceDuration,
+    mediaDuration,
     playing,
     voice,
     speaking,
   ]);
 
   function onEnded() {
-    if (playMode === "watch") {
+    if (playMode === "watch" || continuousFilm) {
       setPlaying(false);
       markComplete();
+      // Stay in fullscreen so the ending frame is readable; user exits manually
     }
   }
 
@@ -531,18 +609,36 @@ export function ScenePlayer({
         Default: <strong className="text-[var(--color-fg)]">hear Narragansett</strong>
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
-        . Play opens fullscreen. Film ~{filmLabel}
-        {playMode === "learn" ? ` · practice across ${scene.lines.length} lines` : ""}.
+        .{" "}
+        {continuousFilm || playMode === "watch" ? (
+          <>
+            <strong className="text-[var(--color-fg)]">Play full film</strong> runs
+            continuous end-to-end (no scene skipping) · fullscreen · ~{filmLabel}
+          </>
+        ) : (
+          <>
+            Play opens fullscreen. Film ~{filmLabel}
+            {` · practice across ${scene.lines.length} lines`}
+          </>
+        )}
+        .
       </p>
 
       <div
         ref={shellRef}
+        data-scene-player-shell="true"
+        data-fullscreen={isFullscreen ? "true" : "false"}
         className={cn(
           "relative overflow-hidden bg-black shadow-[var(--shadow-elevated)]",
           isFullscreen
-            ? "fixed inset-0 z-50 rounded-none border-0"
+            ? "fixed inset-0 z-[100] rounded-none border-0"
             : "rounded-mode-lg border border-[var(--color-border)]",
         )}
+        style={
+          isFullscreen
+            ? { width: "100vw", height: "100dvh", maxHeight: "100dvh" }
+            : undefined
+        }
         onPointerMove={bumpChrome}
         onClick={bumpChrome}
       >
@@ -562,10 +658,14 @@ export function ScenePlayer({
             setMediaDuration(e.currentTarget.duration || scene.durationSec)
           }
           onPlay={() => {
-            if (playMode === "watch") setPlaying(true);
+            if (playMode === "watch" || continuousFilm) setPlaying(true);
           }}
           onPause={() => {
-            if (playMode === "watch") setPlaying(false);
+            // Ignore transient pauses; only clear if truly paused
+            const v = videoRef.current;
+            if ((playMode === "watch" || continuousFilm) && v && v.paused) {
+              setPlaying(false);
+            }
           }}
           onEnded={onEnded}
           preload="metadata"
@@ -577,8 +677,12 @@ export function ScenePlayer({
           <button
             type="button"
             onClick={() => void togglePlay()}
-            className="absolute inset-0 z-10 flex items-center justify-center bg-black/25"
-            aria-label="Play fullscreen"
+            className="absolute inset-0 z-30 flex items-center justify-center bg-black/25"
+            aria-label={
+              continuousFilm || playMode === "watch"
+                ? "Play full film"
+                : "Play fullscreen"
+            }
           >
             <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-primary-fg)] shadow-xl">
               <Play className="h-8 w-8" fill="currentColor" />
@@ -588,25 +692,49 @@ export function ScenePlayer({
 
         <div
           className={cn(
-            "absolute inset-x-0 bottom-0 z-20 transition-opacity duration-300",
+            "pointer-events-none absolute inset-x-0 bottom-0 z-20 transition-opacity duration-300",
             chromeVisible || !playing
               ? "opacity-100"
-              : "pointer-events-none opacity-0",
+              : "opacity-0",
           )}
         >
           <div className="bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-3 pt-16">
-            <div className="mb-2 h-1 overflow-hidden rounded-full bg-white/20">
+            <div
+              className="pointer-events-auto mb-2 h-2 cursor-pointer overflow-hidden rounded-full bg-white/20"
+              role="slider"
+              aria-label="Seek in film"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(Math.min(100, progress))}
+              onClick={(e) => {
+                const v = videoRef.current;
+                if (!v || !(playMode === "watch" || continuousFilm)) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+                const md = v.duration || mediaDuration || 0;
+                if (md > 0) {
+                  v.currentTime = pct * md;
+                  setTime(pct * practiceDuration);
+                }
+              }}
+            >
               <div
                 className="h-full rounded-full bg-[var(--color-primary)] transition-[width] duration-200"
                 style={{ width: `${Math.min(100, progress)}%` }}
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="pointer-events-auto flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => void togglePlay()}
                 className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-primary-fg)]"
-                aria-label={playing ? "Pause" : "Play fullscreen"}
+                aria-label={
+                  playing
+                    ? "Pause"
+                    : continuousFilm || playMode === "watch"
+                      ? "Play full film"
+                      : "Play fullscreen"
+                }
               >
                 {playing ? (
                   <Pause className="h-5 w-5" />
@@ -677,18 +805,24 @@ export function ScenePlayer({
             onClick={() => void togglePlay()}
           >
             {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-            {playing ? "Pause" : "Play fullscreen"}
+            {playing
+              ? "Pause"
+              : continuousFilm || playMode === "watch"
+                ? "Play full film"
+                : "Play fullscreen"}
           </Button>
           <Button type="button" variant="secondary" onClick={restart}>
             <RotateCcw className="h-4 w-4" />
           </Button>
-          <Button
-            type="button"
-            variant={loopLine ? "soft" : "secondary"}
-            onClick={() => setLoopLine((v) => !v)}
-          >
-            Loop line
-          </Button>
+          {!continuousFilm && (
+            <Button
+              type="button"
+              variant={loopLine ? "soft" : "secondary"}
+              onClick={() => setLoopLine((v) => !v)}
+            >
+              Loop line
+            </Button>
+          )}
           {prev && (
             <Button asChild variant="secondary">
               <Link to={prev.to} params={prev.params}>
@@ -779,6 +913,7 @@ export function ScenePlayer({
               onClick={() => {
                 stopLearn();
                 setPlayMode(key);
+                lastSpokenLine.current = null;
               }}
               className={cn(
                 "min-h-11 rounded-full border px-3 py-1.5 text-sm",

@@ -82,11 +82,12 @@ function HomePage() {
           <div className="flex gap-3">
             <Film className="mt-1 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
             <div>
-              <p className="label-eyebrow">Long story narrative</p>
+              <p className="label-eyebrow">Long story narrative · short movie</p>
               <p className="font-display text-title">{longStory.title}</p>
               <p className="text-sm text-[var(--color-muted)]">
                 {formatDuration(longStory.durationSec)} continuous film ·{" "}
-                {longStory.lines.length} language lines · dawn to night
+                {longStory.lines.length} language lines · dawn to night · one
+                video
               </p>
             </div>
           </div>

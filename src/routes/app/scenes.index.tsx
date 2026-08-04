@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Clapperboard, Play, Upload, CheckCircle2, Sun } from "lucide-react";
+import { Clapperboard, Film, Play, Upload, CheckCircle2, Sun } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,6 +10,7 @@ import {
   getRecommendedScene,
 } from "@/lib/content/scenes";
 import { getDayJourneyStats } from "@/lib/content/day-journey";
+import { formatDuration, getLongStories } from "@/lib/content/long-stories";
 import { useModeStore } from "@/lib/mode/store";
 import { useProgressStore } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ function ScenesIndexPage() {
   const seriesList = getSceneSeries();
   const chapters = getSceneChapters();
   const dayStats = getDayJourneyStats(mode);
+  const longStory = getLongStories(mode)[0];
   const [domain, setDomain] = useState<string | null>(null);
   const [series, setSeries] = useState<string | null>(null);
   const [chapter, setChapter] = useState<number | null>(null);
@@ -56,25 +58,50 @@ function ScenesIndexPage() {
         </p>
         <h1 className="font-display text-display">Scenes</h1>
         <p className="text-content text-[var(--color-muted)] leading-relaxed">
-          Fullscreen line-by-line practice:{" "}
+          Short practice clips:{" "}
           <strong className="text-[var(--color-fg)]">hear Narragansett</strong>,{" "}
           <strong className="text-[var(--color-fg)]">read English</strong> — then
-          toggle either track.
+          toggle either track. Full-length film lives under{" "}
+          <Link to="/app/stories" className="text-[var(--color-primary)]">
+            Stories
+          </Link>
+          .
         </p>
         <p className="text-sm text-[var(--color-subtle)]">
-          {list.length} of {scenes.length} scenes in this mode · path ordered by
+          {list.length} of {scenes.length} short scenes in this mode · path ordered by
           chapter
         </p>
       </header>
 
+      {longStory && (
+        <Link
+          to="/app/stories/$id"
+          params={{ id: longStory.id }}
+          className="focus-stage pad-mode flex items-center justify-between gap-3"
+        >
+          <div className="flex gap-3">
+            <Film className="mt-0.5 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+            <div>
+              <p className="label-eyebrow">Long story narrative</p>
+              <p className="font-display text-title">{longStory.title}</p>
+              <p className="text-sm text-[var(--color-muted)]">
+                {formatDuration(longStory.durationSec)} continuous film ·{" "}
+                {longStory.lines.length} language lines · one file
+              </p>
+            </div>
+          </div>
+          <Play className="h-6 w-6 shrink-0 text-[var(--color-primary)]" />
+        </Link>
+      )}
+
       <Link
         to="/app/day"
-        className="focus-stage pad-mode flex items-center justify-between gap-3"
+        className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
       >
         <div className="flex gap-3">
           <Sun className="mt-0.5 h-6 w-6 shrink-0 text-[var(--color-primary)]" />
           <div>
-            <p className="label-eyebrow">Want a longer arc?</p>
+            <p className="label-eyebrow">Multi-minute acts</p>
             <p className="font-display text-title">A full day</p>
             <p className="text-sm text-[var(--color-muted)]">
               ~{dayStats.filmMin} min film · {dayStats.actCount} acts · dawn →

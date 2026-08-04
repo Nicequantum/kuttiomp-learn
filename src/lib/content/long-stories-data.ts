@@ -40,8 +40,8 @@ function timed(
   }));
 }
 
-/** ~40 min 50 s film — one continuous day story */
-const ONE_DAY_FILM_SEC = 40 * 60 + 50;
+/** ~25 min 12 s film — all scenes stitched once, dawn→night, no loops */
+const ONE_DAY_FILM_SEC = 25 * 60 + 12;
 
 const oneDayLines: Omit<SceneLine, "startSec" | "endSec">[] = [
   // —— Dawn ——
@@ -208,7 +208,7 @@ export const LONG_STORIES: LongStory[] = [
       "Hunting",
     ],
     reconstructionNote:
-      "Long story narrative: many AI reconstruction shots stitched into one continuous film (~41 minutes). Dialogue forms from Williams 1643 with modern English. Not a living speaker recording and not a ceremonial film. Replace the whole file via public/scenes/long/uploads/one-day-story.mp4 when you have community footage.",
+      "Long story narrative: all day acts and practice scenes stitched once into one continuous film (~25 minutes, dawn to night). No loops between scenes — press Play full film and it runs end to end. Dialogue forms from Williams 1643 with modern English. Not a living speaker recording and not a ceremonial film. Replace the whole file via public/scenes/long/uploads/one-day-story.mp4 when you have community footage.",
     lines: timed(oneDayLines, ONE_DAY_FILM_SEC),
   },
 ];

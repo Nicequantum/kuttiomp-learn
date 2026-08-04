@@ -13,10 +13,10 @@ export type ModeMeta = {
   who: string;
   navLabels: {
     home: string;
+    stories: string;
     scenes: string;
     listen: string;
     words: string;
-    profile: string;
   };
   voiceFirst: boolean;
   largeTargets: boolean;
@@ -35,10 +35,10 @@ export const MODES: Record<LearningMode, ModeMeta> = {
     who: "Toddlers and young children with a caregiver",
     navLabels: {
       home: "Home",
-      scenes: "Watch",
+      stories: "Story",
+      scenes: "Clips",
       listen: "Hear",
       words: "Words",
-      profile: "Me",
     },
     voiceFirst: true,
     largeTargets: true,
@@ -55,10 +55,10 @@ export const MODES: Record<LearningMode, ModeMeta> = {
     who: "Students and youth",
     navLabels: {
       home: "Home",
+      stories: "Stories",
       scenes: "Scenes",
       listen: "Listen",
       words: "Words",
-      profile: "Me",
     },
     voiceFirst: true,
     largeTargets: false,
@@ -75,10 +75,10 @@ export const MODES: Record<LearningMode, ModeMeta> = {
     who: "Adults and tribal members",
     navLabels: {
       home: "Home",
+      stories: "Stories",
       scenes: "Scenes",
       listen: "Listen",
       words: "Words",
-      profile: "You",
     },
     voiceFirst: true,
     largeTargets: false,
@@ -95,10 +95,10 @@ export const MODES: Record<LearningMode, ModeMeta> = {
     who: "Elders and high-accessibility needs",
     navLabels: {
       home: "Home",
+      stories: "Story",
       scenes: "Scenes",
       listen: "Listen",
       words: "Words",
-      profile: "You",
     },
     voiceFirst: true,
     largeTargets: true,
