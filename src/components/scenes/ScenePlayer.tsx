@@ -86,13 +86,22 @@ export function ScenePlayer({
   const learnToken = useRef(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSpokenLine = useRef<string | null>(null);
+  /** User wants continuous film playing — auto-resume if browser stalls */
+  const userIntentPlay = useRef(false);
+  /** Guard against overlapping TTS during continuous watch */
+  const ttsBusy = useRef(false);
+  const stallTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastProgressAt = useRef(0);
+  const lastMediaTime = useRef(0);
 
   const [videoSrc, setVideoSrc] = useState(scene.videoSrc);
   const [fromUpload, setFromUpload] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [mediaDuration, setMediaDuration] = useState(scene.durationSec);
-  const [voice, setVoice] = useState<VoiceTrack>("narragansett");
+  const [voice, setVoice] = useState<VoiceTrack>(
+    continuousFilm ? "narragansett" : "narragansett",
+  );
   const [subs, setSubs] = useState<SubtitleTrack>("english");
   const [playMode, setPlayMode] = useState<PlayMode>(defaultPlayMode);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
@@ -104,6 +113,7 @@ export function ScenePlayer({
   const isFullscreen = fsMode !== "none";
   const [chromeVisible, setChromeVisible] = useState(true);
   const [speaking, setSpeaking] = useState(false);
+  const [buffering, setBuffering] = useState(false);
   const [practicedLines, setPracticedLines] = useState<Set<string>>(
     () => new Set(),
   );
@@ -144,6 +154,7 @@ export function ScenePlayer({
 
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
   const practiceDuration = scene.durationSec;
+  const isContinuous = continuousFilm || playMode === "watch";
   const displayDuration =
     playMode === "learn"
       ? practiceDuration
@@ -155,11 +166,13 @@ export function ScenePlayer({
     setActiveLineIdx(0);
     setTime(0);
     setPlaying(false);
+    userIntentPlay.current = false;
     setPracticedLines(new Set());
     setVoice("narragansett");
     setSubs("english");
     setPlayMode(defaultPlayMode);
     lastSpokenLine.current = null;
+    ttsBusy.current = false;
     learnToken.current += 1;
     stopSpeaking();
     const resolver = resolveVideo ?? resolveSceneVideoSrc;
@@ -169,7 +182,9 @@ export function ScenePlayer({
     });
     return () => {
       learnToken.current += 1;
+      userIntentPlay.current = false;
       stopSpeaking();
+      if (stallTimer.current) clearTimeout(stallTimer.current);
     };
   }, [scene, setLastScene, setLastDayAct, progressKind, resolveVideo, defaultPlayMode]);
 
@@ -180,6 +195,54 @@ export function ScenePlayer({
     v.muted = !ambientOn;
     v.volume = ambientOn ? 0.35 : 0;
   }, [speed, videoSrc, ambientOn]);
+
+  // Keep continuous film rolling until natural end or user pause.
+  // Also recovers from buffer stalls without seeking.
+  useEffect(() => {
+    if (!isContinuous) return;
+    const id = window.setInterval(() => {
+      const v = videoRef.current;
+      if (!v || !userIntentPlay.current) return;
+      if (v.ended) {
+        userIntentPlay.current = false;
+        setPlaying(false);
+        setBuffering(false);
+        return;
+      }
+      // Stall detection: time not advancing while intending to play
+      const t = v.currentTime;
+      if (Math.abs(t - lastMediaTime.current) < 0.05 && !v.paused) {
+        // still playing but not advancing — buffering
+        setBuffering(true);
+      } else if (!v.paused) {
+        setBuffering(false);
+      }
+      lastMediaTime.current = t;
+
+      if (v.paused && !v.ended) {
+        // Resume from same position — never restart or skip
+        void v
+          .play()
+          .then(() => {
+            setPlaying(true);
+            setBuffering(false);
+          })
+          .catch(() => {
+            // Autoplay policy: try muted once, keep position
+            try {
+              v.muted = true;
+              void v.play().then(() => {
+                setPlaying(true);
+                setBuffering(false);
+              });
+            } catch {
+              /* wait for user */
+            }
+          });
+      }
+    }, 600);
+    return () => window.clearInterval(id);
+  }, [isContinuous]);
 
   useEffect(() => {
     function onFs() {
@@ -196,6 +259,11 @@ export function ScenePlayer({
           return m;
         });
       }
+      // Space toggles play only when continuous film focused
+      if (e.key === " " && isContinuous && shellRef.current?.contains(document.activeElement)) {
+        e.preventDefault();
+        void togglePlay();
+      }
     }
     document.addEventListener("fullscreenchange", onFs);
     document.addEventListener("keydown", onKey);
@@ -204,7 +272,8 @@ export function ScenePlayer({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isContinuous]);
 
   const bumpChrome = useCallback(() => {
     setChromeVisible(true);
@@ -230,7 +299,6 @@ export function ScenePlayer({
       setFsMode("native");
       return;
     }
-    // Prefer native Fullscreen API when available
     if (el.requestFullscreen && !document.fullscreenElement) {
       try {
         await el.requestFullscreen();
@@ -240,7 +308,6 @@ export function ScenePlayer({
         /* iframe / policy — fall through to CSS */
       }
     }
-    // CSS fullscreen: works inside live preview iframes where FS API is blocked
     document.body.style.overflow = "hidden";
     setFsMode("css");
   }
@@ -278,6 +345,9 @@ export function ScenePlayer({
     track: VoiceTrack = voice,
   ) {
     if (track === "off" || !line) return;
+    // Continuous film: never stack TTS or cancel mid-film aggressively
+    if (isContinuous && ttsBusy.current) return;
+    ttsBusy.current = true;
     setSpeaking(true);
     try {
       markLinePracticed(line.id, line.wordId);
@@ -296,6 +366,7 @@ export function ScenePlayer({
       });
     } finally {
       setSpeaking(false);
+      ttsBusy.current = false;
     }
   }
 
@@ -367,6 +438,7 @@ export function ScenePlayer({
     learnToken.current += 1;
     stopSpeaking();
     setSpeaking(false);
+    ttsBusy.current = false;
     setPlaying(false);
     videoRef.current?.pause();
   }
@@ -375,11 +447,32 @@ export function ScenePlayer({
     const v = videoRef.current;
     if (!v) return;
     learnToken.current += 1; // cancel any learn loop
-    stopSpeaking();
     setSpeaking(false);
+    userIntentPlay.current = true;
+    lastProgressAt.current = Date.now();
+
+    // Wait for enough media data when starting long films
+    if (v.readyState < 2) {
+      setBuffering(true);
+      await new Promise<void>((resolve) => {
+        const onReady = () => {
+          v.removeEventListener("canplay", onReady);
+          resolve();
+        };
+        v.addEventListener("canplay", onReady);
+        // safety timeout
+        window.setTimeout(() => {
+          v.removeEventListener("canplay", onReady);
+          resolve();
+        }, 4000);
+      });
+      setBuffering(false);
+    }
+
     if (typeof startAt === "number" && Number.isFinite(startAt)) {
       try {
-        v.currentTime = Math.max(0, startAt);
+        const md = v.duration || mediaDuration || startAt;
+        v.currentTime = Math.max(0, Math.min(startAt, Math.max(0, md - 0.05)));
       } catch {
         /* ignore */
       }
@@ -388,30 +481,52 @@ export function ScenePlayer({
     bumpChrome();
     try {
       v.muted = !ambientOn;
-      await v.play();
+      v.playsInline = true;
+      // Ensure we are not looping — film must end naturally
+      v.loop = false;
+      const p = v.play();
+      if (p) await p;
       setPlaying(true);
-      // Optional soft TTS over continuous film — never pause/seek the video
+      // Soft TTS for current line only — never pauses/seeks the video
       if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
         lastSpokenLine.current = activeLine.id;
         void speakLine(activeLine, voice);
       }
     } catch {
-      setPlaying(false);
+      try {
+        v.muted = true;
+        await v.play();
+        setPlaying(true);
+      } catch {
+        userIntentPlay.current = false;
+        setPlaying(false);
+      }
     }
   }
 
   async function togglePlay() {
-    if (playing) {
+    if (playing || userIntentPlay.current) {
+      userIntentPlay.current = false;
       learnToken.current += 1;
       stopSpeaking();
       setSpeaking(false);
+      ttsBusy.current = false;
       setPlaying(false);
+      setBuffering(false);
       videoRef.current?.pause();
       return;
     }
-    // Continuous film always plays end-to-end (no line stepping)
-    if (playMode === "watch" || continuousFilm) {
-      await playContinuousFrom();
+    if (isContinuous) {
+      // Resume from current position if mid-film, else from start only when at end
+      const v = videoRef.current;
+      let start: number | undefined;
+      if (v) {
+        if (v.ended || (v.duration && v.currentTime >= v.duration - 0.25)) {
+          start = 0;
+        }
+        // otherwise continue from currentTime (no startAt)
+      }
+      await playContinuousFrom(start);
       return;
     }
     await enterFullscreen();
@@ -422,12 +537,11 @@ export function ScenePlayer({
   function seekLine(idx: number) {
     const line = scene.lines[idx];
     if (!line) return;
-    stopLearn();
+    if (!isContinuous) stopLearn();
     setActiveLineIdx(idx);
     setTime(line.startSec);
-    seekMediaToLine(idx);
-    // Continuous / watch: jump to that moment and keep fluid playback
-    if (playMode === "watch" || continuousFilm) {
+    if (isContinuous) {
+      // Jump to mapped media time and keep fluid playback
       void playContinuousFrom(mediaTimeForLine(idx));
       if (voice !== "off") {
         lastSpokenLine.current = line.id;
@@ -435,6 +549,7 @@ export function ScenePlayer({
       }
       return;
     }
+    seekMediaToLine(idx);
     void enterFullscreen().then(() => {
       void runLearnSequence(idx);
     });
@@ -452,8 +567,9 @@ export function ScenePlayer({
     setActiveLineIdx(0);
     setTime(0);
     lastSpokenLine.current = null;
+    ttsBusy.current = false;
     if (videoRef.current) videoRef.current.currentTime = 0;
-    if (playMode === "watch" || continuousFilm) {
+    if (isContinuous) {
       void playContinuousFrom(0);
       return;
     }
@@ -464,53 +580,57 @@ export function ScenePlayer({
 
   async function hearLineManual(lang: "n" | "e" | "both") {
     if (!activeLine) return;
-    if (playing) stopLearn();
+    if (playing && !isContinuous) stopLearn();
     const track: VoiceTrack =
       lang === "n" ? "narragansett" : lang === "e" ? "english" : "both";
+    // Manual hear can interrupt soft TTS
+    ttsBusy.current = false;
+    stopSpeaking();
     await speakLine(activeLine, track);
   }
 
   function toggleFullscreenBtn() {
-    // Native FS or CSS overlay both count as fullscreen
     if (document.fullscreenElement || fsMode !== "none") void exitFullscreen();
     else void enterFullscreen();
   }
 
   const onTime = useCallback(() => {
-    // Continuous film / watch mode: advance only by video clock — never pause or skip
-    if (playMode !== "watch" && !continuousFilm) return;
+    if (!isContinuous) return;
     const v = videoRef.current;
     if (!v) return;
     const t = v.currentTime;
     const md = v.duration || mediaDuration || 1;
-    // Map media time → practice timeline (1:1 for long films)
+    lastProgressAt.current = Date.now();
+    lastMediaTime.current = t;
+    // 1:1 clock for long films (practice timeline = film length)
     const practiceT =
-      practiceDuration > 0 ? (t / Math.max(0.01, md)) * practiceDuration : t;
+      practiceDuration > 0 && md > 0
+        ? (t / Math.max(0.01, md)) * practiceDuration
+        : t;
     setTime(practiceT);
-    setMediaDuration(md);
+    if (md && Number.isFinite(md)) setMediaDuration(md);
+
     let idx = scene.lines.findIndex(
       (l) => practiceT >= l.startSec && practiceT < l.endSec,
     );
     if (idx < 0 && scene.lines.length) {
-      // past last line end — keep last line active until film ends
       idx = scene.lines.length - 1;
     }
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
       const line = scene.lines[idx];
       if (
-        playing &&
+        userIntentPlay.current &&
         voice !== "off" &&
-        !speaking &&
         line &&
         lastSpokenLine.current !== line.id
       ) {
         lastSpokenLine.current = line.id;
-        // Fire-and-forget TTS — video keeps rolling
+        // Fire-and-forget TTS — video clock is source of truth
         void speakLine(line, voice);
       }
     }
-    // Loop line only when explicitly enabled (off for continuous films)
+    // Loop line only when explicitly enabled (never on continuous films)
     if (
       loopLine &&
       !continuousFilm &&
@@ -520,7 +640,7 @@ export function ScenePlayer({
       v.currentTime = mediaTimeForLine(activeLineIdx);
     }
   }, [
-    playMode,
+    isContinuous,
     continuousFilm,
     scene.lines,
     activeLineIdx,
@@ -528,16 +648,15 @@ export function ScenePlayer({
     activeLine,
     practiceDuration,
     mediaDuration,
-    playing,
     voice,
-    speaking,
   ]);
 
   function onEnded() {
-    if (playMode === "watch" || continuousFilm) {
+    if (isContinuous) {
+      userIntentPlay.current = false;
       setPlaying(false);
+      setBuffering(false);
       markComplete();
-      // Stay in fullscreen so the ending frame is readable; user exits manually
     }
   }
 
@@ -610,10 +729,11 @@ export function ScenePlayer({
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
         .{" "}
-        {continuousFilm || playMode === "watch" ? (
+        {isContinuous ? (
           <>
             <strong className="text-[var(--color-fg)]">Play full film</strong> runs
             continuous end-to-end (no scene skipping) · fullscreen · ~{filmLabel}
+            {" · "}same Host & Guest throughout
           </>
         ) : (
           <>
@@ -628,8 +748,9 @@ export function ScenePlayer({
         ref={shellRef}
         data-scene-player-shell="true"
         data-fullscreen={isFullscreen ? "true" : "false"}
+        tabIndex={0}
         className={cn(
-          "relative overflow-hidden bg-black shadow-[var(--shadow-elevated)]",
+          "relative overflow-hidden bg-black shadow-[var(--shadow-elevated)] outline-none",
           isFullscreen
             ? "fixed inset-0 z-[100] rounded-none border-0"
             : "rounded-mode-lg border border-[var(--color-border)]",
@@ -653,25 +774,39 @@ export function ScenePlayer({
           poster={scene.posterSrc}
           playsInline
           muted={!ambientOn}
+          loop={false}
           onTimeUpdate={onTime}
-          onLoadedMetadata={(e) =>
-            setMediaDuration(e.currentTarget.duration || scene.durationSec)
-          }
+          onWaiting={() => {
+            if (userIntentPlay.current) setBuffering(true);
+          }}
+          onPlaying={() => {
+            setBuffering(false);
+            if (userIntentPlay.current) setPlaying(true);
+          }}
+          onLoadedMetadata={(e) => {
+            const d = e.currentTarget.duration;
+            if (d && Number.isFinite(d)) setMediaDuration(d);
+          }}
           onPlay={() => {
-            if (playMode === "watch" || continuousFilm) setPlaying(true);
+            if (isContinuous) setPlaying(true);
           }}
           onPause={() => {
-            // Ignore transient pauses; only clear if truly paused
-            const v = videoRef.current;
-            if ((playMode === "watch" || continuousFilm) && v && v.paused) {
-              setPlaying(false);
-            }
+            if (!isContinuous) return;
+            if (!userIntentPlay.current) setPlaying(false);
           }}
           onEnded={onEnded}
-          preload="metadata"
+          preload={continuousFilm ? "auto" : "metadata"}
         />
 
         {subtitleNode}
+
+        {buffering && playing && (
+          <div className="pointer-events-none absolute inset-0 z-25 flex items-center justify-center">
+            <span className="rounded-full bg-black/60 px-4 py-2 text-sm text-white/90">
+              Loading film…
+            </span>
+          </div>
+        )}
 
         {!playing && chromeVisible && (
           <button
@@ -679,9 +814,7 @@ export function ScenePlayer({
             onClick={() => void togglePlay()}
             className="absolute inset-0 z-30 flex items-center justify-center bg-black/25"
             aria-label={
-              continuousFilm || playMode === "watch"
-                ? "Play full film"
-                : "Play fullscreen"
+              isContinuous ? "Play full film" : "Play fullscreen"
             }
           >
             <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-primary-fg)] shadow-xl">
@@ -693,9 +826,7 @@ export function ScenePlayer({
         <div
           className={cn(
             "pointer-events-none absolute inset-x-0 bottom-0 z-20 transition-opacity duration-300",
-            chromeVisible || !playing
-              ? "opacity-100"
-              : "opacity-0",
+            chromeVisible || !playing ? "opacity-100" : "opacity-0",
           )}
         >
           <div className="bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-3 pt-16">
@@ -708,13 +839,20 @@ export function ScenePlayer({
               aria-valuenow={Math.round(Math.min(100, progress))}
               onClick={(e) => {
                 const v = videoRef.current;
-                if (!v || !(playMode === "watch" || continuousFilm)) return;
+                if (!v || !isContinuous) return;
                 const rect = e.currentTarget.getBoundingClientRect();
-                const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+                const pct = Math.min(
+                  1,
+                  Math.max(0, (e.clientX - rect.left) / rect.width),
+                );
                 const md = v.duration || mediaDuration || 0;
                 if (md > 0) {
                   v.currentTime = pct * md;
                   setTime(pct * practiceDuration);
+                  // Keep playing through after seek
+                  if (userIntentPlay.current) {
+                    void v.play().catch(() => {});
+                  }
                 }
               }}
             >
@@ -731,7 +869,7 @@ export function ScenePlayer({
                 aria-label={
                   playing
                     ? "Pause"
-                    : continuousFilm || playMode === "watch"
+                    : isContinuous
                       ? "Play full film"
                       : "Play fullscreen"
                 }
@@ -761,6 +899,7 @@ export function ScenePlayer({
               <span className="ml-1 min-w-0 flex-1 truncate text-xs text-white/80 tabular-nums sm:text-sm">
                 Line {activeLineIdx + 1}/{scene.lines.length}
                 {speaking ? " · speaking…" : ""}
+                {buffering ? " · buffering…" : ""}
                 {" · "}
                 {fmt(playMode === "learn" ? activeLine?.startSec ?? 0 : time)} /{" "}
                 {fmt(displayDuration)}
@@ -807,7 +946,7 @@ export function ScenePlayer({
             {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             {playing
               ? "Pause"
-              : continuousFilm || playMode === "watch"
+              : isContinuous
                 ? "Play full film"
                 : "Play fullscreen"}
           </Button>
@@ -912,6 +1051,7 @@ export function ScenePlayer({
               type="button"
               onClick={() => {
                 stopLearn();
+                userIntentPlay.current = false;
                 setPlayMode(key);
                 lastSpokenLine.current = null;
               }}
@@ -1043,7 +1183,7 @@ function fmt(sec: number) {
   if (m >= 60) {
     const h = Math.floor(m / 60);
     const rm = m % 60;
-    return `${h}:${rm.toString().padStart(2, "0")}:${r.toString().padStart(2, "0")}`;
+    return `${h}:${String(rm).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
   }
-  return `${m}:${r.toString().padStart(2, "0")}`;
+  return `${m}:${String(r).padStart(2, "0")}`;
 }

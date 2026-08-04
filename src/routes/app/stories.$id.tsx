@@ -68,6 +68,7 @@ function LongStoryPage() {
             {formatDuration(story.durationSec)} continuous
           </Badge>
           <Badge tone="neutral">{story.lines.length} language lines</Badge>
+          <Badge tone="neutral">Host + Guest throughout</Badge>
           <Badge tone="neutral">
             {story.chapters.length} Williams chapters
           </Badge>
@@ -76,11 +77,13 @@ function LongStoryPage() {
 
       <HistoricalBanner compact />
 
-      <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]">
-        Press <strong className="text-[var(--color-fg)]">Play full film</strong> — one continuous{" "}
-        {formatDuration(story.durationSec)} video, no skipping between scenes. Opens fullscreen.
-        Subtitles track the language as the film runs. Switch to{" "}
-        <strong className="text-[var(--color-fg)]">Learn</strong> only if you want line-by-line practice.
+      <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)] leading-relaxed">
+        Press <strong className="text-[var(--color-fg)]">Play full film</strong> —
+        one continuous {formatDuration(story.durationSec)} video of the same Host
+        and Guest from dawn to night. No recycled practice shorts; language lines
+        track as the film runs. Opens fullscreen. Switch to{" "}
+        <strong className="text-[var(--color-fg)]">Learn</strong> only if you want
+        line-by-line practice.
       </p>
 
       <ScenePlayer
