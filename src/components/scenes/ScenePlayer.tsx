@@ -35,7 +35,13 @@ import {
   getPrevScene,
   resolveSceneVideoSrc,
 } from "@/lib/content/scenes";
-import { speakWord, stopSpeaking } from "@/lib/audio/speak";
+import {
+  prefetchSpeak,
+  speakWord,
+  stopSpeaking,
+  unlockAudioPlayback,
+  checkTtsStatus,
+} from "@/lib/audio/speak";
 import { useProgressStore } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
 
@@ -103,6 +109,93 @@ function isTypingTarget(t: EventTarget | null) {
   );
 }
 
+/**
+ * Wait until the media element has buffered ahead of the playhead
+ * (or HAVE_ENOUGH_DATA). Silent — no UI. Prefer a longer start over
+ * mid-play stalls the learner can see.
+ */
+function waitForPlaybackReady(
+  v: HTMLVideoElement,
+  opts?: { aheadSec?: number; timeoutMs?: number },
+): Promise<void> {
+  const aheadSec = opts?.aheadSec ?? 2.5;
+  const timeoutMs = opts?.timeoutMs ?? 14000;
+  if (v.readyState >= 4) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const started = Date.now();
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      v.removeEventListener("progress", onProg);
+      v.removeEventListener("canplaythrough", onReady);
+      v.removeEventListener("loadeddata", onReady);
+      window.clearInterval(tick);
+      resolve();
+    };
+    const enough = () => {
+      try {
+        if (v.readyState >= 4) return true;
+        if (v.buffered.length === 0) return false;
+        const end = v.buffered.end(v.buffered.length - 1);
+        const need = v.currentTime + aheadSec;
+        const cap =
+          Number.isFinite(v.duration) && v.duration > 0
+            ? Math.min(need, v.duration - 0.05)
+            : need;
+        return end >= cap - 0.05;
+      } catch {
+        return v.readyState >= 3;
+      }
+    };
+    const onProg = () => {
+      if (enough()) finish();
+    };
+    const onReady = () => {
+      if (enough() || v.readyState >= 3) finish();
+    };
+    v.addEventListener("progress", onProg);
+    v.addEventListener("canplaythrough", onReady);
+    v.addEventListener("loadeddata", onReady);
+    const tick = window.setInterval(() => {
+      if (enough()) finish();
+      else if (Date.now() - started > timeoutMs) finish();
+    }, 180);
+    try {
+      v.preload = "auto";
+      // Nudge the network without showing chrome
+      if (v.readyState < 2) v.load();
+    } catch {
+      /* ignore */
+    }
+    if (enough()) finish();
+  });
+}
+
+function detectVideoHasAudio(v: HTMLVideoElement): boolean | null {
+  try {
+    const anyV = v as HTMLVideoElement & {
+      audioTracks?: { length: number };
+      mozHasAudio?: boolean;
+      webkitAudioDecodedByteCount?: number;
+    };
+    if (anyV.audioTracks && typeof anyV.audioTracks.length === "number") {
+      return anyV.audioTracks.length > 0;
+    }
+    if (typeof anyV.mozHasAudio === "boolean") return anyV.mozHasAudio;
+    if (
+      typeof anyV.webkitAudioDecodedByteCount === "number" &&
+      anyV.webkitAudioDecodedByteCount > 0
+    ) {
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 export function ScenePlayer({
   scene,
   largeTargets,
@@ -122,12 +215,14 @@ export function ScenePlayer({
   const userIntentPlay = useRef(false);
   /** Guard against overlapping TTS during continuous watch */
   const ttsBusy = useRef(false);
-  const stallTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stallSince = useRef<number | null>(null);
   const lastProgressAt = useRef(0);
   const lastMediaTime = useRef(0);
   const lastSavedAt = useRef(0);
   const pendingResumeSec = useRef<number | null>(null);
   const appliedResume = useRef(false);
+  /** Internal only — never shown as "Loading…" to the learner */
+  const preparingRef = useRef(false);
 
   const [videoSrc, setVideoSrc] = useState(scene.videoSrc);
   const [fromUpload, setFromUpload] = useState(false);
@@ -140,17 +235,25 @@ export function ScenePlayer({
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
+  /**
+   * Ambient = embedded video soundtrack (if any). Packaged reconstructions
+   * are currently video-only; language audio is TTS / living recording.
+   * Default off so silent files do not look "broken"; community uploads
+   * with audio tracks can turn this on.
+   */
   const [ambientOn, setAmbientOn] = useState(false);
+  const [mediaHasAudio, setMediaHasAudio] = useState<boolean | null>(null);
   /** native = Fullscreen API; css = fixed overlay (iframe-safe) */
   const [fsMode, setFsMode] = useState<"none" | "native" | "css">("none");
   const isFullscreen = fsMode !== "none";
   const [chromeVisible, setChromeVisible] = useState(true);
   const [speaking, setSpeaking] = useState(false);
-  const [buffering, setBuffering] = useState(false);
   const [mediaError, setMediaError] = useState<string | null>(null);
+  const [oralOnly, setOralOnly] = useState(false);
   const [practicedLines, setPracticedLines] = useState<Set<string>>(
     () => new Set(),
   );
+  const [ttsConfigured, setTtsConfigured] = useState<boolean | null>(null);
 
   const completeScene = useProgressStore((s) => s.completeScene);
   const completeDayAct = useProgressStore((s) => s.completeDayAct);
@@ -223,7 +326,6 @@ export function ScenePlayer({
         !store.completedStories.includes(scene.id);
       pendingResumeSec.current = canResume ? store.lastStoryPositionSec : null;
       appliedResume.current = false;
-      // Touch lastStoryId without wiping a valid resume cursor
       if (store.lastStoryId !== scene.id) {
         setStoryPosition(scene.id, 0);
       }
@@ -239,8 +341,12 @@ export function ScenePlayer({
     setSubs("english");
     setPlayMode(defaultPlayMode);
     setMediaError(null);
+    setOralOnly(false);
+    setMediaHasAudio(null);
     lastSpokenLine.current = null;
     ttsBusy.current = false;
+    stallSince.current = null;
+    preparingRef.current = false;
     learnToken.current += 1;
     stopSpeaking();
     const resolver = resolveVideo ?? resolveSceneVideoSrc;
@@ -248,8 +354,15 @@ export function ScenePlayer({
       setVideoSrc(r.src);
       setFromUpload(r.fromUpload);
     });
+    // Warm TTS status + first lines (silent prefetch — no UI)
+    void checkTtsStatus().then((s) => setTtsConfigured(s.configured));
+    const warm = scene.lines.slice(0, 4);
+    void (async () => {
+      for (const line of warm) {
+        if (line.narragansett) await prefetchSpeak(line.narragansett, "narragansett");
+      }
+    })();
     return () => {
-      // Persist place on leave (pause / navigate away)
       if (progressKind === "story") {
         const v = videoRef.current;
         if (v && Number.isFinite(v.currentTime) && v.currentTime >= 1) {
@@ -259,7 +372,6 @@ export function ScenePlayer({
       learnToken.current += 1;
       userIntentPlay.current = false;
       stopSpeaking();
-      if (stallTimer.current) clearTimeout(stallTimer.current);
     };
   }, [
     scene,
@@ -275,28 +387,34 @@ export function ScenePlayer({
     const v = videoRef.current;
     if (!v) return;
     v.playbackRate = speed;
-    v.muted = !ambientOn;
-    v.volume = ambientOn ? 0.35 : 0;
-  }, [speed, videoSrc, ambientOn]);
+    // Only unmute element when ambient is on AND we believe there is a track
+    const wantAmbient = ambientOn && mediaHasAudio !== false;
+    v.muted = !wantAmbient;
+    v.volume = wantAmbient ? 0.85 : 0;
+  }, [speed, videoSrc, ambientOn, mediaHasAudio]);
 
-  // Keep continuous film rolling until natural end or user pause.
-  // Also recovers from buffer stalls without seeking.
+  // Continuous stall recovery — silent; no "Loading…" chrome
   useEffect(() => {
     if (!isContinuous) return;
     const id = window.setInterval(() => {
       const v = videoRef.current;
-      if (!v || !userIntentPlay.current) return;
+      if (!v || !userIntentPlay.current) {
+        stallSince.current = null;
+        return;
+      }
       if (v.ended) {
         userIntentPlay.current = false;
         setPlaying(false);
-        setBuffering(false);
+        stallSince.current = null;
         return;
       }
       const t = v.currentTime;
-      if (Math.abs(t - lastMediaTime.current) < 0.05 && !v.paused) {
-        setBuffering(true);
-      } else if (!v.paused) {
-        setBuffering(false);
+      const stalled =
+        Math.abs(t - lastMediaTime.current) < 0.05 && !v.paused && !v.ended;
+      if (stalled) {
+        if (stallSince.current == null) stallSince.current = Date.now();
+      } else {
+        stallSince.current = null;
       }
       lastMediaTime.current = t;
 
@@ -305,23 +423,16 @@ export function ScenePlayer({
           .play()
           .then(() => {
             setPlaying(true);
-            setBuffering(false);
           })
           .catch(() => {
-            try {
-              v.muted = true;
-              void v.play().then(() => {
-                setPlaying(true);
-                setBuffering(false);
-              });
-            } catch {
-              /* wait for user */
-            }
+            // Keep oral path alive even if video autoplay fails
+            void speakLine(activeLine, voice).catch(() => {});
           });
       }
-    }, 600);
+    }, 800);
     return () => window.clearInterval(id);
-  }, [isContinuous]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isContinuous, voice, activeLine]);
 
   useEffect(() => {
     function onFs() {
@@ -330,7 +441,6 @@ export function ScenePlayer({
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        // Always leave both native and CSS fullscreen shells
         if (document.fullscreenElement) {
           void document.exitFullscreen().catch(() => {});
         }
@@ -338,7 +448,6 @@ export function ScenePlayer({
         setFsMode("none");
         return;
       }
-      // Space toggles play when player shell is the interaction context
       if (e.key !== " " && e.code !== "Space") return;
       if (isTypingTarget(e.target)) return;
       const shell = shellRef.current;
@@ -435,7 +544,6 @@ export function ScenePlayer({
     track: VoiceTrack = voice,
   ) {
     if (track === "off" || !line) return;
-    // Continuous film: never stack TTS or cancel mid-film aggressively
     if (isContinuous && ttsBusy.current) return;
     ttsBusy.current = true;
     setSpeaking(true);
@@ -465,7 +573,6 @@ export function ScenePlayer({
     const md = v?.duration || mediaDuration || 1;
     if (!Number.isFinite(md) || md <= 0) return 0;
     if (scene.lines.length <= 1) return 0;
-    // Prefer line timeline mapped into media when practiceDuration ≈ film length
     const line = scene.lines[idx];
     if (line && practiceDuration > 0 && Number.isFinite(line.startSec)) {
       const ratio = md / practiceDuration;
@@ -504,12 +611,46 @@ export function ScenePlayer({
     }
   }
 
+  /** Start video when ready; never blocks oral path if media fails. */
+  async function startVideoSoft(v: HTMLVideoElement | null) {
+    if (!v || oralOnly) return false;
+    preparingRef.current = true;
+    try {
+      await waitForPlaybackReady(v, {
+        aheadSec: continuousFilm ? 4 : 2.5,
+        timeoutMs: continuousFilm ? 16000 : 10000,
+      });
+      const wantAmbient = ambientOn && mediaHasAudio !== false;
+      v.muted = !wantAmbient;
+      v.volume = wantAmbient ? 0.85 : 0;
+      v.playsInline = true;
+      await v.play();
+      return true;
+    } catch {
+      return false;
+    } finally {
+      preparingRef.current = false;
+    }
+  }
+
   const runLearnSequence = useCallback(
     async (fromIdx: number) => {
       const token = ++learnToken.current;
       const v = videoRef.current;
       setPlaying(true);
       setActiveLineIdx(fromIdx);
+      await unlockAudioPlayback();
+
+      // Prefetch remaining lines silently while we work
+      void (async () => {
+        for (const line of scene.lines.slice(fromIdx, fromIdx + 6)) {
+          if (line.narragansett)
+            await prefetchSpeak(line.narragansett, "narragansett");
+        }
+      })();
+
+      // Prepare video in parallel with first speech — oral primacy
+      const videoReady = startVideoSoft(v);
 
       for (let i = fromIdx; i < scene.lines.length; i++) {
         if (learnToken.current !== token) return;
@@ -518,15 +659,7 @@ export function ScenePlayer({
         setTime(line.startSec);
         seekMediaToLine(i);
 
-        if (v) {
-          try {
-            v.muted = !ambientOn;
-            await v.play();
-          } catch {
-            /* autoplay */
-          }
-        }
-
+        // Language first — always, even if video still buffering or failed
         if (voice !== "off") {
           await speakLine(line, voice);
         } else {
@@ -535,11 +668,28 @@ export function ScenePlayer({
         }
 
         if (learnToken.current !== token) return;
+
+        // Ensure video is advancing for this line window when possible
+        if (v && !oralOnly) {
+          const ok = await videoReady;
+          if (!ok && i === fromIdx) {
+            // Video failed entirely — continue oral-only
+            setOralOnly(true);
+            setMediaError("video-unavailable-oral-continues");
+          } else if (v.paused && !v.ended) {
+            try {
+              await v.play();
+            } catch {
+              /* keep oral */
+            }
+          }
+        }
+
         if (loopLine) {
           i -= 1;
           continue;
         }
-        await new Promise((r) => setTimeout(r, 350 / speed));
+        await new Promise((r) => setTimeout(r, 280 / speed));
       }
 
       if (learnToken.current !== token) return;
@@ -548,7 +698,7 @@ export function ScenePlayer({
       if (v) v.pause();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [scene, voice, loopLine, ambientOn, speed, progressKind],
+    [scene, voice, loopLine, ambientOn, speed, progressKind, oralOnly, mediaHasAudio],
   );
 
   function stopLearn() {
@@ -562,32 +712,25 @@ export function ScenePlayer({
 
   async function playContinuousFrom(startAt?: number) {
     const v = videoRef.current;
-    if (!v) return;
-    learnToken.current += 1; // cancel any learn loop
+    learnToken.current += 1;
     setSpeaking(false);
     userIntentPlay.current = true;
     lastProgressAt.current = Date.now();
     setMediaError(null);
+    await unlockAudioPlayback();
 
-    if (v.readyState < 2) {
-      setBuffering(true);
-      await new Promise<void>((resolve) => {
-        const onReady = () => {
-          v.removeEventListener("canplay", onReady);
-          resolve();
-        };
-        v.addEventListener("canplay", onReady);
-        window.setTimeout(() => {
-          v.removeEventListener("canplay", onReady);
-          resolve();
-        }, 4000);
-      });
-      setBuffering(false);
-    }
+    // Prefetch upcoming dialogue TTS while media buffers (silent)
+    const startIdx = Math.max(0, activeLineIdx);
+    void (async () => {
+      for (const line of scene.lines.slice(startIdx, startIdx + 8)) {
+        if (line.narragansett)
+          await prefetchSpeak(line.narragansett, "narragansett");
+      }
+    })();
 
-    applyPendingResume(v);
+    applyPendingResume(v!);
 
-    if (typeof startAt === "number" && Number.isFinite(startAt)) {
+    if (v && typeof startAt === "number" && Number.isFinite(startAt)) {
       try {
         const md = v.duration || mediaDuration || startAt;
         v.currentTime = Math.max(0, Math.min(startAt, Math.max(0, md - 0.05)));
@@ -595,32 +738,44 @@ export function ScenePlayer({
         /* ignore */
       }
     }
+
     await enterFullscreen();
     bumpChrome();
-    try {
-      v.muted = !ambientOn;
-      v.playsInline = true;
-      v.loop = false;
-      const p = v.play();
-      if (p) await p;
-      setPlaying(true);
-      if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
-        lastSpokenLine.current = activeLine.id;
-        void speakLine(activeLine, voice);
-      }
-    } catch {
-      try {
-        v.muted = true;
-        await v.play();
-        setPlaying(true);
-      } catch {
-        userIntentPlay.current = false;
-        setPlaying(false);
-      }
+
+    // Speak first line immediately (gesture-safe), then bring video up when ready
+    if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
+      lastSpokenLine.current = activeLine.id;
+      void speakLine(activeLine, voice);
     }
+
+    const videoOk = await startVideoSoft(v);
+    if (!videoOk) {
+      setOralOnly(true);
+      setMediaError("video-unavailable-oral-continues");
+      setPlaying(true);
+      // Oral walkthrough of remaining lines while video is down
+      if (voice !== "off") {
+        const token = learnToken.current;
+        for (let i = activeLineIdx + 1; i < scene.lines.length; i++) {
+          if (learnToken.current !== token || !userIntentPlay.current) break;
+          setActiveLineIdx(i);
+          lastSpokenLine.current = scene.lines[i].id;
+          await speakLine(scene.lines[i], voice);
+        }
+        if (learnToken.current === token) {
+          userIntentPlay.current = false;
+          setPlaying(false);
+          markComplete();
+        }
+      }
+      return;
+    }
+    setPlaying(true);
+    setOralOnly(false);
   }
 
   async function togglePlay() {
+    await unlockAudioPlayback();
     if (playing || userIntentPlay.current) {
       userIntentPlay.current = false;
       learnToken.current += 1;
@@ -628,9 +783,7 @@ export function ScenePlayer({
       setSpeaking(false);
       ttsBusy.current = false;
       setPlaying(false);
-      setBuffering(false);
       videoRef.current?.pause();
-      // Session A: save place on pause
       saveStoryPosition();
       return;
     }
@@ -650,7 +803,6 @@ export function ScenePlayer({
         ) {
           start = pendingResumeSec.current;
         }
-        // otherwise continue from currentTime
       }
       await playContinuousFrom(start);
       return;
@@ -670,10 +822,6 @@ export function ScenePlayer({
       const mediaT = mediaTimeForLine(idx);
       void playContinuousFrom(mediaT);
       saveStoryPosition(mediaT);
-      if (voice !== "off") {
-        lastSpokenLine.current = line.id;
-        void speakLine(line, voice);
-      }
       return;
     }
     seekMediaToLine(idx);
@@ -685,16 +833,18 @@ export function ScenePlayer({
   function seekByProgress(pct: number) {
     const v = videoRef.current;
     if (!v) return;
-    // Progress bar seeks the film clock (Watch). In Learn, map to nearest line.
-    const md = (Number.isFinite(v.duration) && v.duration > 0)
-      ? v.duration
-      : (Number.isFinite(mediaDuration) && mediaDuration > 0 ? mediaDuration : 0);
+    const md =
+      Number.isFinite(v.duration) && v.duration > 0
+        ? v.duration
+        : Number.isFinite(mediaDuration) && mediaDuration > 0
+          ? mediaDuration
+          : 0;
     if (!Number.isFinite(md) || md <= 0) return;
     const clamped = Math.min(1, Math.max(0, pct));
     const mediaT = clamped * md;
     if (!isContinuous) {
-      // Snap to nearest dialogue line for Learn mode
-      const practiceT = practiceDuration > 0 ? clamped * practiceDuration : mediaT;
+      const practiceT =
+        practiceDuration > 0 ? clamped * practiceDuration : mediaT;
       let best = 0;
       let bestDist = Infinity;
       scene.lines.forEach((line, i) => {
@@ -715,7 +865,6 @@ export function ScenePlayer({
     const practiceT =
       practiceDuration > 0 ? clamped * practiceDuration : mediaT;
     setTime(Number.isFinite(practiceT) ? practiceT : mediaT);
-    // Update active line from practice clock
     let idx = scene.lines.findIndex(
       (l) => practiceT >= l.startSec && practiceT < l.endSec,
     );
@@ -743,6 +892,7 @@ export function ScenePlayer({
     ttsBusy.current = false;
     pendingResumeSec.current = null;
     appliedResume.current = true;
+    setOralOnly(false);
     if (videoRef.current) videoRef.current.currentTime = 0;
     if (progressKind === "story") {
       setStoryPosition(scene.id, 0);
@@ -758,6 +908,7 @@ export function ScenePlayer({
 
   async function hearLineManual(lang: "n" | "e" | "both") {
     if (!activeLine) return;
+    await unlockAudioPlayback();
     if (playing && !isContinuous) stopLearn();
     const track: VoiceTrack =
       lang === "n" ? "narragansett" : lang === "e" ? "english" : "both";
@@ -772,7 +923,6 @@ export function ScenePlayer({
   }
 
   function switchPlayMode(key: PlayMode) {
-    // Leaving continuous: stop autoplay intent so Learn never keeps rolling
     userIntentPlay.current = false;
     stopLearn();
     lastSpokenLine.current = null;
@@ -797,7 +947,6 @@ export function ScenePlayer({
     setTime(Number.isFinite(practiceT) ? practiceT : 0);
     if (md && Number.isFinite(md)) setMediaDuration(md);
 
-    // Throttled progress save (~every 4s while watching)
     if (
       progressKind === "story" &&
       userIntentPlay.current &&
@@ -822,11 +971,17 @@ export function ScenePlayer({
         lastSpokenLine.current !== line.id
       ) {
         lastSpokenLine.current = line.id;
-        // Fire-and-forget TTS — video clock is source of truth
         void speakLine(line, voice);
+        // Prefetch next few
+        const next = scene.lines.slice(idx + 1, idx + 4);
+        void (async () => {
+          for (const l of next) {
+            if (l.narragansett)
+              await prefetchSpeak(l.narragansett, "narragansett");
+          }
+        })();
       }
     }
-    // Loop line only in Learn (never while watching continuous film)
     if (
       loopLine &&
       !isContinuous &&
@@ -849,29 +1004,14 @@ export function ScenePlayer({
   ]);
 
   function onEnded() {
-    if (isContinuous) {
-      userIntentPlay.current = false;
-      setPlaying(false);
-      setBuffering(false);
-      markComplete();
+    if (!isContinuous) return;
+    userIntentPlay.current = false;
+    setPlaying(false);
+    markComplete();
+    if (progressKind === "story") {
+      setStoryPosition(scene.id, 0);
     }
   }
-
-  const safeProgress = (() => {
-    if (!(displayDuration > 0) || !Number.isFinite(displayDuration)) return 0;
-    if (playMode === "learn") {
-      return ((activeLineIdx + (speaking ? 0.5 : 0)) / Math.max(1, scene.lines.length)) * 100;
-    }
-    if (!Number.isFinite(time)) return 0;
-    return Math.min(100, Math.max(0, (time / displayDuration) * 100));
-  })();
-
-  const filmLabel =
-    Number.isFinite(mediaDuration) && mediaDuration >= 60
-      ? `${Math.floor(mediaDuration / 60)} min`
-      : Number.isFinite(mediaDuration)
-        ? `${Math.round(mediaDuration)}s`
-        : "—";
 
   const resumeHint =
     progressKind === "story" &&
@@ -881,22 +1021,30 @@ export function ScenePlayer({
       ? pendingResumeSec.current
       : null;
 
+  const filmLabel = useMemo(() => {
+    const d = mediaDuration || scene.durationSec;
+    if (!Number.isFinite(d) || d <= 0) return "—";
+    if (d >= 60) return `${Math.round(d / 60)} min`;
+    return `${Math.round(d)}s`;
+  }, [mediaDuration, scene.durationSec]);
+
+  const safeProgress = useMemo(() => {
+    const d = displayDuration;
+    if (!Number.isFinite(d) || d <= 0) return 0;
+    const t =
+      playMode === "learn" ? (activeLine?.startSec ?? 0) : time;
+    return Math.min(100, Math.max(0, (t / d) * 100));
+  }, [displayDuration, playMode, activeLine, time]);
+
   const subtitleNode = useMemo(() => {
     if (subs === "off" || !activeLine) return null;
     return (
-      <div
-        className={cn(
-          "pointer-events-none absolute inset-x-0 flex justify-center px-4",
-          isFullscreen ? "bottom-24 sm:bottom-28" : "bottom-16",
-        )}
-        data-testid="scene-player-subtitles"
-      >
-        <div className="max-w-2xl rounded-xl bg-black/75 px-5 py-3 text-center shadow-lg backdrop-blur-md">
+      <div className="pointer-events-none absolute inset-x-0 bottom-16 z-10 flex justify-center px-3 sm:bottom-20">
+        <div className="max-w-[92%] rounded-lg bg-black/65 px-3 py-2 text-center backdrop-blur-sm">
           {(subs === "narragansett" || subs === "both") && (
             <p
-              lang="nax"
               className={cn(
-                "font-display text-white drop-shadow",
+                "font-medium text-white",
                 largeTargets || isFullscreen ? "text-2xl sm:text-3xl" : "text-xl",
               )}
             >
@@ -926,6 +1074,10 @@ export function ScenePlayer({
       data-play-mode={playMode}
       data-continuous={isContinuous ? "true" : "false"}
       data-progress-kind={progressKind}
+      data-media-has-audio={
+        mediaHasAudio === null ? "unknown" : mediaHasAudio ? "true" : "false"
+      }
+      data-oral-only={oralOnly ? "true" : "false"}
     >
       {scene.mediaStatus === "awaiting_upload" && !fromUpload && (
         <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-warn)_12%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]">
@@ -944,11 +1096,15 @@ export function ScenePlayer({
         Default: <strong className="text-[var(--color-fg)]">hear Narragansett</strong>
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
+        . Language audio is spoken on Play (not from the picture track)
+        {mediaHasAudio === false
+          ? " — this film has no embedded soundtrack"
+          : ""}
         .{" "}
         {isContinuous ? (
           <>
             <strong className="text-[var(--color-fg)]">Play full film</strong> runs
-            continuous end-to-end (no scene skipping) · fullscreen · ~{filmLabel}
+            continuous end-to-end · fullscreen · ~{filmLabel}
             {" · "}same Host & Guest throughout
           </>
         ) : (
@@ -964,6 +1120,14 @@ export function ScenePlayer({
         .
       </p>
 
+      {ttsConfigured === false && (
+        <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-warn)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]">
+          Server voice is not configured here — using your device speech as a
+          temporary scaffold. Set <code className="text-[var(--color-fg)]">XAI_API_KEY</code>{" "}
+          for full Grok pronunciation. Living speaker recordings always take priority when present.
+        </p>
+      )}
+
       {resumeHint != null && (
         <p
           className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-primary)_10%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]"
@@ -974,7 +1138,7 @@ export function ScenePlayer({
         </p>
       )}
 
-      {mediaError && (
+      {mediaError && mediaError !== "video-unavailable-oral-continues" && (
         <p
           className="flex items-start gap-2 rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-warn)_14%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]"
           data-testid="scene-player-error"
@@ -982,9 +1146,16 @@ export function ScenePlayer({
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-warn)]" />
           <span>
-            Film could not load. Check your connection and try again.{" "}
+            Film could not load. Language audio continues when you press Play or
+            Hear.{" "}
             <span className="text-[var(--color-subtle)]">({mediaError})</span>
           </span>
+        </p>
+      )}
+
+      {oralOnly && (
+        <p className="rounded-mode border border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)]">
+          Picture is unavailable — continuing with spoken language only so practice is not interrupted.
         </p>
       )}
 
@@ -1016,24 +1187,30 @@ export function ScenePlayer({
           className={cn(
             "w-full bg-black object-contain",
             isFullscreen ? "h-dvh max-h-dvh" : "aspect-video max-h-[70vh]",
+            oralOnly && "opacity-40",
           )}
           src={videoSrc}
           poster={scene.posterSrc}
           playsInline
-          muted={!ambientOn}
+          muted={!(ambientOn && mediaHasAudio !== false)}
           loop={false}
+          preload="auto"
           onTimeUpdate={onTime}
           onWaiting={() => {
-            if (userIntentPlay.current) setBuffering(true);
+            /* intentional: no learner-facing loading chrome */
           }}
           onPlaying={() => {
-            setBuffering(false);
             if (userIntentPlay.current) setPlaying(true);
           }}
           onLoadedMetadata={(e) => {
-            const d = e.currentTarget.duration;
+            const el = e.currentTarget;
+            const d = el.duration;
             if (d && Number.isFinite(d)) setMediaDuration(d);
-            applyPendingResume(e.currentTarget);
+            const has = detectVideoHasAudio(el);
+            setMediaHasAudio(has);
+            // Packaged reconstructions are known silent; community may have voice
+            if (has === true && fromUpload) setAmbientOn(true);
+            applyPendingResume(el);
           }}
           onPlay={() => {
             if (isContinuous) setPlaying(true);
@@ -1048,25 +1225,15 @@ export function ScenePlayer({
           onEnded={onEnded}
           onError={() => {
             setMediaError("media error");
-            setBuffering(false);
             userIntentPlay.current = false;
-            setPlaying(false);
+            // Do not stop oral practice — learner can still Hear lines
+            setOralOnly(true);
           }}
-          preload={continuousFilm ? "auto" : "metadata"}
         />
 
         {subtitleNode}
 
-        {buffering && playing && (
-          <div
-            className="pointer-events-none absolute inset-0 z-25 flex items-center justify-center"
-            data-testid="scene-player-buffering"
-          >
-            <span className="rounded-full bg-black/60 px-4 py-2 text-sm text-white/90">
-              Loading film…
-            </span>
-          </div>
-        )}
+        {/* No "Loading film…" overlay — buffer silently before/while speaking */}
 
         {!playing && chromeVisible && (
           <button
@@ -1158,26 +1325,30 @@ export function ScenePlayer({
                 data-testid="scene-player-time"
               >
                 Line {activeLineIdx + 1}/{scene.lines.length}
-                {speaking ? " · speaking…" : ""}
-                {buffering ? " · buffering…" : ""}
+                {speaking ? " · speaking" : ""}
                 {" · "}
                 {fmt(playMode === "learn" ? activeLine?.startSec ?? 0 : time)} /{" "}
                 {fmt(displayDuration)}
               </span>
-              <button
-                type="button"
-                onClick={() => setAmbientOn((a) => !a)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/90 hover:bg-white/10"
-                aria-label={
-                  ambientOn ? "Mute ambient video audio" : "Unmute ambient video audio"
-                }
-              >
-                {ambientOn ? (
-                  <Volume2 className="h-4 w-4" />
-                ) : (
-                  <VolumeX className="h-4 w-4 opacity-60" />
-                )}
-              </button>
+              {mediaHasAudio !== false && (
+                <button
+                  type="button"
+                  onClick={() => setAmbientOn((a) => !a)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/90 hover:bg-white/10"
+                  aria-label={
+                    ambientOn
+                      ? "Mute film soundtrack"
+                      : "Unmute film soundtrack"
+                  }
+                  title="Film soundtrack (if present). Language speech is separate."
+                >
+                  {ambientOn ? (
+                    <Volume2 className="h-4 w-4" />
+                  ) : (
+                    <VolumeX className="h-4 w-4 opacity-60" />
+                  )}
+                </button>
+              )}
               <button
                 type="button"
                 data-testid="scene-player-fullscreen"
@@ -1197,75 +1368,92 @@ export function ScenePlayer({
       </div>
 
       {!isFullscreen && (
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            type="button"
-            variant="primary"
-            size={largeTargets ? "lg" : "default"}
-            data-testid="scene-player-play-btn"
-            onClick={() => void togglePlay()}
-          >
-            {playing ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-            {playing
-              ? "Pause"
-              : isContinuous
-                ? "Play full film"
-                : "Play fullscreen"}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            data-testid="scene-player-restart"
-            onClick={restart}
-          >
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-          {playMode === "learn" && (
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
             <Button
               type="button"
-              variant={loopLine ? "soft" : "secondary"}
-              data-testid="scene-player-loop"
-              onClick={() => setLoopLine((v) => !v)}
+              variant="secondary"
+              size={largeTargets ? "lg" : "default"}
+              onClick={() => void togglePlay()}
+              data-testid="scene-player-mode-play"
             >
-              Loop line
+              {playing ? (
+                <>
+                  <Pause className="h-4 w-4" /> Pause
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4" />{" "}
+                  {isContinuous ? "Play full film" : "Play Learn"}
+                </>
+              )}
             </Button>
-          )}
-          {prev && (
-            <Button asChild variant="secondary">
-              <Link to={prev.to} params={prev.params}>
-                <SkipBack className="h-4 w-4" />
-                {prev.label}
-              </Link>
+            <Button
+              type="button"
+              variant="secondary"
+              size={largeTargets ? "lg" : "default"}
+              onClick={restart}
+            >
+              <RotateCcw className="h-4 w-4" /> Restart
             </Button>
-          )}
-          {next && (
-            <Button asChild variant="soft">
-              <Link to={next.to} params={next.params}>
-                <SkipForward className="h-4 w-4" />
-                {next.label}
-              </Link>
-            </Button>
-          )}
-        </div>
-      )}
+            {prev && (
+              <Button asChild variant="ghost" size={largeTargets ? "lg" : "default"}>
+                <Link to={prev.to} params={prev.params}>
+                  <SkipBack className="h-4 w-4" /> {prev.label}
+                </Link>
+              </Button>
+            )}
+            {next && (
+              <Button asChild variant="ghost" size={largeTargets ? "lg" : "default"}>
+                <Link to={next.to} params={next.params}>
+                  {next.label} <SkipForward className="h-4 w-4" />
+                </Link>
+              </Button>
+            )}
+          </div>
 
-      <div className="surface-card pad-mode space-y-4">
-        <div className="space-y-2">
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
-            <Ear className="h-4 w-4" />
-            Hear (starts as Narragansett)
-          </span>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
+              <Film className="h-4 w-4" /> Mode
+            </span>
+            {(
+              [
+                { key: "learn" as const, label: "Learn" },
+                { key: "watch" as const, label: "Watch" },
+              ] as const
+            ).map((m) => (
+              <button
+                key={m.key}
+                type="button"
+                data-testid={`scene-player-mode-${m.key}`}
+                onClick={() => switchPlayMode(m.key)}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                  playMode === m.key
+                    ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-[var(--color-primary-fg)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
+                )}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
+              <Ear className="h-4 w-4" />
+              Hear (starts as Narragansett)
+            </span>
             {VOICE_OPTIONS.map((opt) => (
               <button
                 key={opt.key}
                 type="button"
-                title={opt.hint}
                 onClick={() => setVoice(opt.key)}
+                title={opt.hint}
                 className={cn(
-                  "min-h-11 rounded-full border px-3 py-1.5 text-sm",
+                  "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
                   voice === opt.key
-                    ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]"
+                    ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_18%,transparent)] text-[var(--color-fg)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
@@ -1273,170 +1461,158 @@ export function ScenePlayer({
               </button>
             ))}
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
-            {subs === "off" ? (
-              <CaptionsOff className="h-4 w-4" />
-            ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
               <Captions className="h-4 w-4" />
-            )}
-            Subtitles (starts as English)
-          </span>
-          <div className="flex flex-wrap gap-2">
+              Subtitles
+            </span>
             {SUB_OPTIONS.map((opt) => (
               <button
                 key={opt.key}
                 type="button"
                 onClick={() => setSubs(opt.key)}
                 className={cn(
-                  "min-h-11 rounded-full border px-3 py-1.5 text-sm",
+                  "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
                   subs === opt.key
-                    ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_14%,transparent)] text-[var(--color-primary)]"
+                    ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_18%,transparent)] text-[var(--color-fg)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                {opt.label}
+                {opt.label === "Off" ? (
+                  <span className="inline-flex items-center gap-1">
+                    <CaptionsOff className="h-3.5 w-3.5" /> Off
+                  </span>
+                ) : (
+                  opt.label
+                )}
               </button>
             ))}
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
-            <Film className="h-4 w-4" />
-            Mode
-          </span>
-          {(
-            [
-              ["learn", "Learn (line-by-line)"],
-              ["watch", "Watch (continuous)"],
-            ] as const
-          ).map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              data-testid={`scene-player-mode-${key}`}
-              onClick={() => switchPlayMode(key)}
-              className={cn(
-                "min-h-11 rounded-full border px-3 py-1.5 text-sm",
-                playMode === key
-                  ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-                  : "border-[var(--color-border)] text-[var(--color-muted)]",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-          <span className="ml-2 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
-            <Gauge className="h-4 w-4" />
-            Speed
-          </span>
-          {SPEEDS.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setSpeed(s)}
-              className={cn(
-                "min-h-11 rounded-full border px-3 py-1.5 text-sm tabular-nums",
-                speed === s
-                  ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-                  : "border-[var(--color-border)] text-[var(--color-muted)]",
-              )}
-            >
-              {s}×
-            </button>
-          ))}
-          <span className="ml-auto text-xs tabular-nums text-[var(--color-subtle)]">
-            Practiced {practicedLines.size}/{scene.lines.length} lines
-          </span>
-        </div>
-      </div>
-
-      {activeLine && (
-        <div className="focus-stage pad-mode space-y-3" data-testid="scene-player-active-line">
-          <div className="flex flex-wrap gap-2">
-            <Badge tone="land">{activeLine.speaker}</Badge>
-            <Badge tone="neutral">
-              Line {activeLineIdx + 1} / {scene.lines.length}
-            </Badge>
-            {practicedLines.has(activeLine.id) && (
-              <Badge tone="land">
-                <CheckCircle2 className="mr-1 inline h-3 w-3" />
-                Heard
-              </Badge>
-            )}
-          </div>
-          <p
-            lang="nax"
-            className={cn(
-              "font-display text-[var(--color-fg)]",
-              largeTargets ? "text-3xl" : "text-2xl",
-            )}
-          >
-            {activeLine.narragansett}
-          </p>
-          <p className="text-content text-[var(--color-muted)]">
-            {activeLine.english}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="primary" onClick={() => void hearLineManual("n")}>
-              <Volume2 className="h-4 w-4" />
-              Hear Narragansett
-            </Button>
-            <Button type="button" variant="secondary" onClick={() => void hearLineManual("e")}>
-              <Languages className="h-4 w-4" />
-              Hear English
-            </Button>
-            <Button type="button" variant="soft" onClick={() => void hearLineManual("both")}>
-              Hear both
-            </Button>
-            {activeLine.wordId && (
-              <Button asChild variant="secondary">
-                <Link to="/app/words/$id" params={{ id: activeLine.wordId }}>
-                  <BookOpen className="h-4 w-4" />
-                  Open in Words
-                </Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
-
-      <section className="space-y-2">
-        <h2 className="font-display text-title">Dialogue</h2>
-        <ul className="max-h-[28rem] space-y-2 overflow-y-auto pr-1" data-testid="scene-player-dialogue">
-          {scene.lines.map((line, i) => (
-            <li key={line.id}>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
+              <Gauge className="h-4 w-4" /> Speed
+            </span>
+            {SPEEDS.map((s) => (
               <button
+                key={s}
                 type="button"
-                data-testid={`scene-player-line-${i}`}
-                onClick={() => seekLine(i)}
+                onClick={() => setSpeed(s)}
                 className={cn(
-                  "min-h-11 w-full rounded-mode border px-3 py-3 text-left transition-colors",
-                  i === activeLineIdx
-                    ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_12%,transparent)]"
-                    : "border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_80%,transparent)] hover:border-[var(--color-border-strong)]",
+                  "rounded-full border px-3 py-1.5 text-sm font-medium tabular-nums transition-colors",
+                  speed === s
+                    ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_18%,transparent)] text-[var(--color-fg)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                <p className="flex items-center gap-2 text-xs text-[var(--color-subtle)]">
-                  <span>
-                    {line.speaker} · {fmt(line.startSec)}
-                  </span>
-                  {practicedLines.has(line.id) && (
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[var(--color-land)]" />
-                  )}
-                </p>
-                <p lang="nax" className="font-display text-lg text-[var(--color-fg)]">
-                  {line.narragansett}
-                </p>
-                <p className="text-sm text-[var(--color-muted)]">{line.english}</p>
+                {s}×
               </button>
-            </li>
-          ))}
-        </ul>
-      </section>
+            ))}
+            <span className="ml-2 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
+              <Languages className="h-4 w-4" /> Loop line
+            </span>
+            <button
+              type="button"
+              onClick={() => setLoopLine((x) => !x)}
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                loopLine
+                  ? "border-[var(--color-primary)] bg-[color-mix(in_oklab,var(--color-primary)_18%,transparent)] text-[var(--color-fg)]"
+                  : "border-[var(--color-border)] text-[var(--color-muted)]",
+              )}
+            >
+              {loopLine ? "On" : "Off"}
+            </button>
+          </div>
+
+          <div className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_88%,transparent)] p-3">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-medium text-[var(--color-fg)]">
+                Current line
+              </p>
+              {practicedLines.has(activeLine?.id ?? "") && (
+                <span className="inline-flex items-center gap-1 text-sm text-[var(--color-land)]">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Heard
+                </span>
+              )}
+            </div>
+            {activeLine && (
+              <>
+                <p className="text-content text-[length:calc(var(--mode-font-body)*1.05)] font-medium text-[var(--color-fg)]">
+                  {activeLine.narragansett}
+                </p>
+                <p className="text-content text-[var(--color-muted)]">
+                  {activeLine.english}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size={largeTargets ? "lg" : "default"}
+                    onClick={() => void hearLineManual("n")}
+                  >
+                    <Ear className="h-4 w-4" />
+                    Hear Narragansett
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size={largeTargets ? "lg" : "default"}
+                    onClick={() => void hearLineManual("e")}
+                  >
+                    Hear English
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size={largeTargets ? "lg" : "default"}
+                    onClick={() => void hearLineManual("both")}
+                  >
+                    Hear both
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <p className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-fg)]">
+              <BookOpen className="h-4 w-4" />
+              Lines
+            </p>
+            <ul className="max-h-64 space-y-1 overflow-y-auto rounded-mode border border-[var(--color-border)] p-2">
+              {scene.lines.map((line, i) => (
+                <li key={line.id}>
+                  <button
+                    type="button"
+                    onClick={() => seekLine(i)}
+                    className={cn(
+                      "flex w-full flex-col items-start rounded-md px-2 py-2 text-left transition-colors",
+                      i === activeLineIdx
+                        ? "bg-[color-mix(in_oklab,var(--color-primary)_14%,transparent)]"
+                        : "hover:bg-[color-mix(in_oklab,var(--color-fg)_5%,transparent)]",
+                    )}
+                  >
+                    <span className="text-sm font-medium text-[var(--color-fg)]">
+                      {line.speaker}: {line.narragansett}
+                    </span>
+                    <p className="text-sm text-[var(--color-muted)]">{line.english}</p>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {practicedLines.size > 0 && (
+            <div className="flex flex-wrap gap-2">
+              <Badge tone="neutral">
+                {practicedLines.size}/{scene.lines.length} lines heard
+              </Badge>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
