@@ -1,79 +1,66 @@
-# Prompt Pack — Cast · Wetu · Style (HQ)
+# Prompt Pack v3 — Cinematic · Speak-First · Cast Lock
 
-Copy blocks verbatim. Do not invent a second style sentence.
-
-## STYLE_MASTER (every still + I2V)
+## STYLE_MASTER
 
 ```
 Premium children’s cinematic storybook illustration, ultra-detailed, rich natural color,
-volumetric morning light through coastal New England pines, shallow depth, fine fabric and
-bark texture, warm skin, kind eyes. Vertical 9:16. Same continuity as a high-end animated
-short — not flat cartoon, not anime, not photoreal live-action, not 3D plastic CGI.
+volumetric golden light through southern New England coastal pines, shallow depth of field,
+fine hide fabric, purple-white wampum shell beads, copper, quill trim, bark texture,
+warm light-brown / copper-brown skin, kind dark eyes, high cheekbones.
+Vertical 9:16. High-end animated short continuity — NOT flat cartoon, NOT anime,
+NOT photoreal live-action, NOT plastic 3D CGI, NOT soft pastel kids-app cartoon.
 ```
 
-## CAST — Friend Tan (lead)
+## CAST (locked — only these faces)
+
+**Friend Tan:** Northeastern Indigenous child ~8, warm light-brown skin, longer dark braid with one small eagle feather, soft tan hide tunic with bead/quill trim, purple-white wampum choker and shell/bone chest piece, moccasins — identical face to cast-duo-v2.
+
+**Friend Teal:** Northeastern Indigenous child ~7, warm light-brown skin, twin dark braids, soft teal-blue hide tunic with bead trim, purple-white wampum necklace, shell earrings, bracelet, moccasins — identical face to cast-duo-v2.
+
+**Father:** Adult man, copper-brown skin, single eagle feather, hide tunic, wampum — match father-v2.  
+**Mother:** Adult woman, warm brown skin, shell necklace, hide dress — match mother-v2.  
+**Elder man / Elder woman:** Silver-dark hair, staff/mat presence — match elder-*-v2.
+
+## WETU_LOCK
 
 ```
-Friend Tan: Northeastern Indigenous child about 8, warm brown skin, longer dark hair with a
-soft braid, soft tan hide tunic with simple stitching, moccasins, gentle confident posture.
-Always the same face and costume.
+Accurate Northeastern wetu: bent green sapling frame, bark sheets or cattail mats,
+smoke hole at crown, low doorway, natural bark browns — no yurt, tipí, circus tent.
 ```
 
-## CAST — Friend Teal (lead)
+## SPEAK_LOCK — CRITICAL (every dialogue line)
 
+**Still (must be true in the image):**
 ```
-Friend Teal: Northeastern Indigenous child about 7, warm brown skin, shorter dark hair with
-twin braids or neat waves, soft teal-blue hide tunic, moccasins, bright curious expression.
-Always the same face and costume. Pair with Friend Tan only as speaking leads.
-```
-
-## CAST — Supporting (family-kids only)
-
-```
-Father: tall Indigenous man, same people, dark hair, plain hide shirt and leggings, calm.
-Mother: Indigenous woman, same people, dark hair, soft hide dress, wooden bowl or basket.
-Elder man: silver-haired man, cloak of soft hide, carved staff, seated dignity.
-Elder woman: silver-haired woman, mat and beadwork nearby, kind eyes.
-Supporting only — Friends Tan and Teal remain the emotional center of every shot.
+Speaker’s mouth is clearly OPEN mid-word (visible teeth or dark mouth interior),
+expressive speaking face, active eyebrows; listener attentive with closed or soft mouth.
+Not a closed-lip smile. Not both kids silent.
 ```
 
-## WETU_LOCK (architecture — reject if wrong)
-
+**I2V (append ALWAYS, full strength):**
 ```
-Accurate Northeastern wetu / wigwam: dome or long-oval lodge of bent green saplings lashed
-with fiber, covered in overlapping sheets of tree bark (winter) or woven cattail reed mats
-(summer), visible smoke hole at the crown, low mat-framed doorway, natural brown and grey
-bark tones, no painted circus stripes, no fabric yurt panels, no Plains tipí cones, no
-bright gypsy wagon colors. Set in southern New England coastal woodland clearing with white
-pine, oak, fern, shell path, soft marsh light.
-```
-
-## WORLD crumbs
-
-```
-Coastal Narragansett country: wetu clearing, pine needles, wooden bowls, cattail mats,
-quahog shells, corn hills nearby, salt-marsh edge in distance, morning gold or soft dusk.
+Throughout the entire 6 seconds the SPEAKING child clearly talks out loud:
+lips and jaw continuously open and close in a natural speaking rhythm,
+mouth forming syllables, chin moving, cheeks flexing — obvious dialogue mouth motion
+every half-second (NOT a frozen smile, NOT a single blink, NOT silent portrait).
+Listener may nod but keeps a soft closed mouth. One clear gesture matching the English
+meaning of the line. Slow cinematic push-in or gentle parallax. Fabric, leaves, and hair
+breathe. Faces and costumes stay locked to the still; no new characters; no face morph.
 ```
 
 ## STILL formula
 
 ```
-[STYLE_MASTER] [CAST lines needed] [WETU_LOCK if home/world] [shot action from SHOT_LIST]
-Composition: clear hero poses, readable silhouette, room for vertical phone frame.
+[STYLE_MASTER] [CAST description] [scene action from shot list].
+Speaker mid-speech mouth clearly open. Vertical 9:16 portrait.
+Same exact faces as cast-duo-v2 bible ref. Traditional Northeastern regalia with wampum beads.
 ```
 
-## I2V formula (one sentence)
+## Reject
 
-```
-[Subject action in present tense]. Camera [slow push-in | gentle parallax | soft orbit].
-Natural light breathes; fabric and leaves move slightly; faces stay consistent; no new characters.
-```
-
-## Reject list
-
-- Soft muddy low-detail cartoon  
-- Wrong dwelling (yurt, tipí, colorful tent)  
-- Random third child faces  
-- Plains warbonnet / pan-Indigenous costume dump  
-- Mouth flapping nonsense without timed beat  
-- Horizontal 16:9 masters for kids path  
+- Flat cartoon / muddy soft style  
+- Wrong dwelling  
+- Frozen closed mouths on dialogue lines  
+- Random faces or third child  
+- Full Plains warbonnets on children  
+- Horizontal masters  

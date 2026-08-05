@@ -56,11 +56,9 @@ __pycache__/
 film-kids/export/
 film-kids/shots/
 film-kids/stills/
-
-# Kids HQ pipeline intermediates
+film-kids/export-hq/
 film-kids/shots-hq/
 film-kids/stills-hq/
-film-kids/export-hq/
-film-kids/shots/
-film-kids/stills/
-film-kids/export/
+film-kids/export-v2/
+film-kids/shots-v2/
+film-kids/stills-v2/

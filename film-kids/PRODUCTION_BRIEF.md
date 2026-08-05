@@ -1,26 +1,53 @@
-# Little Ones HQ Production Brief
+# Little Ones HQ Production Brief — Cinematic Speak-v3
 
-**Grade target:** Showcase-level Grok Imagine video — rich detail, cinematic light, storybook realism for children. Not soft flat cartoon. Not photoreal live-action.
+**Grade target:** Showcase cinematic storybook — rich detail, volumetric light, locked Northeastern cast. **Not** flat cartoon. **Not** photoreal live-action.
 
-**Culture:** Southern New England coastal Algonquian (Narragansett / related woodland peoples). Pre-contact and early-contact everyday life. Language first (Narragansett forms from Williams 1643 kids-safe set).
+**Culture:** Southern New England coastal Algonquian (Narragansett / related woodland peoples). Everyday life. Language first (Williams 1643 kids-safe forms).
 
 **Hero cast (every clip):** Friend Tan + Friend Teal only as speaking leads.  
-**Supporting cast (family lesson only):** Father, Mother, Elder man, Elder woman — locked designs, same world, never replace the two friends as leads.
+**Supporting cast (when the word needs them):** Father, Mother, Elder man, Elder woman — locked bible designs only.
 
-**World lock:** Accurate **wetu** (bent sapling frame; winter bark sheets or summer cattail mats; smoke hole; oval/dome woodland lodge). Pine, oak, marsh edge, shell path, wooden bowls, mats. No Plains tipí, no yurt, no circus tent, no bright painted fabric dome, no pan-Indigenous headdress pile.
+**World lock:** Accurate **wetu** (bent sapling; bark sheets / cattail mats; smoke hole; low doorway). Pine, oak, marsh, shell path, wooden bowls. No Plains tipí, no yurt, no pan-Indigenous warbonnet pile.
 
-**Pipeline (non-negotiable):**
-1. Bible stills (cast + wetu + world) at **9:16**, max detail.
-2. **One still per line** (shot-per-word).
-3. **I2V 6s per shot** — one clear action + one camera move.
-4. **FFmpeg concat** (re-encode only if fps/size mismatch; prefer stream copy when uniform).
-5. Export master **720×1280** (or native gen if higher), H.264 high profile, ~8–12 Mbps target.
-6. Language: app oral path always; mux AAC when line packs exist.
-7. QA: reject bad wetu, wrong faces, third random kids, mute mouths with no timed action.
+## Non-negotiable quality rules (v3)
 
-**Pilot clips (judge quality before full 12):**
-1. `greeting-kids` — Hello, friend  
-2. `home-kids` — Home wetu  
-3. `family-kids` — Our family words  
+1. **Style:** Cinematic storybook only. Scrap all soft-flat cartoon masters.  
+2. **Cast lock:** Same two children (and locked family) in every Little Ones video — forever for this section.  
+3. **Speak-first:** Every dialogue line has **open + closed mouth stills**. Packaged motion **flaps the mouth** for the full shot (not frozen I2V smile).  
+4. **Export master:** **1080×1920** · H.264 high · CRF ≤17 · ~30s (5×6s shots) · `scripts/rebuild-kids-speak-v3.py`.  
+5. **Language:** App oral path timed to lines; picture serves the word.  
+6. **Cartoon scrap:** No cartoon-tagged Little Ones media in the catalog.
 
-**App contract:** `public/scenes/{id}.mp4` + `.jpg` poster; `scenes-data.ts` durationSec + line timing must match stitched length.
+## Pipeline
+
+1. Bible stills from `film-kids/bible/` (cast + wetu + family).  
+2. **Open + closed still per line** under `film-kids/stills-v2/<id>/`.  
+3. Speak-Ken Burns 6s flap + zoom.  
+4. Stitch → `public/scenes/{id}.mp4` + `.jpg`.  
+5. `scenes-data.ts`: `style: "cinematic"`, `durationSec: 30`, tags `hq`, `cinematic`, `speak`.
+
+## All 12 clips
+
+| # | id | Title |
+|---|-----|-------|
+| 1 | greeting-kids | Hello, friend |
+| 2 | meal-kids | Share the bowl |
+| 3 | count-kids | Count with me |
+| 4 | family-kids | Our family words |
+| 5 | home-kids | Home wetu |
+| 6 | day-kids | Day light |
+| 7 | seasons-kids | Four seasons |
+| 8 | birds-kids | Bird friends |
+| 9 | water-kids | By the water |
+| 10 | sleep-kids | Night rest |
+| 11 | path-kids | Little path |
+| 12 | land-kids | Corn and land |
+
+## Reject
+
+- Flat cartoon / muddy soft style  
+- Wrong dwelling or Plains warbonnets on children  
+- Frozen closed mouths on dialogue lines  
+- Random third child / wrong faces  
+- Horizontal masters  
+- Masters left at 448×672 cartoon resolution  

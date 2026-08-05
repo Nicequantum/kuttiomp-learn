@@ -1,30 +1,38 @@
-# Pilot HQ status — judge before full 12
+# Little Ones — Cinematic Speak-v3 (all 12)
 
-**Shipped to app:** `greeting-kids`, `home-kids`, `family-kids`  
-**Masters:** 720×1280 · ~30s · 5 shots × 6s · H.264 high · ~3–6 Mbps  
-**Docs:** `PRODUCTION_BRIEF.md` · `PROMPT_PACK.md` · `SHOT_LIST_PILOT.md` · `CAST_LOCK.md`  
-**Tooling:** `scripts/stitch-kids-hq.py`  
-**Bible:** `film-kids/bible/` (cast-duo, wetu exterior/interior)
+**Shipped to app:** all 12 Little Ones clips  
+**Masters:** **1080×1920** · ~30s · 5 shots × 6s · H.264 high · ~4–5.5 Mbps  
+**Pipeline:** open/closed mouth pairs + Ken Burns speak flap (`scripts/speak-kenburns-shot.py` + `scripts/rebuild-kids-speak-v3.py`)  
+**Docs:** `PRODUCTION_BRIEF.md` · `PROMPT_PACK.md` · `SHOT_LIST_V2.md` · `CAST_LOCK.md`  
+**Bible:** `film-kids/bible/` (cast-duo, family, wetu)
 
-## What changed vs old kids pack
+## What shipped
 
-| | Old | HQ pilot |
-|--|-----|----------|
-| Resolution | 448×672 | **720×1280** |
-| Structure | 1 ambient loop / 5 words | **1 shot per line** |
-| Style | Soft flat cartoon | Cinematic storybook |
-| Wetu | Fabric / yurt drift | Bark-mat **dome** wetu |
-| Family words | Two kids only | Father / mother / elders **on screen** |
-| Duration | ~18s | **~30s** (matches 5×6s) |
+| | Old cartoon | Prior I2V pack | **Speak-v3 (now)** |
+|--|-------------|----------------|---------------------|
+| Resolution | 448×672 | upscaled ~720–1080 | **Native package 1080×1920** |
+| Structure | 1 ambient loop | shot-per-line | **shot-per-line** |
+| Style | Soft flat cartoon | Cinematic stills | **Cinematic storybook only** |
+| Mouth | None | Often frozen in I2V | **Guaranteed open/closed flap every line** |
+| Cast | Mixed | Friend Tan + Teal | **Locked Tan + Teal + family bible** |
+| Clips | partial | 8 of 12 | **All 12** |
 
-## Known limits (honest)
+## Clip list (all live)
 
-1. **I2V native pixels** are still ~400–448 wide from the video tool; we **upscale** to 720 for packaging. Detail is far above the old pack but not native 1080p showcase export yet.
-2. **Language audio** is still app oral (TTS/line speak) timed to lines — not phoneme lip-sync baked into the MP4. Actions match the **word meaning**; mouths are natural motion, not exact Narragansett visemes.
-3. Remaining 9 Little Ones clips still use the old single-loop 448 assets until approved for rebuild.
+1. greeting-kids · 2. meal-kids · 3. count-kids · 4. family-kids  
+5. home-kids · 6. day-kids · 7. seasons-kids · 8. birds-kids  
+9. water-kids · 10. sleep-kids · 11. path-kids · 12. land-kids  
 
-## Approve / iterate
+## Why speak flap (not I2V lips)
 
-- If pilot grade is good → rebuild remaining 9 with same pipeline.  
-- If wetu or faces need tighter lock → fix bible stills first, then re-I2V only weak shots.  
-- Next quality leap: longer/higher native I2V when available + per-line Narragansett AAC mux.
+I2V cinematic motion looked richer in body/camera, but mouths often stayed closed.  
+Speak-v3 alternates locked **open-mouth** and **closed-mouth** stills at ~3.2 Hz with a slow push-in/out so every dialogue line clearly talks. Language audio remains the app oral path timed to lines.
+
+## Rebuild
+
+```bash
+python3 scripts/rebuild-kids-speak-v3.py              # all 12
+python3 scripts/rebuild-kids-speak-v3.py water-kids   # one clip
+```
+
+Requires `film-kids/stills-v2/<id>/{open,closed}/01.jpg`…`05.jpg`.
