@@ -11,6 +11,7 @@ export type {
   PlayMode,
   VideoStyle,
   MediaStatus,
+  MediaWindow,
 } from "./scenes-data";
 
 function currentMode(): LearningModeId | null {

@@ -1,0 +1,1142 @@
+[
+  {
+    "id": "od1",
+    "speaker": "Host",
+    "narragansett": "P\u00e1shisha",
+    "english": "It is sunrise.",
+    "startSec": 0.0,
+    "endSec": 7.14,
+    "audioSrc": "/audio/one-day/od1.mp3",
+    "speakable": "Pashisha"
+  },
+  {
+    "id": "od2",
+    "speaker": "Host",
+    "narragansett": "Maut\u00e0bon, Chich\u00e1uquat wompan",
+    "english": "It is day.",
+    "startSec": 7.14,
+    "endSec": 14.29,
+    "audioSrc": "/audio/one-day/od2.mp3",
+    "speakable": "Mautabon Chichauquat wompan"
+  },
+  {
+    "id": "od3",
+    "speaker": "Host",
+    "narragansett": "Wetu",
+    "english": "A house / dwelling.",
+    "startSec": 14.29,
+    "endSec": 21.43,
+    "audioSrc": "/audio/one-day/od3.mp3",
+    "speakable": "Wetu"
+  },
+  {
+    "id": "od4",
+    "speaker": "Host",
+    "narragansett": "Wetu\u00f4muck",
+    "english": "At home.",
+    "startSec": 21.43,
+    "endSec": 28.57,
+    "audioSrc": "/audio/one-day/od4.mp3",
+    "speakable": "Wetuomuck"
+  },
+  {
+    "id": "od5",
+    "speaker": "Host",
+    "narragansett": "Tok\u00eatuck",
+    "english": "Let us wake.",
+    "startSec": 28.57,
+    "endSec": 42.86,
+    "audioSrc": "/audio/one-day/od5.mp3",
+    "speakable": "Toketuck"
+  },
+  {
+    "id": "od6",
+    "speaker": "Host",
+    "narragansett": "Nk\u00e0taquaum",
+    "english": "I am sleepy.",
+    "startSec": 42.86,
+    "endSec": 50.0,
+    "audioSrc": "/audio/one-day/od6.mp3",
+    "speakable": "Nkataquaum"
+  },
+  {
+    "id": "od7",
+    "speaker": "Host",
+    "narragansett": "Wuddt\u00fackqunash, ponam\u00e1uta",
+    "english": "Let us lay on wood.",
+    "startSec": 50.0,
+    "endSec": 57.14,
+    "audioSrc": "/audio/one-day/od7.mp3",
+    "speakable": "Wuddtuckqunash ponamauta"
+  },
+  {
+    "id": "od8",
+    "speaker": "Host",
+    "narragansett": "Numm\u00e1ttaq\u00faaw",
+    "english": "Morning (before noon).",
+    "startSec": 57.14,
+    "endSec": 64.29,
+    "audioSrc": "/audio/one-day/od8.mp3",
+    "speakable": "Nummattaquaw"
+  },
+  {
+    "id": "od9",
+    "speaker": "Host",
+    "narragansett": "Wunn\u00e9gin",
+    "english": "Welcome.",
+    "startSec": 64.29,
+    "endSec": 71.43,
+    "audioSrc": "/audio/one-day/od9.mp3",
+    "speakable": "Wunnegin"
+  },
+  {
+    "id": "od10",
+    "speaker": "Host",
+    "narragansett": "Ascowequassunn\u00fammis",
+    "english": "Good morning.",
+    "startSec": 71.43,
+    "endSec": 78.57,
+    "audioSrc": "/audio/one-day/od10.mp3",
+    "speakable": "Ascowequassunnummis"
+  },
+  {
+    "id": "od11",
+    "speaker": "Guest",
+    "narragansett": "Askuttaaquomps\u00edn",
+    "english": "How are you?",
+    "startSec": 78.57,
+    "endSec": 85.71,
+    "audioSrc": "/audio/one-day/od11.mp3",
+    "speakable": "Askuttaaquompsin"
+  },
+  {
+    "id": "od12",
+    "speaker": "Host",
+    "narragansett": "Asnpaumpma\u00fantam",
+    "english": "I am very well.",
+    "startSec": 85.71,
+    "endSec": 92.86,
+    "audioSrc": "/audio/one-day/od12.mp3",
+    "speakable": "Asnpaumpmauntam"
+  },
+  {
+    "id": "od13",
+    "speaker": "Guest",
+    "narragansett": "Taub\u00fat paump ma\u00fantaman",
+    "english": "I am glad you are well.",
+    "startSec": 92.86,
+    "endSec": 100.0,
+    "audioSrc": "/audio/one-day/od13.mp3",
+    "speakable": "Taubut paump mauntaman"
+  },
+  {
+    "id": "od14",
+    "speaker": "Guest",
+    "narragansett": "N\u00f3sh",
+    "english": "My father. (respectful address)",
+    "startSec": 100.0,
+    "endSec": 107.14,
+    "audioSrc": "/audio/one-day/od14.mp3",
+    "speakable": "Nosh"
+  },
+  {
+    "id": "od15",
+    "speaker": "Host",
+    "narragansett": "Ok\u00e1su",
+    "english": "A mother. (speaking of kin)",
+    "startSec": 107.14,
+    "endSec": 121.43,
+    "audioSrc": "/audio/one-day/od15.mp3",
+    "speakable": "Okasu"
+  },
+  {
+    "id": "od16",
+    "speaker": "Host",
+    "narragansett": "Nipp\u00e1poos",
+    "english": "My child. (of the family)",
+    "startSec": 121.43,
+    "endSec": 128.57,
+    "audioSrc": "/audio/one-day/od16.mp3",
+    "speakable": "Nippapoos"
+  },
+  {
+    "id": "od17",
+    "speaker": "Guest",
+    "narragansett": "H\u00f4mes",
+    "english": "An old man (elder).",
+    "startSec": 128.57,
+    "endSec": 135.71,
+    "audioSrc": "/audio/one-day/od17.mp3",
+    "speakable": "Homes"
+  },
+  {
+    "id": "od18",
+    "speaker": "Host",
+    "narragansett": "W\u00e9nise",
+    "english": "An old woman (elder).",
+    "startSec": 135.71,
+    "endSec": 142.86,
+    "audioSrc": "/audio/one-day/od18.mp3",
+    "speakable": "Wenise"
+  },
+  {
+    "id": "od19",
+    "speaker": "Both",
+    "narragansett": "Cowa\u00fanckamish",
+    "english": "My respects to you.",
+    "startSec": 142.86,
+    "endSec": 150.0,
+    "audioSrc": "/audio/one-day/od19.mp3",
+    "speakable": "Cowaunckamish"
+  },
+  {
+    "id": "od20",
+    "speaker": "Guest",
+    "narragansett": "Taubotneanaw\u00e1yean",
+    "english": "I thank you.",
+    "startSec": 150.0,
+    "endSec": 157.14,
+    "audioSrc": "/audio/one-day/od20.mp3",
+    "speakable": "Taubotneanawayean"
+  },
+  {
+    "id": "od21",
+    "speaker": "Guest",
+    "narragansett": "Nicc\u00e0wkatone",
+    "english": "I am thirsty.",
+    "startSec": 157.14,
+    "endSec": 164.29,
+    "audioSrc": "/audio/one-day/od21.mp3",
+    "speakable": "Niccawkatone"
+  },
+  {
+    "id": "od22",
+    "speaker": "Host",
+    "narragansett": "Nip, or nip\u00e9wese",
+    "english": "Some water.",
+    "startSec": 164.29,
+    "endSec": 171.43,
+    "audioSrc": "/audio/one-day/od22.mp3",
+    "speakable": "Nip or nipewese"
+  },
+  {
+    "id": "od23",
+    "speaker": "Host",
+    "narragansett": "Namitch, commetes\u00edmmin",
+    "english": "Stay \u2014 you must eat first.",
+    "startSec": 171.43,
+    "endSec": 178.57,
+    "audioSrc": "/audio/one-day/od23.mp3",
+    "speakable": "Namitch commetesimmin"
+  },
+  {
+    "id": "od24",
+    "speaker": "Host",
+    "narragansett": "T\u00e9aquacumm\u00e9ich",
+    "english": "What will you eat?",
+    "startSec": 178.57,
+    "endSec": 192.86,
+    "audioSrc": "/audio/one-day/od24.mp3",
+    "speakable": "Teaquacummeich"
+  },
+  {
+    "id": "od25",
+    "speaker": "Guest",
+    "narragansett": "Aup\u00faminea-nawsa\u00f9mp",
+    "english": "Parched meal boiled (soft corn porridge).",
+    "startSec": 192.86,
+    "endSec": 200.0,
+    "audioSrc": "/audio/one-day/od25.mp3",
+    "speakable": "Aupuminea-nawsaump"
+  },
+  {
+    "id": "od26",
+    "speaker": "Host",
+    "narragansett": "Wunn\u00e9gin",
+    "english": "Welcome.",
+    "startSec": 200.0,
+    "endSec": 207.14,
+    "audioSrc": "/audio/one-day/od26.mp3",
+    "speakable": "Wunnegin"
+  },
+  {
+    "id": "od27",
+    "speaker": "Guest",
+    "narragansett": "Taubotneanaw\u00e1yean",
+    "english": "I thank you.",
+    "startSec": 207.14,
+    "endSec": 214.29,
+    "audioSrc": "/audio/one-day/od27.mp3",
+    "speakable": "Taubotneanawayean"
+  },
+  {
+    "id": "od28",
+    "speaker": "Host",
+    "narragansett": "Cowa\u00fanckamish",
+    "english": "My respects to you.",
+    "startSec": 214.29,
+    "endSec": 221.43,
+    "audioSrc": "/audio/one-day/od28.mp3",
+    "speakable": "Cowaunckamish"
+  },
+  {
+    "id": "od29",
+    "speaker": "Guest",
+    "narragansett": "Taub\u00fat paump ma\u00fantaman",
+    "english": "I am glad (of this).",
+    "startSec": 221.43,
+    "endSec": 228.57,
+    "audioSrc": "/audio/one-day/od29.mp3",
+    "speakable": "Taubut paump mauntaman"
+  },
+  {
+    "id": "od30",
+    "speaker": "Guest",
+    "narragansett": "Nickqu\u00e9num",
+    "english": "I am going.",
+    "startSec": 228.57,
+    "endSec": 235.71,
+    "audioSrc": "/audio/one-day/od30.mp3",
+    "speakable": "Nickquenum"
+  },
+  {
+    "id": "od31",
+    "speaker": "Guest",
+    "narragansett": "Nnatotem\u00fackaun",
+    "english": "I will ask the way.",
+    "startSec": 235.71,
+    "endSec": 242.86,
+    "audioSrc": "/audio/one-day/od31.mp3",
+    "speakable": "Nnatotemuckaun"
+  },
+  {
+    "id": "od32",
+    "speaker": "Guest",
+    "narragansett": "Kunnat\u00f3temous",
+    "english": "I will inquire of you.",
+    "startSec": 242.86,
+    "endSec": 250.0,
+    "audioSrc": "/audio/one-day/od32.mp3",
+    "speakable": "Kunnatotemous"
+  },
+  {
+    "id": "od33",
+    "speaker": "Guest",
+    "narragansett": "Kokotem\u00edinnea m\u00e9yi",
+    "english": "Show me the way.",
+    "startSec": 250.0,
+    "endSec": 257.14,
+    "audioSrc": "/audio/one-day/od33.mp3",
+    "speakable": "Kokotemiinnea meyi"
+  },
+  {
+    "id": "od34",
+    "speaker": "Host",
+    "narragansett": "Mishimm\u00e1yagat",
+    "english": "A great path.",
+    "startSec": 257.14,
+    "endSec": 271.43,
+    "audioSrc": "/audio/one-day/od34.mp3",
+    "speakable": "Mishimmayagat"
+  },
+  {
+    "id": "od35",
+    "speaker": "Host",
+    "narragansett": "Peem\u00e1yag\u00e2t",
+    "english": "A short way.",
+    "startSec": 271.43,
+    "endSec": 278.57,
+    "audioSrc": "/audio/one-day/od35.mp3",
+    "speakable": "Peemayagat"
+  },
+  {
+    "id": "od36",
+    "speaker": "Guest",
+    "narragansett": "Taubotneanaw\u00e1yean",
+    "english": "I thank you.",
+    "startSec": 278.57,
+    "endSec": 285.71,
+    "audioSrc": "/audio/one-day/od36.mp3",
+    "speakable": "Taubotneanawayean"
+  },
+  {
+    "id": "od37",
+    "speaker": "Guest",
+    "narragansett": "Nq\u00e9nowhick woutt\u00edn",
+    "english": "I stay for a wind.",
+    "startSec": 285.71,
+    "endSec": 292.86,
+    "audioSrc": "/audio/one-day/od37.mp3",
+    "speakable": "Nqenowhick wouttin"
+  },
+  {
+    "id": "od38",
+    "speaker": "Host",
+    "narragansett": "Wunn\u00e1gehan",
+    "english": "Fair wind.",
+    "startSec": 292.86,
+    "endSec": 300.0,
+    "audioSrc": "/audio/one-day/od38.mp3",
+    "speakable": "Wunnagehan"
+  },
+  {
+    "id": "od39",
+    "speaker": "Guest",
+    "narragansett": "Nqu\u00edt",
+    "english": "One.",
+    "startSec": 300.0,
+    "endSec": 307.14,
+    "audioSrc": "/audio/one-day/od39.mp3",
+    "speakable": "Nquit"
+  },
+  {
+    "id": "od40",
+    "speaker": "Guest",
+    "narragansett": "Ne\u00e8se",
+    "english": "Two.",
+    "startSec": 307.14,
+    "endSec": 314.29,
+    "audioSrc": "/audio/one-day/od40.mp3",
+    "speakable": "Neese"
+  },
+  {
+    "id": "od41",
+    "speaker": "Guest",
+    "narragansett": "N\u00ecsh",
+    "english": "Three.",
+    "startSec": 314.29,
+    "endSec": 321.43,
+    "audioSrc": "/audio/one-day/od41.mp3",
+    "speakable": "Nish"
+  },
+  {
+    "id": "od42",
+    "speaker": "Guest",
+    "narragansett": "Y\u00f2h",
+    "english": "Four.",
+    "startSec": 321.43,
+    "endSec": 328.57,
+    "audioSrc": "/audio/one-day/od42.mp3",
+    "speakable": "Yoh"
+  },
+  {
+    "id": "od43",
+    "speaker": "Guest",
+    "narragansett": "Nap\u00e1nna",
+    "english": "Five.",
+    "startSec": 328.57,
+    "endSec": 342.86,
+    "audioSrc": "/audio/one-day/od43.mp3",
+    "speakable": "Napanna"
+  },
+  {
+    "id": "od44",
+    "speaker": "Host",
+    "narragansett": "Pi\u00f9ck",
+    "english": "Ten.",
+    "startSec": 342.86,
+    "endSec": 350.0,
+    "audioSrc": "/audio/one-day/od44.mp3",
+    "speakable": "Piuck"
+  },
+  {
+    "id": "od45",
+    "speaker": "Host",
+    "narragansett": "A\u00fbke",
+    "english": "Earth or land.",
+    "startSec": 350.0,
+    "endSec": 357.14,
+    "audioSrc": "/audio/one-day/od45.mp3",
+    "speakable": "Auke"
+  },
+  {
+    "id": "od46",
+    "speaker": "Host",
+    "narragansett": "S\u00e9quan",
+    "english": "Spring.",
+    "startSec": 357.14,
+    "endSec": 364.29,
+    "audioSrc": "/audio/one-day/od46.mp3",
+    "speakable": "Sequan"
+  },
+  {
+    "id": "od47",
+    "speaker": "Host",
+    "narragansett": "Aukeete\u00e1mitch",
+    "english": "Spring \u2014 seed-time.",
+    "startSec": 364.29,
+    "endSec": 371.43,
+    "audioSrc": "/audio/one-day/od47.mp3",
+    "speakable": "Aukeeteamitch"
+  },
+  {
+    "id": "od48",
+    "speaker": "Guest",
+    "narragansett": "Ew\u00e1chim neash",
+    "english": "Corn.",
+    "startSec": 371.43,
+    "endSec": 378.57,
+    "audioSrc": "/audio/one-day/od48.mp3",
+    "speakable": "Ewachim neash"
+  },
+  {
+    "id": "od49",
+    "speaker": "Host",
+    "narragansett": "Scann\u00e9meneash",
+    "english": "Seed corn.",
+    "startSec": 378.57,
+    "endSec": 385.71,
+    "audioSrc": "/audio/one-day/od49.mp3",
+    "speakable": "Scannemeneash"
+  },
+  {
+    "id": "od50",
+    "speaker": "Both",
+    "narragansett": "Aukeetea\u00fbmen",
+    "english": "To plant corn.",
+    "startSec": 385.71,
+    "endSec": 392.86,
+    "audioSrc": "/audio/one-day/od50.mp3",
+    "speakable": "Aukeeteaumen"
+  },
+  {
+    "id": "od51",
+    "speaker": "Host",
+    "narragansett": "Petasc\u00fannemun",
+    "english": "To hill the corn.",
+    "startSec": 392.86,
+    "endSec": 400.0,
+    "audioSrc": "/audio/one-day/od51.mp3",
+    "speakable": "Petascunnemun"
+  },
+  {
+    "id": "od52",
+    "speaker": "Guest",
+    "narragansett": "Kepen\u00fammin",
+    "english": "To gather corn.",
+    "startSec": 400.0,
+    "endSec": 407.14,
+    "audioSrc": "/audio/one-day/od52.mp3",
+    "speakable": "Kepenummin"
+  },
+  {
+    "id": "od53",
+    "speaker": "Host",
+    "narragansett": "S\u00f3kenug",
+    "english": "A heap of corn.",
+    "startSec": 407.14,
+    "endSec": 421.43,
+    "audioSrc": "/audio/one-day/od53.mp3",
+    "speakable": "Sokenug"
+  },
+  {
+    "id": "od54",
+    "speaker": "Guest",
+    "narragansett": "N\u00e9epun",
+    "english": "Summer.",
+    "startSec": 421.43,
+    "endSec": 428.57,
+    "audioSrc": "/audio/one-day/od54.mp3",
+    "speakable": "Neepun"
+  },
+  {
+    "id": "od55",
+    "speaker": "Host",
+    "narragansett": "Taqu\u00f2nck",
+    "english": "Fall / harvest.",
+    "startSec": 428.57,
+    "endSec": 435.71,
+    "audioSrc": "/audio/one-day/od55.mp3",
+    "speakable": "Taquonck"
+  },
+  {
+    "id": "od56",
+    "speaker": "Guest",
+    "narragansett": "Pap\u00f3ne",
+    "english": "Winter.",
+    "startSec": 435.71,
+    "endSec": 442.86,
+    "audioSrc": "/audio/one-day/od56.mp3",
+    "speakable": "Papone"
+  },
+  {
+    "id": "od57",
+    "speaker": "Host",
+    "narragansett": "Ntaucha\u00fbmen",
+    "english": "I go to hunt.",
+    "startSec": 442.86,
+    "endSec": 450.0,
+    "audioSrc": "/audio/one-day/od57.mp3",
+    "speakable": "Ntauchaumen"
+  },
+  {
+    "id": "od58",
+    "speaker": "Both",
+    "narragansett": "Aucha\u00fbtuck",
+    "english": "Let us hunt.",
+    "startSec": 450.0,
+    "endSec": 457.14,
+    "audioSrc": "/audio/one-day/od58.mp3",
+    "speakable": "Auchautuck"
+  },
+  {
+    "id": "od59",
+    "speaker": "Guest",
+    "narragansett": "Attuck, quock",
+    "english": "Deer.",
+    "startSec": 457.14,
+    "endSec": 464.29,
+    "audioSrc": "/audio/one-day/od59.mp3",
+    "speakable": "Attuck quock"
+  },
+  {
+    "id": "od60",
+    "speaker": "Host",
+    "narragansett": "Waww\u00fannes",
+    "english": "A young buck.",
+    "startSec": 464.29,
+    "endSec": 471.43,
+    "audioSrc": "/audio/one-day/od60.mp3",
+    "speakable": "Wawwunnes"
+  },
+  {
+    "id": "od61",
+    "speaker": "Guest",
+    "narragansett": "Nk\u00e9ke, nk\u00e9quock",
+    "english": "Otter, otters.",
+    "startSec": 471.43,
+    "endSec": 478.57,
+    "audioSrc": "/audio/one-day/od61.mp3",
+    "speakable": "Nkeke nkequock"
+  },
+  {
+    "id": "od62",
+    "speaker": "Host",
+    "narragansett": "Npunnoww\u00e2umen",
+    "english": "I must go to my traps.",
+    "startSec": 478.57,
+    "endSec": 492.86,
+    "audioSrc": "/audio/one-day/od62.mp3",
+    "speakable": "Npunnowwaumen"
+  },
+  {
+    "id": "od63",
+    "speaker": "Guest",
+    "narragansett": "Ap\u00e8 hana",
+    "english": "Trap, traps.",
+    "startSec": 492.86,
+    "endSec": 500.0,
+    "audioSrc": "/audio/one-day/od63.mp3",
+    "speakable": "Ape hana"
+  },
+  {
+    "id": "od64",
+    "speaker": "Host",
+    "narragansett": "Ntaumpaucha\u00famen",
+    "english": "I come from hunting.",
+    "startSec": 500.0,
+    "endSec": 507.14,
+    "audioSrc": "/audio/one-day/od64.mp3",
+    "speakable": "Ntaumpauchaumen"
+  },
+  {
+    "id": "od65",
+    "speaker": "Guest",
+    "narragansett": "N\u00e9yhom, m\u00e2uog",
+    "english": "Turkey, turkeys.",
+    "startSec": 507.14,
+    "endSec": 514.29,
+    "audioSrc": "/audio/one-day/od65.mp3",
+    "speakable": "Neyhom mauog"
+  },
+  {
+    "id": "od66",
+    "speaker": "Host",
+    "narragansett": "H\u00f2nck, h\u00f2nckock",
+    "english": "Goose, geese.",
+    "startSec": 514.29,
+    "endSec": 521.43,
+    "audioSrc": "/audio/one-day/od66.mp3",
+    "speakable": "Honck honckock"
+  },
+  {
+    "id": "od67",
+    "speaker": "Guest",
+    "narragansett": "Ch\u00f3gan \u00e8uck",
+    "english": "Blackbird, blackbirds.",
+    "startSec": 521.43,
+    "endSec": 528.57,
+    "audioSrc": "/audio/one-day/od67.mp3",
+    "speakable": "Chogan euck"
+  },
+  {
+    "id": "od68",
+    "speaker": "Host",
+    "narragansett": "Wunn\u00f9p, pash",
+    "english": "Wing, wings.",
+    "startSec": 528.57,
+    "endSec": 535.71,
+    "audioSrc": "/audio/one-day/od68.mp3",
+    "speakable": "Wunnup pash"
+  },
+  {
+    "id": "od69",
+    "speaker": "Guest",
+    "narragansett": "Nickqu\u00e9num",
+    "english": "I am going.",
+    "startSec": 535.71,
+    "endSec": 542.86,
+    "audioSrc": "/audio/one-day/od69.mp3",
+    "speakable": "Nickquenum"
+  },
+  {
+    "id": "od70",
+    "speaker": "Guest",
+    "narragansett": "Ac\u00e2wmuck n\u00f3teshem",
+    "english": "I came over the water.",
+    "startSec": 542.86,
+    "endSec": 550.0,
+    "audioSrc": "/audio/one-day/od70.mp3",
+    "speakable": "Acawmuck noteshem"
+  },
+  {
+    "id": "od71",
+    "speaker": "Host",
+    "narragansett": "Nama\u00f9us,-suck",
+    "english": "Fish, fishes.",
+    "startSec": 550.0,
+    "endSec": 557.14,
+    "audioSrc": "/audio/one-day/od71.mp3",
+    "speakable": "Namauus -suck"
+  },
+  {
+    "id": "od72",
+    "speaker": "Guest",
+    "narragansett": "Nta\u00fbmen",
+    "english": "I am fishing.",
+    "startSec": 557.14,
+    "endSec": 571.43,
+    "audioSrc": "/audio/one-day/od72.mp3",
+    "speakable": "Ntaumen"
+  },
+  {
+    "id": "od73",
+    "speaker": "Host",
+    "narragansett": "Nnattuckqunn\u00fbwem",
+    "english": "I go a fishing.",
+    "startSec": 571.43,
+    "endSec": 578.57,
+    "audioSrc": "/audio/one-day/od73.mp3",
+    "speakable": "Nnattuckqunnuwem"
+  },
+  {
+    "id": "od74",
+    "speaker": "Guest",
+    "narragansett": "Miss\u00fackeke-k\u00e9quock",
+    "english": "Bass.",
+    "startSec": 578.57,
+    "endSec": 585.71,
+    "audioSrc": "/audio/one-day/od74.mp3",
+    "speakable": "Missuckeke-kequock"
+  },
+  {
+    "id": "od75",
+    "speaker": "Host",
+    "narragansett": "Mishquamma\u00f9quock",
+    "english": "Red fish, salmon.",
+    "startSec": 585.71,
+    "endSec": 592.86,
+    "audioSrc": "/audio/one-day/od75.mp3",
+    "speakable": "Mishquammauquock"
+  },
+  {
+    "id": "od76",
+    "speaker": "Guest",
+    "narragansett": "A\u00famanep",
+    "english": "A fishing line.",
+    "startSec": 592.86,
+    "endSec": 600.0,
+    "audioSrc": "/audio/one-day/od76.mp3",
+    "speakable": "Aumanep"
+  },
+  {
+    "id": "od77",
+    "speaker": "Host",
+    "narragansett": "W A\u00fbpi",
+    "english": "The wind.",
+    "startSec": 600.0,
+    "endSec": 607.14,
+    "audioSrc": "/audio/one-day/od77.mp3",
+    "speakable": "W Aupi"
+  },
+  {
+    "id": "od78",
+    "speaker": "Guest",
+    "narragansett": "Wunn\u00e1gehan",
+    "english": "Fair wind.",
+    "startSec": 607.14,
+    "endSec": 614.29,
+    "audioSrc": "/audio/one-day/od78.mp3",
+    "speakable": "Wunnagehan"
+  },
+  {
+    "id": "od79",
+    "speaker": "Host",
+    "narragansett": "Nq\u00e9nowhick woutt\u00edn",
+    "english": "I stay for a wind.",
+    "startSec": 614.29,
+    "endSec": 621.43,
+    "audioSrc": "/audio/one-day/od79.mp3",
+    "speakable": "Nqenowhick wouttin"
+  },
+  {
+    "id": "od80",
+    "speaker": "Guest",
+    "narragansett": "Nipp\u00e2wus",
+    "english": "The sun.",
+    "startSec": 621.43,
+    "endSec": 628.57,
+    "audioSrc": "/audio/one-day/od80.mp3",
+    "speakable": "Nippawus"
+  },
+  {
+    "id": "od81",
+    "speaker": "Host",
+    "narragansett": "T Ocke tussinn\u00e1mmin k\u00e9esuck",
+    "english": "What do you think of the weather?",
+    "startSec": 628.57,
+    "endSec": 642.86,
+    "audioSrc": "/audio/one-day/od81.mp3",
+    "speakable": "T Ocke tussinnammin keesuck"
+  },
+  {
+    "id": "od82",
+    "speaker": "Guest",
+    "narragansett": "Wekinea\u00fbquat",
+    "english": "Fair weather.",
+    "startSec": 642.86,
+    "endSec": 650.0,
+    "audioSrc": "/audio/one-day/od82.mp3",
+    "speakable": "Wekineauquat"
+  },
+  {
+    "id": "od83",
+    "speaker": "Host",
+    "narragansett": "Tahk\u00ec or t\u00e1takki",
+    "english": "Cold weather.",
+    "startSec": 650.0,
+    "endSec": 657.14,
+    "audioSrc": "/audio/one-day/od83.mp3",
+    "speakable": "Tahki or tatakki"
+  },
+  {
+    "id": "od84",
+    "speaker": "Guest",
+    "narragansett": "Kuss\u00fattah",
+    "english": "It is hot.",
+    "startSec": 657.14,
+    "endSec": 664.29,
+    "audioSrc": "/audio/one-day/od84.mp3",
+    "speakable": "Kussuttah"
+  },
+  {
+    "id": "od85",
+    "speaker": "Host",
+    "narragansett": "Nan\u00fammatin",
+    "english": "The north wind.",
+    "startSec": 664.29,
+    "endSec": 671.43,
+    "audioSrc": "/audio/one-day/od85.mp3",
+    "speakable": "Nanummatin"
+  },
+  {
+    "id": "od86",
+    "speaker": "Guest",
+    "narragansett": "Touw\u00fattin",
+    "english": "South wind.",
+    "startSec": 671.43,
+    "endSec": 678.57,
+    "audioSrc": "/audio/one-day/od86.mp3",
+    "speakable": "Touwuttin"
+  },
+  {
+    "id": "od87",
+    "speaker": "Both",
+    "narragansett": "K\u00e9esuck",
+    "english": "The heavens.",
+    "startSec": 678.57,
+    "endSec": 685.71,
+    "audioSrc": "/audio/one-day/od87.mp3",
+    "speakable": "Keesuck"
+  },
+  {
+    "id": "od88",
+    "speaker": "Host",
+    "narragansett": "Yahen w\u00e0iy\u00e0uw",
+    "english": "Almost sunset.",
+    "startSec": 685.71,
+    "endSec": 692.86,
+    "audioSrc": "/audio/one-day/od88.mp3",
+    "speakable": "Yahen waiyauw"
+  },
+  {
+    "id": "od89",
+    "speaker": "Guest",
+    "narragansett": "Waya\u00e0wi",
+    "english": "The sun is set.",
+    "startSec": 692.86,
+    "endSec": 700.0,
+    "audioSrc": "/audio/one-day/od89.mp3",
+    "speakable": "Wayaawi"
+  },
+  {
+    "id": "od90",
+    "speaker": "Guest",
+    "narragansett": "Aunchemokauhett\u00edttea",
+    "english": "Let us talk / tell the news.",
+    "startSec": 700.0,
+    "endSec": 707.14,
+    "audioSrc": "/audio/one-day/od90.mp3",
+    "speakable": "Aunchemokauhettittea"
+  },
+  {
+    "id": "od91",
+    "speaker": "Guest",
+    "narragansett": "Aaunchem\u00f3kaw",
+    "english": "Tell me your news.",
+    "startSec": 707.14,
+    "endSec": 721.43,
+    "audioSrc": "/audio/one-day/od91.mp3",
+    "speakable": "Aaunchemokaw"
+  },
+  {
+    "id": "od92",
+    "speaker": "Host",
+    "narragansett": "Cuttaunchem\u00f3kous",
+    "english": "I will tell you the news.",
+    "startSec": 721.43,
+    "endSec": 728.57,
+    "audioSrc": "/audio/one-day/od92.mp3",
+    "speakable": "Cuttaunchemokous"
+  },
+  {
+    "id": "od93",
+    "speaker": "Host",
+    "narragansett": "Cummautaunchem\u00f3kous",
+    "english": "I have finished my news.",
+    "startSec": 728.57,
+    "endSec": 735.71,
+    "audioSrc": "/audio/one-day/od93.mp3",
+    "speakable": "Cummautaunchemokous"
+  },
+  {
+    "id": "od94",
+    "speaker": "Guest",
+    "narragansett": "Taub\u00fat paump ma\u00fantaman",
+    "english": "I am glad (to hear it).",
+    "startSec": 735.71,
+    "endSec": 742.86,
+    "audioSrc": "/audio/one-day/od94.mp3",
+    "speakable": "Taubut paump mauntaman"
+  },
+  {
+    "id": "od95",
+    "speaker": "Host",
+    "narragansett": "Cowa\u00fanckamish",
+    "english": "My respects to you.",
+    "startSec": 742.86,
+    "endSec": 750.0,
+    "audioSrc": "/audio/one-day/od95.mp3",
+    "speakable": "Cowaunckamish"
+  },
+  {
+    "id": "od96",
+    "speaker": "Guest",
+    "narragansett": "Taubotneanaw\u00e1yean",
+    "english": "I thank you.",
+    "startSec": 750.0,
+    "endSec": 757.14,
+    "audioSrc": "/audio/one-day/od96.mp3",
+    "speakable": "Taubotneanawayean"
+  },
+  {
+    "id": "od97",
+    "speaker": "Host",
+    "narragansett": "Wetu\u00f4muck",
+    "english": "At home.",
+    "startSec": 757.14,
+    "endSec": 764.29,
+    "audioSrc": "/audio/one-day/od97.mp3",
+    "speakable": "Wetuomuck"
+  },
+  {
+    "id": "od98",
+    "speaker": "Guest",
+    "narragansett": "Nanepa\u00f9shat",
+    "english": "The moon.",
+    "startSec": 764.29,
+    "endSec": 771.43,
+    "audioSrc": "/audio/one-day/od98.mp3",
+    "speakable": "Nanepaushat"
+  },
+  {
+    "id": "od99",
+    "speaker": "Host",
+    "narragansett": "An\u00f3ckqus, an\u00f3cksuck",
+    "english": "A star, stars.",
+    "startSec": 771.43,
+    "endSec": 778.57,
+    "audioSrc": "/audio/one-day/od99.mp3",
+    "speakable": "Anockqus anocksuck"
+  },
+  {
+    "id": "od100",
+    "speaker": "Guest",
+    "narragansett": "Mish\u00e1nnock",
+    "english": "The morning star.",
+    "startSec": 778.57,
+    "endSec": 792.86,
+    "audioSrc": "/audio/one-day/od100.mp3",
+    "speakable": "Mishannock"
+  },
+  {
+    "id": "od101",
+    "speaker": "Host",
+    "narragansett": "P\u00f3ppakunnetch, auchaugotch",
+    "english": "Dark night.",
+    "startSec": 792.86,
+    "endSec": 800.0,
+    "audioSrc": "/audio/one-day/od101.mp3",
+    "speakable": "Poppakunnetch auchaugotch"
+  },
+  {
+    "id": "od102",
+    "speaker": "Guest",
+    "narragansett": "Yo nickow\u00e9men?",
+    "english": "Shall I sleep here?",
+    "startSec": 800.0,
+    "endSec": 807.14,
+    "audioSrc": "/audio/one-day/od102.mp3",
+    "speakable": "Yo nickowemen"
+  },
+  {
+    "id": "od103",
+    "speaker": "Host",
+    "narragansett": "Wunn\u00e9gin, c\u00f3wish",
+    "english": "Welcome \u2014 sleep here.",
+    "startSec": 807.14,
+    "endSec": 814.29,
+    "audioSrc": "/audio/one-day/od103.mp3",
+    "speakable": "Wunnegin cowish"
+  },
+  {
+    "id": "od104",
+    "speaker": "Guest",
+    "narragansett": "Nsowwushk\u00e2wmen",
+    "english": "I am weary.",
+    "startSec": 814.29,
+    "endSec": 821.43,
+    "audioSrc": "/audio/one-day/od104.mp3",
+    "speakable": "Nsowwushkawmen"
+  },
+  {
+    "id": "od105",
+    "speaker": "Guest",
+    "narragansett": "Nk\u00e0taquaum",
+    "english": "I am sleepy.",
+    "startSec": 821.43,
+    "endSec": 828.57,
+    "audioSrc": "/audio/one-day/od105.mp3",
+    "speakable": "Nkataquaum"
+  },
+  {
+    "id": "od106",
+    "speaker": "Host",
+    "narragansett": "Coww\u00eatuck",
+    "english": "Let us sleep.",
+    "startSec": 828.57,
+    "endSec": 835.71,
+    "audioSrc": "/audio/one-day/od106.mp3",
+    "speakable": "Cowwetuck"
+  },
+  {
+    "id": "od107",
+    "speaker": "Both",
+    "narragansett": "Wuddt\u00fackqunash, ponam\u00e1uta",
+    "english": "Let us lay on wood.",
+    "startSec": 835.71,
+    "endSec": 842.86,
+    "audioSrc": "/audio/one-day/od107.mp3",
+    "speakable": "Wuddtuckqunash ponamauta"
+  },
+  {
+    "id": "od108",
+    "speaker": "Both",
+    "narragansett": "Cowa\u00fanckamish",
+    "english": "My respects to you.",
+    "startSec": 842.86,
+    "endSec": 850.0,
+    "audioSrc": "/audio/one-day/od108.mp3",
+    "speakable": "Cowaunckamish"
+  },
+  {
+    "id": "od109",
+    "speaker": "Host",
+    "narragansett": "P\u00e1shisha",
+    "english": "It is sunrise. (the day remembered)",
+    "startSec": 850.0,
+    "endSec": 857.14,
+    "audioSrc": "/audio/one-day/od109.mp3",
+    "speakable": "Pashisha"
+  },
+  {
+    "id": "od110",
+    "speaker": "Guest",
+    "narragansett": "Waya\u00e0wi",
+    "english": "The sun is set.",
+    "startSec": 857.14,
+    "endSec": 871.43,
+    "audioSrc": "/audio/one-day/od110.mp3",
+    "speakable": "Wayaawi"
+  },
+  {
+    "id": "od111",
+    "speaker": "Both",
+    "narragansett": "Wetu\u00f4muck",
+    "english": "At home.",
+    "startSec": 871.43,
+    "endSec": 878.57,
+    "audioSrc": "/audio/one-day/od111.mp3",
+    "speakable": "Wetuomuck"
+  },
+  {
+    "id": "od112",
+    "speaker": "Both",
+    "narragansett": "Cowa\u00fanckamish",
+    "english": "My respects to you.",
+    "startSec": 878.57,
+    "endSec": 885.71,
+    "audioSrc": "/audio/one-day/od112.mp3",
+    "speakable": "Cowaunckamish"
+  },
+  {
+    "id": "od113",
+    "speaker": "Guest",
+    "narragansett": "Taubotneanaw\u00e1yean",
+    "english": "I thank you.",
+    "startSec": 885.71,
+    "endSec": 892.86,
+    "audioSrc": "/audio/one-day/od113.mp3",
+    "speakable": "Taubotneanawayean"
+  },
+  {
+    "id": "od114",
+    "speaker": "Host",
+    "narragansett": "Wunn\u00e9gin",
+    "english": "Welcome.",
+    "startSec": 892.86,
+    "endSec": 900.0,
+    "audioSrc": "/audio/one-day/od114.mp3",
+    "speakable": "Wunnegin"
+  }
+]

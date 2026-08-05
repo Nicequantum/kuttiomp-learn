@@ -19,6 +19,20 @@ export type SceneLine = {
   endSec: number;
   /** Optional link into demo Williams lexicon word id */
   wordId?: string;
+  /**
+   * Packaged oral audio (language-first). Path under public/.
+   * When set, player plays this before live TTS / browser speech.
+   */
+  audioSrc?: string;
+};
+
+/**
+ * Optional window into a longer master film (Film V5 Full Day acts).
+ * When set, ScenePlayer seeks/plays only [startSec, endSec) of videoSrc.
+ */
+export type MediaWindow = {
+  startSec: number;
+  endSec: number;
 };
 
 export type LearningScene = {
@@ -48,6 +62,11 @@ export type LearningScene = {
   mediaStatus?: MediaStatus;
   /** Suggested learning order within a mode (lower first) */
   pathOrder?: number;
+  /**
+   * When set, videoSrc is a longer master film and this scene plays only
+   * the [startSec, endSec) window (Film V5 Full Day acts).
+   */
+  mediaWindow?: MediaWindow;
 };
 
 const note =

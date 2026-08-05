@@ -56,7 +56,11 @@ export function longStoryAsScene(story: LongStory): LearningScene {
     posterSrc: story.posterSrc,
     uploadSrc: story.uploadSrc,
     durationSec: story.durationSec,
-    lines: story.lines,
+    // Language-first: attach packaged oral clips for every One Day line
+    lines: story.lines.map((l) => ({
+      ...l,
+      audioSrc: l.audioSrc ?? `/audio/one-day/${l.id}.mp3`,
+    })),
     reconstructionNote: story.reconstructionNote,
     tags: ["long-story", "narrative"],
     series: "Long stories",

@@ -42,3 +42,12 @@ AGENTS.project.md
 coverage/
 .cache/
 film-build/
+
+# Film pipeline intermediates (master lives in public/scenes/long/)
+film-v5/export/
+film-v5/kenburns/
+film-v5/acts/
+film-v5/shots/
+scripts/__pycache__/
+__pycache__/
+*.pyc

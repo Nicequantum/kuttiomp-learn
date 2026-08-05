@@ -1,0 +1,172 @@
+{
+  "version": "v5.0",
+  "masterDurationSec": 900,
+  "aspect": "9:16",
+  "export": { "width": 480, "height": 720, "fps": 24 },
+  "shotDurationSec": 12,
+  "crossfadeSec": 0.45,
+  "shotsPerAct": 8,
+  "style": "stylized cinematic animation, hand-painted, dignified northeastern coastal Algonquian life",
+  "acts": [
+    {
+      "id": "dawn-wake",
+      "order": 1,
+      "title": "Dawn in the wetu",
+      "window": [0, 90],
+      "beats": [
+        "Nature: pre-dawn mist over salt marsh, cool lavender light, no people",
+        "Exterior wetu at first light, soft smoke, door flap glow",
+        "Host sleeping then stirring on woven mats inside wetu, amber doorway light",
+        "Host sits up slowly, rubs eyes, looks to doorway",
+        "Host lays small sticks on fire coals, embers brighten",
+        "Host at doorway silhouette, looking out at brightening marsh",
+        "Close: Host face calm, morning light on features",
+        "Wide: wetu clearing fully dawn, birds, Host steps outside"
+      ]
+    },
+    {
+      "id": "kin-greet",
+      "order": 2,
+      "title": "Kin at morning",
+      "window": [90, 180],
+      "beats": [
+        "Guest approaches wetu clearing on path, morning sun",
+        "Host raises hand in welcome outside wetu",
+        "Two-shot greeting, Host and Guest facing, warm light",
+        "Host gestures respect, Guest bows head slightly",
+        "Closer two-shot, both smiling gently, talking",
+        "Guest points toward family wetu area respectfully",
+        "Side walk together past wetu, soft tracking shot",
+        "They pause, look toward marsh light together"
+      ]
+    },
+    {
+      "id": "morning-meal",
+      "order": 3,
+      "title": "Morning meal",
+      "window": [180, 270],
+      "beats": [
+        "Wooden bowls and soft corn porridge by fire",
+        "Host offers bowl to Guest, firelight",
+        "Guest receives water gourd, drinks carefully",
+        "Both seated eating, quiet companionship",
+        "Close: hands, bowl, steam rising",
+        "Host gestures eat, Guest nods thanks",
+        "Wide meal circle, wetu behind, morning established",
+        "They finish, stand, prepare to leave clearing"
+      ]
+    },
+    {
+      "id": "prepare-path",
+      "order": 4,
+      "title": "On the path",
+      "window": [270, 360],
+      "beats": [
+        "Forest path entrance from clearing, dappled light",
+        "Host points the way along the trail",
+        "Guest walks ahead briefly then waits",
+        "Two walk path together under pines",
+        "Close: feet on soft path, moss",
+        "Host indicates short way vs long way with hand",
+        "Tracking shot through green corridor",
+        "They reach a fork, sky opening ahead"
+      ]
+    },
+    {
+      "id": "land-corn",
+      "order": 5,
+      "title": "Land and corn",
+      "window": [360, 450],
+      "beats": [
+        "Sunny corn hills, three sisters mound garden",
+        "Host kneels by corn stalks, checks leaves",
+        "Guest watches, learns, crouches beside Host",
+        "Hands in soil, careful planting motion",
+        "Wide garden with wetu distant behind trees",
+        "Host shows Guest a ripe ear or green stalk",
+        "Both stand in field, wind moves corn",
+        "They leave garden toward forest edge"
+      ]
+    },
+    {
+      "id": "forest-trail",
+      "order": 6,
+      "title": "Forest trail",
+      "window": [450, 540],
+      "beats": [
+        "Deep pine forest, shafts of light",
+        "Host checks a simple snare area carefully",
+        "Guest looks up at canopy, wonder",
+        "Deer silhouette far through trees (nature)",
+        "Two walk deeper trail, quiet",
+        "Host points animal sign on ground",
+        "Close: forest textures, ferns",
+        "Trail opens toward bright water light"
+      ]
+    },
+    {
+      "id": "water-shore",
+      "order": 7,
+      "title": "At the water",
+      "window": [540, 630],
+      "beats": [
+        "Salt marsh canoe on shore, silver water",
+        "Host and Guest at canoe, prepare",
+        "They fish with simple gear at marsh edge",
+        "Water reflections, reed grass motion",
+        "Two-shot by canoe, conversation",
+        "Guest lifts a small fish carefully",
+        "Wide marsh panorama, late day gold begins",
+        "They secure canoe, start return path"
+      ]
+    },
+    {
+      "id": "sky-weather",
+      "order": 8,
+      "title": "Sky and weather",
+      "window": [630, 720],
+      "beats": [
+        "Open sky above marsh, clouds drift",
+        "Host and Guest look upward together",
+        "Wind moves their hair and cloaks",
+        "Sun lowering, warm side light",
+        "Host gestures north/south wind idea",
+        "Wide sky dominant, small figures",
+        "Clouds color toward late afternoon",
+        "They walk homeward under big sky"
+      ]
+    },
+    {
+      "id": "evening-talk",
+      "order": 9,
+      "title": "Evening talk",
+      "window": [720, 810],
+      "beats": [
+        "Wetu fire circle at dusk, copper light",
+        "Host and Guest seated by fire, discourse",
+        "Close fire embers and faces",
+        "Guest listens intently to Host news",
+        "Host finishes speaking, calm gesture",
+        "Mutual respects, gentle nods",
+        "Wide: wetu, fire, indigo sky",
+        "Night deepening, they remain by fire"
+      ]
+    },
+    {
+      "id": "night-return",
+      "order": 10,
+      "title": "Night return",
+      "window": [810, 900],
+      "beats": [
+        "Moon over salt marsh, silver path",
+        "Stars appear above pines",
+        "Guest weary, sits near wetu mats",
+        "Host welcomes rest, soft fire glow",
+        "They lay wood for night fire",
+        "Guest settles to sleep, peaceful",
+        "Host silhouette watching embers",
+        "Final wide: wetu under stars, night holds"
+      ]
+    }
+  ]
+}

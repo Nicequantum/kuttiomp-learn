@@ -215,12 +215,16 @@ export function ScenePlayer({
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
   /**
-   * Ambient = embedded video soundtrack (if any). Packaged reconstructions
-   * are currently video-only; language audio is TTS / living recording.
-   * Default off so silent files do not look "broken"; community uploads
-   * with audio tracks can turn this on.
+   * Film soundtrack (embedded AAC). Film V5 master bakes Narragansett language
+   * + soft ambient into the picture track — language first.
+   * Default ON for continuous film / day-act windows so learners hear the language
+   * without a second control. Short drill scenes stay off unless a community
+   * upload carries a real track (detected below).
+   * Learn mode still uses the separate oral path for line-by-line practice.
    */
-  const [ambientOn, setAmbientOn] = useState(false);
+  const [ambientOn, setAmbientOn] = useState(
+    () => continuousFilm || progressKind === "story" || progressKind === "day-act",
+  );
   const [mediaHasAudio, setMediaHasAudio] = useState<boolean | null>(null);
   /** native = Fullscreen API; css = fixed overlay (iframe-safe) */
   const [fsMode, setFsMode] = useState<"none" | "native" | "css">("none");
@@ -273,15 +277,28 @@ export function ScenePlayer({
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
   const practiceDuration = scene.durationSec;
   /**
+   * Film V5 master-window: day acts play a slice of the master film.
+   * Community uploads are self-contained act clips — ignore mediaWindow then.
+   */
+  const mediaWindow =
+    fromUpload || !scene.mediaWindow ? undefined : scene.mediaWindow;
+  const windowStart = mediaWindow?.startSec ?? 0;
+  const windowEnd = mediaWindow?.endSec ?? null;
+  const hasMediaWindow = windowEnd != null && Number.isFinite(windowEnd);
+  /**
    * CRITICAL Learn ≠ Watch:
    * Continuous autoplay is gated ONLY by playMode === "watch".
    * continuousFilm must never force Learn into continuous playback.
    */
   const isContinuous = playMode === "watch";
+  /** Media length available for this scene (window or full file). */
+  const effectiveMediaLen = hasMediaWindow
+    ? Math.max(0.05, (windowEnd as number) - windowStart)
+    : mediaDuration;
   const displayDuration =
     playMode === "learn"
       ? practiceDuration
-      : mediaDuration || practiceDuration;
+      : effectiveMediaLen || practiceDuration;
 
   const saveStoryPosition = useCallback(
     (mediaSec?: number) => {
@@ -385,10 +402,21 @@ export function ScenePlayer({
         stallSince.current = null;
         return;
       }
-      if (v.ended) {
+      const pastWindow =
+        hasMediaWindow &&
+        windowEnd != null &&
+        v.currentTime >= windowEnd - 0.05;
+      if (v.ended || pastWindow) {
         userIntentPlay.current = false;
         setPlaying(false);
         stallSince.current = null;
+        if (pastWindow) {
+          try {
+            v.pause();
+          } catch {
+            /* ignore */
+          }
+        }
         return;
       }
       const t = v.currentTime;
@@ -415,7 +443,7 @@ export function ScenePlayer({
     }, 800);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isContinuous, voice, activeLine]);
+  }, [isContinuous, voice, activeLine, hasMediaWindow, windowEnd]);
 
   useEffect(() => {
     function onFs() {
@@ -527,11 +555,32 @@ export function ScenePlayer({
     track: VoiceTrack = voice,
   ) {
     if (track === "off" || !line) return;
-    if (isContinuous && ttsBusy.current) return;
+    // Continuous watch: interrupt prior speech so the line under the playhead is always heard
+    if (isContinuous && ttsBusy.current) {
+      stopSpeaking();
+      ttsBusy.current = false;
+    } else if (ttsBusy.current) {
+      return;
+    }
     ttsBusy.current = true;
     setSpeaking(true);
     try {
       markLinePracticed(line.id, line.wordId);
+      // Language-first: packaged oral clip when present (Narragansett + English baked in)
+      const packaged =
+        track === "english"
+          ? undefined
+          : line.audioSrc ||
+            (line.id.startsWith("od")
+              ? `/audio/one-day/${line.id}.mp3`
+              : line.id.startsWith("dw") ||
+                  line.id.startsWith("kg") ||
+                  line.id.match(
+                    /^(mm|pp|lc|ft|ws|sw|et|nr)\d/,
+                  )
+                ? `/audio/day/${line.id}.mp3`
+                : undefined);
+
       if (track === "english") {
         await speakWord({
           narragansett: line.english,
@@ -543,7 +592,9 @@ export function ScenePlayer({
       await speakWord({
         narragansett: line.narragansett,
         english: line.english,
-        includeEnglish: track === "both",
+        // Packaged clips already include a short English gloss after Narragansett
+        includeEnglish: track === "both" && !packaged,
+        primaryAudioUrl: packaged,
       });
     } finally {
       setSpeaking(false);
@@ -553,15 +604,27 @@ export function ScenePlayer({
 
   function mediaTimeForLine(idx: number): number {
     const v = videoRef.current;
-    const md = v?.duration || mediaDuration || 1;
-    if (!Number.isFinite(md) || md <= 0) return 0;
-    if (scene.lines.length <= 1) return 0;
+    const fullMd = v?.duration || mediaDuration || 1;
+    const md = hasMediaWindow
+      ? effectiveMediaLen
+      : Number.isFinite(fullMd) && fullMd > 0
+        ? fullMd
+        : 1;
+    if (!Number.isFinite(md) || md <= 0) return windowStart;
+    if (scene.lines.length <= 1) return windowStart;
     const line = scene.lines[idx];
     if (line && practiceDuration > 0 && Number.isFinite(line.startSec)) {
-      const ratio = md / practiceDuration;
-      return Math.min(Math.max(0, line.startSec * ratio), Math.max(0, md - 0.05));
+      // Map practice line times into window (or full media):
+      // windowStart + (line.startSec / practiceDuration) * effectiveMediaLen
+      const offset = (line.startSec / practiceDuration) * md;
+      const mediaT = windowStart + offset;
+      const maxT = hasMediaWindow
+        ? (windowEnd as number) - 0.05
+        : Math.max(0, fullMd - 0.05);
+      return Math.min(Math.max(windowStart, mediaT), Math.max(windowStart, maxT));
     }
-    return (idx / scene.lines.length) * Math.max(0.1, md - 0.15);
+    const offset = (idx / scene.lines.length) * Math.max(0.1, md - 0.15);
+    return windowStart + offset;
   }
 
   function seekMediaToLine(idx: number) {
@@ -575,6 +638,8 @@ export function ScenePlayer({
   }
 
   function applyPendingResume(v: HTMLVideoElement) {
+    // Day-act master windows: never resume mid-master; always start at windowStart.
+    if (hasMediaWindow || progressKind === "day-act") return;
     if (appliedResume.current) return;
     const resume = pendingResumeSec.current;
     if (resume == null || resume < 5) return;
@@ -589,6 +654,17 @@ export function ScenePlayer({
           : v.currentTime;
       setTime(practiceT);
       appliedResume.current = true;
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function seekToWindowStart(v: HTMLVideoElement) {
+    if (!hasMediaWindow) return;
+    try {
+      v.currentTime = windowStart;
+      lastMediaTime.current = windowStart;
+      setTime(0);
     } catch {
       /* ignore */
     }
@@ -725,8 +801,27 @@ export function ScenePlayer({
 
     if (v && typeof startAt === "number" && Number.isFinite(startAt)) {
       try {
-        const md = v.duration || mediaDuration || startAt;
-        v.currentTime = Math.max(0, Math.min(startAt, Math.max(0, md - 0.05)));
+        if (hasMediaWindow) {
+          // startAt is media time (absolute) from mediaTimeForLine, or window offset 0
+          const abs =
+            startAt < windowStart
+              ? windowStart + startAt
+              : startAt;
+          const maxT = (windowEnd as number) - 0.05;
+          v.currentTime = Math.max(windowStart, Math.min(abs, maxT));
+        } else {
+          const md = v.duration || mediaDuration || startAt;
+          v.currentTime = Math.max(0, Math.min(startAt, Math.max(0, md - 0.05)));
+        }
+      } catch {
+        /* ignore */
+      }
+    } else if (v && hasMediaWindow) {
+      // Start continuous watch at act window (no story resume)
+      try {
+        if (v.currentTime < windowStart || v.currentTime >= (windowEnd as number) - 0.05) {
+          v.currentTime = windowStart;
+        }
       } catch {
         /* ignore */
       }
@@ -758,9 +853,20 @@ export function ScenePlayer({
     void enterFullscreen();
     bumpChrome();
 
-    if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
+    // Continuous watch: if film soundtrack is on and carries language, do not
+    // also fire oral overlay on start (would echo). Oral still used in Learn.
+    const filmCarriesLanguage =
+      ambientOn && mediaHasAudio === true;
+    if (
+      voice !== "off" &&
+      activeLine &&
+      lastSpokenLine.current !== activeLine.id &&
+      !filmCarriesLanguage
+    ) {
       lastSpokenLine.current = activeLine.id;
       void speakLine(activeLine, voice);
+    } else if (activeLine) {
+      lastSpokenLine.current = activeLine.id;
     }
   }
 
@@ -781,17 +887,24 @@ export function ScenePlayer({
       const v = videoRef.current;
       let start: number | undefined;
       if (v) {
-        if (v.ended || (v.duration && v.currentTime >= v.duration - 0.25)) {
-          start = 0;
+        const atEnd = hasMediaWindow
+          ? v.currentTime >= (windowEnd as number) - 0.25
+          : v.ended ||
+            (v.duration > 0 && v.currentTime >= v.duration - 0.25);
+        if (atEnd) {
+          start = hasMediaWindow ? windowStart : 0;
           pendingResumeSec.current = null;
           appliedResume.current = true;
         } else if (
+          !hasMediaWindow &&
           !appliedResume.current &&
           pendingResumeSec.current != null &&
           pendingResumeSec.current >= 5 &&
           v.currentTime < 1
         ) {
           start = pendingResumeSec.current;
+        } else if (hasMediaWindow && v.currentTime < windowStart) {
+          start = windowStart;
         }
       }
       await playContinuousFrom(start);
@@ -824,6 +937,48 @@ export function ScenePlayer({
   function seekByProgress(pct: number) {
     const v = videoRef.current;
     if (!v) return;
+    const clamped = Math.min(1, Math.max(0, pct));
+
+    if (hasMediaWindow) {
+      const winLen = effectiveMediaLen;
+      if (!Number.isFinite(winLen) || winLen <= 0) return;
+      const mediaT = windowStart + clamped * winLen;
+      if (!isContinuous) {
+        const practiceT =
+          practiceDuration > 0 ? clamped * practiceDuration : clamped * winLen;
+        let best = 0;
+        let bestDist = Infinity;
+        scene.lines.forEach((line, i) => {
+          const d = Math.abs(line.startSec - practiceT);
+          if (d < bestDist) {
+            bestDist = d;
+            best = i;
+          }
+        });
+        seekLine(best);
+        return;
+      }
+      try {
+        v.currentTime = Math.min(mediaT, (windowEnd as number) - 0.05);
+      } catch {
+        return;
+      }
+      // Watch display time is offset within window
+      const displayT = clamped * winLen;
+      setTime(Number.isFinite(displayT) ? displayT : 0);
+      const practiceT =
+        practiceDuration > 0 ? (displayT / winLen) * practiceDuration : displayT;
+      let idx = scene.lines.findIndex(
+        (l) => practiceT >= l.startSec && practiceT < l.endSec,
+      );
+      if (idx < 0 && scene.lines.length) idx = scene.lines.length - 1;
+      if (idx >= 0) setActiveLineIdx(idx);
+      if (userIntentPlay.current) {
+        void v.play().catch(() => {});
+      }
+      return;
+    }
+
     const md =
       Number.isFinite(v.duration) && v.duration > 0
         ? v.duration
@@ -831,7 +986,6 @@ export function ScenePlayer({
           ? mediaDuration
           : 0;
     if (!Number.isFinite(md) || md <= 0) return;
-    const clamped = Math.min(1, Math.max(0, pct));
     const mediaT = clamped * md;
     if (!isContinuous) {
       const practiceT =
@@ -884,12 +1038,14 @@ export function ScenePlayer({
     pendingResumeSec.current = null;
     appliedResume.current = true;
     setOralOnly(false);
-    if (videoRef.current) videoRef.current.currentTime = 0;
+    if (videoRef.current) {
+      videoRef.current.currentTime = hasMediaWindow ? windowStart : 0;
+    }
     if (progressKind === "story") {
       setStoryPosition(scene.id, 0);
     }
     if (isContinuous) {
-      void playContinuousFrom(0);
+      void playContinuousFrom(hasMediaWindow ? windowStart : 0);
       return;
     }
     void enterFullscreen().then(() => {
@@ -928,18 +1084,79 @@ export function ScenePlayer({
     const v = videoRef.current;
     if (!v) return;
     const t = v.currentTime;
-    const md = v.duration || mediaDuration || 1;
     lastProgressAt.current = Date.now();
     lastMediaTime.current = t;
+
+    // Film V5: clamp continuous play to mediaWindow
+    if (hasMediaWindow && windowEnd != null) {
+      if (t >= windowEnd - 0.05) {
+        try {
+          v.currentTime = windowEnd - 0.05;
+          v.pause();
+        } catch {
+          /* ignore */
+        }
+        userIntentPlay.current = false;
+        setPlaying(false);
+        setTime(effectiveMediaLen);
+        markComplete();
+        return;
+      }
+      if (t < windowStart) {
+        try {
+          v.currentTime = windowStart;
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+
+    const winLen = hasMediaWindow
+      ? effectiveMediaLen
+      : v.duration || mediaDuration || 1;
+    const offsetInWindow = hasMediaWindow
+      ? Math.max(0, t - windowStart)
+      : t;
+    const md = hasMediaWindow
+      ? winLen
+      : v.duration || mediaDuration || 1;
+
+    // Watch: display continuous time within window (or full file)
+    // Learn mapping for line hit-testing still uses practice scale
+    const displayT = hasMediaWindow
+      ? Math.min(offsetInWindow, winLen)
+      : t;
     const practiceT =
       practiceDuration > 0 && md > 0 && Number.isFinite(md)
-        ? (t / Math.max(0.01, md)) * practiceDuration
-        : t;
-    setTime(Number.isFinite(practiceT) ? practiceT : 0);
-    if (md && Number.isFinite(md)) setMediaDuration(md);
+        ? hasMediaWindow
+          ? Math.min(
+              practiceDuration,
+              Math.max(
+                0,
+                (offsetInWindow / Math.max(0.01, winLen)) * practiceDuration,
+              ),
+            )
+          : (t / Math.max(0.01, md)) * practiceDuration
+        : displayT;
+
+    setTime(
+      Number.isFinite(isContinuous ? displayT : practiceT)
+        ? isContinuous
+          ? displayT
+          : practiceT
+        : 0,
+    );
+    if (!hasMediaWindow) {
+      const full = v.duration || mediaDuration;
+      if (full && Number.isFinite(full)) setMediaDuration(full);
+    } else {
+      // Keep mediaDuration as window length for watch UI helpers
+      setMediaDuration(winLen);
+    }
 
     if (
       progressKind === "story" &&
+      !hasMediaWindow &&
       userIntentPlay.current &&
       Date.now() - lastSavedAt.current > 4000
     ) {
@@ -955,11 +1172,17 @@ export function ScenePlayer({
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
       const line = scene.lines[idx];
+      // Continuous watch with film soundtrack on: language is already in the
+      // picture track — do not dual-speak via oral overlay (echo).
+      // Learn mode and Hear always use the oral path.
+      const filmCarriesLanguage =
+        isContinuous && ambientOn && mediaHasAudio === true;
       if (
         userIntentPlay.current &&
         voice !== "off" &&
         line &&
-        lastSpokenLine.current !== line.id
+        lastSpokenLine.current !== line.id &&
+        !filmCarriesLanguage
       ) {
         lastSpokenLine.current = line.id;
         void speakLine(line, voice);
@@ -971,6 +1194,8 @@ export function ScenePlayer({
               await prefetchSpeak(l.narragansett, "narragansett");
           }
         })();
+      } else if (line) {
+        lastSpokenLine.current = line.id;
       }
     }
     if (
@@ -992,10 +1217,24 @@ export function ScenePlayer({
     voice,
     progressKind,
     saveStoryPosition,
+    hasMediaWindow,
+    windowStart,
+    windowEnd,
+    effectiveMediaLen,
+    ambientOn,
+    mediaHasAudio,
   ]);
 
   function onEnded() {
     if (!isContinuous) return;
+    // With mediaWindow, completion is handled in onTime at windowEnd
+    if (hasMediaWindow) {
+      userIntentPlay.current = false;
+      setPlaying(false);
+      setTime(effectiveMediaLen);
+      markComplete();
+      return;
+    }
     userIntentPlay.current = false;
     setPlaying(false);
     markComplete();
@@ -1013,11 +1252,13 @@ export function ScenePlayer({
       : null;
 
   const filmLabel = useMemo(() => {
-    const d = mediaDuration || scene.durationSec;
+    const d = hasMediaWindow
+      ? effectiveMediaLen
+      : mediaDuration || scene.durationSec;
     if (!Number.isFinite(d) || d <= 0) return "—";
     if (d >= 60) return `${Math.round(d / 60)} min`;
     return `${Math.round(d)}s`;
-  }, [mediaDuration, scene.durationSec]);
+  }, [mediaDuration, scene.durationSec, hasMediaWindow, effectiveMediaLen]);
 
   const safeProgress = useMemo(() => {
     const d = displayDuration;
@@ -1087,9 +1328,10 @@ export function ScenePlayer({
         Default: <strong className="text-[var(--color-fg)]">hear Narragansett</strong>
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
-        . Language audio is spoken on Play (not from the picture track)
+        . Language is first — on the continuous film it is embedded in the soundtrack
+        (and spoken line-by-line in Learn mode)
         {mediaHasAudio === false
-          ? " — this film has no embedded soundtrack"
+          ? " — this film has no embedded soundtrack yet; use Hear / Learn for oral practice"
           : ""}
         .{" "}
         {isContinuous ? (
@@ -1196,12 +1438,22 @@ export function ScenePlayer({
           onLoadedMetadata={(e) => {
             const el = e.currentTarget;
             const d = el.duration;
-            if (d && Number.isFinite(d)) setMediaDuration(d);
+            if (hasMediaWindow) {
+              // Watch duration is the window length, not the full master
+              setMediaDuration(effectiveMediaLen);
+              // Day-act / windowed: always land at window start (no master resume)
+              seekToWindowStart(el);
+              appliedResume.current = true;
+            } else if (d && Number.isFinite(d)) {
+              setMediaDuration(d);
+              applyPendingResume(el);
+            }
             const has = detectVideoHasAudio(el);
             setMediaHasAudio(has);
-            // Packaged reconstructions are known silent; community may have voice
-            if (has === true && fromUpload) setAmbientOn(true);
-            applyPendingResume(el);
+            // Continuous film / day-act: language is baked into the soundtrack — keep on
+            if (has === true && (fromUpload || continuousFilm || progressKind === "story" || progressKind === "day-act")) {
+              setAmbientOn(true);
+            }
           }}
           onPlay={() => {
             if (isContinuous) setPlaying(true);
@@ -1331,7 +1583,11 @@ export function ScenePlayer({
                       ? "Mute film soundtrack"
                       : "Unmute film soundtrack"
                   }
-                  title="Film soundtrack (if present). Language speech is separate."
+                  title={
+                    ambientOn
+                      ? "Film soundtrack on (Narragansett language + ambient). Tap to mute."
+                      : "Film soundtrack muted. Tap to hear language on the film."
+                  }
                 >
                   {ambientOn ? (
                     <Volume2 className="h-4 w-4" />

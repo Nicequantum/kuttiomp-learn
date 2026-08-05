@@ -2,18 +2,22 @@ import type { LearningModeId } from "./types";
 import type { SceneLine, SceneSensitivity } from "./scenes-data";
 
 /**
- * Full Day Journey — multi-act life-cycle experience.
+ * Full Day Journey — multi-act life-cycle experience (Film V5).
  *
- * Technical limits (platform):
- * - One AI reconstruction clip ≤ 12 seconds.
- * - Longer media = many clips stitched (ffmpeg). Packaged acts here ≈ 1.5–2 min each.
- * - Full journey film ≈ 15–20 minutes across all acts.
- * - Practice with line-paced Narragansett speech ≈ 30–40+ minutes.
- * - Community uploads can replace any act with real multi-minute / multi-hour footage.
+ * Master film: one continuous stylized cinematic animation (~15 min / 900s).
+ * Each act plays a TIME WINDOW into that master (not separate act mp4s as primary).
+ * Community uploads can still replace any act with a self-contained clip.
  *
  * Cultural: historical Williams forms + modern English. Not living ceremony.
  * Sensitive/sacred reconstruction is not staged; evening act is discourse only.
  */
+
+/** Shared master film for all Full Day acts (Film V5). */
+export const MASTER_STORY_VIDEO = "/scenes/long/one-day-story.mp4";
+export const MASTER_STORY_POSTER = "/scenes/long/one-day-story.jpg";
+
+/** Seconds per act window on the master (10 acts × 90s = 900s). */
+export const ACT_WINDOW_SEC = 90;
 
 export type DayActId =
   | "dawn-wake"
@@ -38,12 +42,17 @@ export type DayAct = {
   domains: string[];
   sensitivity: SceneSensitivity;
   modesAllowed: LearningModeId[];
+  /** Packaged master film (shared); community upload overrides per act. */
   videoSrc: string;
   posterSrc: string;
   uploadSrc: string;
-  /** Packaged film length in seconds (aligned to the stitched MP4). */
+  /** Window into master film — absolute start on master timeline. */
+  windowStartSec: number;
+  /** Window into master film — absolute end on master timeline. */
+  windowEndSec: number;
+  /** Packaged film window length (windowEnd − windowStart). */
   durationSec: number;
-  /** Learn-mode dialogue window in seconds (may exceed film length). */
+  /** Learn-mode dialogue window in seconds (may exceed film window). */
   practiceSec: number;
   lines: SceneLine[];
   reconstructionNote: string;
@@ -63,8 +72,23 @@ function timed(
   }));
 }
 
+/** Build a 90s window for act order 1..10 (0–90, 90–180, … 810–900). */
+function actWindow(order: number): {
+  windowStartSec: number;
+  windowEndSec: number;
+  durationSec: number;
+} {
+  const windowStartSec = (order - 1) * ACT_WINDOW_SEC;
+  const windowEndSec = order * ACT_WINDOW_SEC;
+  return {
+    windowStartSec,
+    windowEndSec,
+    durationSec: windowEndSec - windowStartSec,
+  };
+}
+
 const dayNote =
-  "Full Day act — AI visual reconstruction stitched from short shots (each generation ≤12s). Dialogue from Williams 1643 (modern English). Not a living speaker film or a ceremonial recording. Replace with community footage via public/scenes/day/uploads/{act-id}.mp4.";
+  "Full Day act (Film V5) — plays a window of the master one-day film (stylized cinematic animation). Dialogue from Williams 1643 (modern English). Not a living speaker film or a ceremonial recording. Replace with community footage via public/scenes/day/uploads/{act-id}.mp4 (self-contained act clip overrides the master window).";
 
 export const DAY_JOURNEY = {
   id: "full-day",
@@ -72,7 +96,7 @@ export const DAY_JOURNEY = {
   subtitle: "From dawn in the wetu to night under the stars",
   summary:
     "One continuous life-cycle path: wake, kin, meal, trail, land, water, sky, talk, and rest — language from many chapters woven into a single day.",
-  targetFilmMin: 17,
+  targetFilmMin: 15,
   targetPracticeMin: 35,
 } as const;
 
@@ -88,10 +112,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["kinship", "time"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/dawn-wake.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/dawn-wake.jpg",
     uploadSrc: "/scenes/day/uploads/dawn-wake.mp4",
-    durationSec: 103,
+    ...actWindow(1),
     practiceSec: 180,
     reconstructionNote: dayNote,
     lines: timed(
@@ -121,10 +145,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["kinship"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/kin-greet.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/kin-greet.jpg",
     uploadSrc: "/scenes/day/uploads/kin-greet.mp4",
-    durationSec: 109,
+    ...actWindow(2),
     practiceSec: 180,
     reconstructionNote: dayNote,
     lines: timed(
@@ -154,10 +178,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["food"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/morning-meal.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/morning-meal.jpg",
     uploadSrc: "/scenes/day/uploads/morning-meal.mp4",
-    durationSec: 103,
+    ...actWindow(3),
     practiceSec: 180,
     reconstructionNote: dayNote,
     lines: timed(
@@ -187,10 +211,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["movement"],
     sensitivity: "everyday",
     modesAllowed: ["young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/prepare-path.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/prepare-path.jpg",
     uploadSrc: "/scenes/day/uploads/prepare-path.mp4",
-    durationSec: 103,
+    ...actWindow(4),
     practiceSec: 180,
     reconstructionNote: dayNote,
     lines: timed(
@@ -220,10 +244,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["flora", "time"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/land-corn.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/land-corn.jpg",
     uploadSrc: "/scenes/day/uploads/land-corn.mp4",
-    durationSec: 97,
+    ...actWindow(5),
     practiceSec: 200,
     reconstructionNote: dayNote,
     lines: timed(
@@ -255,10 +279,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["flora", "movement"],
     sensitivity: "everyday",
     modesAllowed: ["young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/forest-trail.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/forest-trail.jpg",
     uploadSrc: "/scenes/day/uploads/forest-trail.mp4",
-    durationSec: 97,
+    ...actWindow(6),
     practiceSec: 180,
     reconstructionNote: dayNote,
     lines: timed(
@@ -288,10 +312,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["water", "weather"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/water-shore.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/water-shore.jpg",
     uploadSrc: "/scenes/day/uploads/water-shore.mp4",
-    durationSec: 103,
+    ...actWindow(7),
     practiceSec: 200,
     reconstructionNote: dayNote,
     lines: timed(
@@ -323,10 +347,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["weather"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/sky-weather.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/sky-weather.jpg",
     uploadSrc: "/scenes/day/uploads/sky-weather.mp4",
-    durationSec: 97,
+    ...actWindow(8),
     practiceSec: 180,
     reconstructionNote: dayNote,
     lines: timed(
@@ -356,10 +380,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["other"],
     sensitivity: "everyday",
     modesAllowed: ["young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/evening-talk.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/evening-talk.jpg",
     uploadSrc: "/scenes/day/uploads/evening-talk.mp4",
-    durationSec: 115,
+    ...actWindow(9),
     practiceSec: 180,
     reconstructionNote:
       dayNote +
@@ -391,10 +415,10 @@ export const DAY_ACTS: DayAct[] = [
     domains: ["weather", "kinship"],
     sensitivity: "everyday",
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/day/night-return.mp4",
+    videoSrc: MASTER_STORY_VIDEO,
     posterSrc: "/scenes/day/night-return.jpg",
     uploadSrc: "/scenes/day/uploads/night-return.mp4",
-    durationSec: 103,
+    ...actWindow(10),
     practiceSec: 200,
     reconstructionNote: dayNote,
     lines: timed(

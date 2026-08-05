@@ -1,81 +1,67 @@
 # Full Day journey & long film — length limits & how it grows
 
-## Hard limits (generation platform)
+## Film V5 master-window model (current)
 
 | Layer | Limit |
 |-------|--------|
-| Single AI reconstruction shot | **≤ 12 seconds** |
-| One Full Day **act** (stitched) | **~1.5–2 minutes** film (5+ shots) |
-| Full Day package (10 acts) | **~17 minutes** of film |
-| **Long story “One day” film** | **~25 min 12 s** (126 × 12s narrative shots) |
+| **Master film** `one-day-story.mp4` | **~15 min / 900s** (stylized cinematic animation) |
+| Full Day **act** | **90s window** into the master (not a separate act mp4 as primary) |
+| Full Day package (10 acts) | **15 minutes** film (10 × 90s) |
+| Long story “One day” | **Same master** — full continuous watch |
 | Practice with line-paced speech | **~30–40 minutes** across all acts |
-| Community upload | **Any length** |
+| Community upload | **Any length** (per-act or full master override) |
 
-There is no 30-minute single AI generation. Long films are always **many short shots concatenated** (or your real camera files).
+There is no 30-minute single AI generation. The master is many short shots concatenated (or your real camera files).
 
-## Film v4 pipeline (long story)
+### How acts use the master
 
-Narrative-first rebuild — **do not** stitch practice-scene shorts.
+1. Packaged `videoSrc` for every Full Day act is `/scenes/long/one-day-story.mp4`
+2. Each act sets `windowStartSec` / `windowEndSec` (0–90, 90–180, … 810–900)
+3. `ScenePlayer` seeks to the window start, seeks only inside the window, and stops at window end
+4. Learn mode still uses local line times `0..practiceSec`; the player maps them into the window
+5. Community upload at `public/scenes/day/uploads/{act-id}.mp4` **replaces** the master window for that act (self-contained clip; no window applied)
 
-1. **Dialogue first** — Host + Guest only (Williams 1643 Narragansett + modern English) in `scripts/build-film-v4-plan.mjs` / `src/lib/content/long-stories-data.ts`
-2. **Shot plan** — 126 shots × 12s = 25m 12s, fixed cast, visual beat per line → `film-build/narrative/`
-3. **Stills** — generated from locked Host / Guest / Both refs (same two faces throughout)
-4. **Motion** — **Track 6 complete**: AI I2V on all **20 narrative keyshots** (`film-build/shots/*.mp4`); Ken Burns from stills for the other ~106. Status: `film-build/logs/track6-i2v-status.json`
-5. **Stitch** — `python3 scripts/stitch-film-v4.py` → `public/scenes/long/one-day-story.mp4` (prefers `film-build/shots/*.mp4` over Ken Burns)
+## Film V5 pipeline (long story / master)
+
+1. **Dialogue first** — Host + Guest only (Williams 1643 Narragansett + modern English)
+2. **Beat plan** — 10 acts × ~8 beats × 12s ≈ 900s → `film-v5/BEAT_PLAN.json`
+3. **Style** — stylized cinematic animation (hand-painted, dignified northeastern coastal Algonquian life)
+4. **Stitch** → `public/scenes/long/one-day-story.mp4`
 
 Rules:
 
 - Only **Host** (elder) and **Guest** (traveler) appear as people
 - Nature-only breathers allowed (marsh, path, sky) with no new faces
-- App player: **Play full film** runs continuous end-to-end (watch mode + stall recovery)
-
-## Track 6 keyshots (I2V anchors across the day)
-
-| Time | Shot | Cast | Beat |
-|------|-----:|------|------|
-| 0:00 | 0 | nature | Dawn marsh |
-| 0:36 | 3 | host | Host by fire |
-| 1:12 | 6 | host | Host outside wetu |
-| 2:24 | 12 | both | Kin greeting |
-| 3:36 | 18 | both | Two-shot kin |
-| 4:48 | 24 | both | Morning meal |
-| 6:00 | 30 | guest | Guest with bowl |
-| 7:12 | 36 | both | Path ready |
-| 8:24 | 42 | both | Path walk |
-| 9:36 | 48 | both | Numbers / shells |
-| 10:48 | 54 | host | Land / corn |
-| 13:12 | 66 | both | Forest enter |
-| 14:24 | 72 | host | Snare check |
-| 15:36 | 78 | nature | Canoe shore |
-| 16:48 | 84 | both | Fishing together |
-| 18:00 | 90 | both | Reading the sky |
-| 20:24 | 102 | both | Evening discourse by fire |
-| 21:36 | 108 | host | Host offers respects |
-| 22:48 | 114 | nature | Night moon over marsh |
-| 24:00 | 120 | guest | Guest settles for night |
+- App player: **Play full film** (Stories) runs continuous end-to-end; **Full Day acts** play windows into the same file
 
 ## What ships for Full Day acts
 
-10 acts, dawn → night (separate shorter films under `/app/day`):
+10 acts, dawn → night (windows into master under `/app/day`):
 
-1. Dawn in the wetu  
-2. Kin at morning  
-3. Morning meal  
-4. On the path  
-5. Land and corn  
-6. Forest trail  
-7. At the water  
-8. Sky and weather  
-9. Evening talk (discourse only — **not** living ceremony)  
-10. Night return  
+| # | Act | Master window |
+|--:|-----|---------------|
+| 1 | Dawn in the wetu | 0–90s |
+| 2 | Kin at morning | 90–180s |
+| 3 | Morning meal | 180–270s |
+| 4 | On the path | 270–360s |
+| 5 | Land and corn | 360–450s |
+| 6 | Forest trail | 450–540s |
+| 7 | At the water | 540–630s |
+| 8 | Sky and weather | 630–720s |
+| 9 | Evening talk (discourse only — **not** living ceremony) | 720–810s |
+| 10 | Night return | 810–900s |
 
 ## Replace with your long footage
 
 ```text
-public/scenes/long/uploads/one-day-story.mp4
-public/scenes/day/uploads/{act-id}.mp4
+public/scenes/long/uploads/one-day-story.mp4   # full master override
+public/scenes/day/uploads/{act-id}.mp4         # per-act override (no window)
 ```
 
 ## Ceremony note
 
 Living ceremony is **not** reconstructed in demo media. Evening is **discourse/news** language only.
+
+## Legacy (v4)
+
+Earlier packages used separate ~1.5–2 min act mp4s under `/scenes/day/` and a ~25 min 12 s long story. V5 supersedes that with the master-window model above; act posters under `/scenes/day/` remain as still thumbnails.

@@ -3,13 +3,21 @@ import type { LearningModeId } from "./types";
 import {
   DAY_ACTS,
   DAY_JOURNEY,
+  MASTER_STORY_VIDEO,
   type DayAct,
   type DayActId,
 } from "./day-journey-data";
 import { resolveCommunityMedia } from "@/lib/media/community-media";
+import type { LearningScene } from "./scenes-data";
 
 export type { DayAct, DayActId } from "./day-journey-data";
-export { DAY_JOURNEY, DAY_ACTS } from "./day-journey-data";
+export {
+  DAY_JOURNEY,
+  DAY_ACTS,
+  MASTER_STORY_VIDEO,
+  MASTER_STORY_POSTER,
+  ACT_WINDOW_SEC,
+} from "./day-journey-data";
 
 function currentMode(): LearningModeId | null {
   try {
@@ -72,18 +80,22 @@ export function getDayJourneyStats(mode?: LearningModeId | null) {
   };
 }
 
+/**
+ * Prefer community act upload when present; otherwise packaged master film.
+ * Master windows are applied via scene.mediaWindow in ScenePlayer.
+ */
 export async function resolveDayActVideoSrc(
   act: DayAct,
 ): Promise<{ src: string; fromUpload: boolean }> {
   const r = await resolveCommunityMedia({
-    packagedSrc: act.videoSrc,
+    packagedSrc: act.videoSrc || MASTER_STORY_VIDEO,
     uploadSrc: act.uploadSrc,
   });
   return { src: r.src, fromUpload: r.fromUpload };
 }
 
 /** Convert a DayAct into a LearningScene-shaped object for ScenePlayer reuse */
-export function dayActAsScene(act: DayAct) {
+export function dayActAsScene(act: DayAct): LearningScene {
   return {
     id: act.id,
     title: act.title,
@@ -92,17 +104,27 @@ export function dayActAsScene(act: DayAct) {
     chapterNum: act.chapterNums[0] ?? 0,
     domain: act.domains[0] ?? "other",
     sensitivity: act.sensitivity,
-    style: "cinematic" as const,
+    style: "cinematic",
     modesAllowed: act.modesAllowed,
     videoSrc: act.videoSrc,
     posterSrc: act.posterSrc,
     uploadSrc: act.uploadSrc,
+    /** Learn mode uses practice timeline (lines are local 0..practiceSec). */
     durationSec: act.practiceSec,
-    lines: act.lines,
+    lines: act.lines.map((l) => ({
+      ...l,
+      // Prefer day-act packaged audio, fall back to one-day shared when ids match
+      audioSrc: l.audioSrc ?? `/audio/day/${l.id}.mp3`,
+    })),
     reconstructionNote: act.reconstructionNote,
     tags: ["full-day", ...act.domains],
     series: "Full Day",
-    mediaStatus: "ready" as const,
+    mediaStatus: "ready",
     pathOrder: act.order,
+    /** Film window length is on mediaWindow; ScenePlayer maps seek/play into it. */
+    mediaWindow: {
+      startSec: act.windowStartSec,
+      endSec: act.windowEndSec,
+    },
   };
 }
