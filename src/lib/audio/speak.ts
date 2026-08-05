@@ -35,18 +35,25 @@ export function isGrokTtsAvailable() {
 /**
  * Call from the first user gesture (Play / Hear) so later TTS and
  * HTMLAudioElement playback are not blocked by autoplay policy.
+ * Never throws; never hangs.
  */
 export async function unlockAudioPlayback(): Promise<void> {
   if (typeof window === "undefined" || audioUnlocked) return;
   try {
-    // Tiny silent wav — primes the audio element pipeline
     const silent =
       "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
     const a = new Audio(silent);
     a.volume = 0.01;
-    await a.play().catch(() => {});
-    a.pause();
-    a.src = "";
+    await Promise.race([
+      a.play().catch(() => {}),
+      new Promise((r) => setTimeout(r, 400)),
+    ]);
+    try {
+      a.pause();
+      a.src = "";
+    } catch {
+      /* ignore */
+    }
   } catch {
     /* ignore */
   }
@@ -96,10 +103,14 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
       resolve();
       return;
     }
-    // Do not call full stopSpeaking() here — it cancels the queue we are about to use.
+
     if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.src = "";
+      try {
+        currentAudio.pause();
+        currentAudio.src = "";
+      } catch {
+        /* ignore */
+      }
       currentAudio = null;
     }
     try {
@@ -108,38 +119,51 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
     } catch {
       /* ignore */
     }
+
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      currentUtterance = null;
+      window.clearTimeout(timer);
+      resolve();
+    };
+
     const u = new SpeechSynthesisUtterance(trimmed);
     u.rate = opts?.rate ?? 0.8;
     u.lang = "en-US";
     u.volume = 1;
-    u.onend = () => {
-      currentUtterance = null;
-      resolve();
-    };
-    u.onerror = () => {
-      currentUtterance = null;
-      resolve();
-    };
+    u.onend = finish;
+    u.onerror = finish;
     currentUtterance = u;
-    // Chrome sometimes drops the first speak() after cancel — double-kick
-    window.speechSynthesis.speak(u);
+    // Hard cap — speechSynthesis sometimes never fires onend
+    const timer = window.setTimeout(finish, 12000);
+    try {
+      window.speechSynthesis.speak(u);
+    } catch {
+      finish();
+    }
     window.setTimeout(() => {
-      if (currentUtterance === u && window.speechSynthesis.paused) {
-        try {
+      try {
+        if (!done && window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
-        } catch {
-          /* ignore */
         }
+      } catch {
+        /* ignore */
       }
-    }, 80);
+    }, 60);
   });
 }
 
 function playUrl(url: string): Promise<boolean> {
   return new Promise((resolve) => {
     if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.src = "";
+      try {
+        currentAudio.pause();
+        currentAudio.src = "";
+      } catch {
+        /* ignore */
+      }
       currentAudio = null;
     }
     try {
@@ -148,18 +172,36 @@ function playUrl(url: string): Promise<boolean> {
       /* ignore */
     }
     currentUtterance = null;
+
+    let done = false;
+    const finish = (ok: boolean) => {
+      if (done) return;
+      done = true;
+      window.clearTimeout(timer);
+      if (currentAudio) {
+        try {
+          currentAudio.onended = null;
+          currentAudio.onerror = null;
+        } catch {
+          /* ignore */
+        }
+      }
+      resolve(ok);
+    };
+
     const audio = new Audio(url);
     audio.volume = 1;
     currentAudio = audio;
     audio.onended = () => {
       currentAudio = null;
-      resolve(true);
+      finish(true);
     };
     audio.onerror = () => {
       currentAudio = null;
-      resolve(false);
+      finish(false);
     };
-    void audio.play().catch(() => resolve(false));
+    const timer = window.setTimeout(() => finish(false), 15000);
+    void audio.play().catch(() => finish(false));
   });
 }
 
@@ -206,16 +248,20 @@ async function grokSpeak(
   return playUrl(url);
 }
 
-/** Warm cache without playing — call while video buffers. */
+/** Warm cache without playing — never blocks UI. */
 export async function prefetchSpeak(
   text: string,
   kind: "narragansett" | "english" = "narragansett",
 ): Promise<boolean> {
   if (!text?.trim()) return false;
-  if (grokAvailable === null) await checkTtsStatus();
-  if (!grokAvailable) return false;
-  const url = await fetchTtsBlobUrl(text.trim(), kind);
-  return Boolean(url);
+  try {
+    if (grokAvailable === null) await checkTtsStatus();
+    if (!grokAvailable) return false;
+    const url = await fetchTtsBlobUrl(text.trim(), kind);
+    return Boolean(url);
+  } catch {
+    return false;
+  }
 }
 
 export async function speakWord(opts: {
@@ -225,7 +271,11 @@ export async function speakWord(opts: {
   /** Living speaker recording from public API */
   primaryAudioUrl?: string;
 }): Promise<"recording" | "grok" | "browser" | "none"> {
-  await unlockAudioPlayback();
+  try {
+    await unlockAudioPlayback();
+  } catch {
+    /* ignore */
+  }
 
   // 1) Living speaker recording (production path)
   if (opts.primaryAudioUrl) {
@@ -254,7 +304,6 @@ export async function speakWord(opts: {
     }
   }
 
-  // Browser fallback — always attempt; oral primacy over silence
   if (!opts.narragansett?.trim() && !opts.english?.trim()) return "none";
   await browserSpeak(opts.narragansett || opts.english || "", { rate: 0.7 });
   if (opts.includeEnglish && opts.english) {

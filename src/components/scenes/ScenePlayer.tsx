@@ -110,67 +110,46 @@ function isTypingTarget(t: EventTarget | null) {
 }
 
 /**
- * Wait until the media element has buffered ahead of the playhead
- * (or HAVE_ENOUGH_DATA). Silent — no UI. Prefer a longer start over
- * mid-play stalls the learner can see.
+ * Ensure media can start. Never call video.load() (it resets the element
+ * and was blocking play). Prefer immediate muted play for autoplay policy.
  */
-function waitForPlaybackReady(
-  v: HTMLVideoElement,
-  opts?: { aheadSec?: number; timeoutMs?: number },
-): Promise<void> {
-  const aheadSec = opts?.aheadSec ?? 2.5;
-  const timeoutMs = opts?.timeoutMs ?? 14000;
-  if (v.readyState >= 4) return Promise.resolve();
-
-  return new Promise((resolve) => {
-    const started = Date.now();
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      v.removeEventListener("progress", onProg);
-      v.removeEventListener("canplaythrough", onReady);
-      v.removeEventListener("loadeddata", onReady);
-      window.clearInterval(tick);
-      resolve();
-    };
-    const enough = () => {
-      try {
-        if (v.readyState >= 4) return true;
-        if (v.buffered.length === 0) return false;
-        const end = v.buffered.end(v.buffered.length - 1);
-        const need = v.currentTime + aheadSec;
-        const cap =
-          Number.isFinite(v.duration) && v.duration > 0
-            ? Math.min(need, v.duration - 0.05)
-            : need;
-        return end >= cap - 0.05;
-      } catch {
-        return v.readyState >= 3;
-      }
-    };
-    const onProg = () => {
-      if (enough()) finish();
-    };
-    const onReady = () => {
-      if (enough() || v.readyState >= 3) finish();
-    };
-    v.addEventListener("progress", onProg);
-    v.addEventListener("canplaythrough", onReady);
-    v.addEventListener("loadeddata", onReady);
-    const tick = window.setInterval(() => {
-      if (enough()) finish();
-      else if (Date.now() - started > timeoutMs) finish();
-    }, 180);
-    try {
-      v.preload = "auto";
-      // Nudge the network without showing chrome
-      if (v.readyState < 2) v.load();
-    } catch {
-      /* ignore */
+async function ensureVideoPlaying(v: HTMLVideoElement): Promise<boolean> {
+  try {
+    v.playsInline = true;
+    // Always start muted so browsers allow play without gesture issues
+    v.muted = true;
+    if (v.readyState < 2) {
+      await Promise.race([
+        new Promise<void>((resolve) => {
+          const done = () => {
+            v.removeEventListener("loadeddata", done);
+            v.removeEventListener("canplay", done);
+            resolve();
+          };
+          v.addEventListener("loadeddata", done);
+          v.addEventListener("canplay", done);
+        }),
+        new Promise<void>((resolve) => window.setTimeout(resolve, 2500)),
+      ]);
     }
-    if (enough()) finish();
-  });
+    if (v.ended) {
+      try {
+        v.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    }
+    await v.play();
+    return true;
+  } catch {
+    try {
+      v.muted = true;
+      await v.play();
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
 
 function detectVideoHasAudio(v: HTMLVideoElement): boolean | null {
@@ -387,10 +366,14 @@ export function ScenePlayer({
     const v = videoRef.current;
     if (!v) return;
     v.playbackRate = speed;
-    // Only unmute element when ambient is on AND we believe there is a track
-    const wantAmbient = ambientOn && mediaHasAudio !== false;
-    v.muted = !wantAmbient;
-    v.volume = wantAmbient ? 0.85 : 0;
+    // Prefer muted flag over volume=0 (volume 0 can prevent some engines from advancing)
+    if (ambientOn && mediaHasAudio === true) {
+      v.muted = false;
+      v.volume = 0.85;
+    } else {
+      v.muted = true;
+      v.volume = 1;
+    }
   }, [speed, videoSrc, ambientOn, mediaHasAudio]);
 
   // Continuous stall recovery — silent; no "Loading…" chrome
@@ -611,20 +594,25 @@ export function ScenePlayer({
     }
   }
 
-  /** Start video when ready; never blocks oral path if media fails. */
+  /** Start video immediately (muted). Never blocks on long buffer waits. */
   async function startVideoSoft(v: HTMLVideoElement | null) {
     if (!v || oralOnly) return false;
     preparingRef.current = true;
     try {
-      await waitForPlaybackReady(v, {
-        aheadSec: continuousFilm ? 4 : 2.5,
-        timeoutMs: continuousFilm ? 16000 : 10000,
-      });
-      const wantAmbient = ambientOn && mediaHasAudio !== false;
-      v.muted = !wantAmbient;
-      v.volume = wantAmbient ? 0.85 : 0;
-      v.playsInline = true;
-      await v.play();
+      const ok = await ensureVideoPlaying(v);
+      if (!ok) return false;
+      // Apply ambient only after successful start, and only if a track exists
+      if (ambientOn && mediaHasAudio === true) {
+        try {
+          v.muted = false;
+          v.volume = 0.85;
+        } catch {
+          /* keep muted */
+        }
+      } else {
+        v.muted = true;
+        v.volume = 1;
+      }
       return true;
     } catch {
       return false;
@@ -639,18 +627,23 @@ export function ScenePlayer({
       const v = videoRef.current;
       setPlaying(true);
       setActiveLineIdx(fromIdx);
-      await unlockAudioPlayback();
+      void unlockAudioPlayback();
 
-      // Prefetch remaining lines silently while we work
+      // Start picture immediately — do not wait for TTS or long buffer
+      void startVideoSoft(v).then((ok) => {
+        if (!ok && learnToken.current === token) {
+          setOralOnly(true);
+          setMediaError("video-unavailable-oral-continues");
+        }
+      });
+
+      // Prefetch speech in background (non-blocking)
       void (async () => {
         for (const line of scene.lines.slice(fromIdx, fromIdx + 6)) {
           if (line.narragansett)
             await prefetchSpeak(line.narragansett, "narragansett");
         }
       })();
-
-      // Prepare video in parallel with first speech — oral primacy
-      const videoReady = startVideoSoft(v);
 
       for (let i = fromIdx; i < scene.lines.length; i++) {
         if (learnToken.current !== token) return;
@@ -659,7 +652,18 @@ export function ScenePlayer({
         setTime(line.startSec);
         seekMediaToLine(i);
 
-        // Language first — always, even if video still buffering or failed
+        // Keep video rolling after seek
+        if (v && !oralOnly) {
+          try {
+            if (v.paused && !v.ended) {
+              v.muted = true;
+              await v.play().catch(() => {});
+            }
+          } catch {
+            /* keep oral */
+          }
+        }
+
         if (voice !== "off") {
           await speakLine(line, voice);
         } else {
@@ -668,22 +672,6 @@ export function ScenePlayer({
         }
 
         if (learnToken.current !== token) return;
-
-        // Ensure video is advancing for this line window when possible
-        if (v && !oralOnly) {
-          const ok = await videoReady;
-          if (!ok && i === fromIdx) {
-            // Video failed entirely — continue oral-only
-            setOralOnly(true);
-            setMediaError("video-unavailable-oral-continues");
-          } else if (v.paused && !v.ended) {
-            try {
-              await v.play();
-            } catch {
-              /* keep oral */
-            }
-          }
-        }
 
         if (loopLine) {
           i -= 1;
@@ -714,21 +702,26 @@ export function ScenePlayer({
     const v = videoRef.current;
     learnToken.current += 1;
     setSpeaking(false);
-    userIntentPlay.current = true;
-    lastProgressAt.current = Date.now();
     setMediaError(null);
-    await unlockAudioPlayback();
+    void unlockAudioPlayback();
 
-    // Prefetch upcoming dialogue TTS while media buffers (silent)
-    const startIdx = Math.max(0, activeLineIdx);
+    // Mark intent only after we actually try to start — avoids "dead" second click cancel
+    // during a long wait. Set intent + playing early so UI responds.
+    userIntentPlay.current = true;
+    setPlaying(true);
+    lastProgressAt.current = Date.now();
+
     void (async () => {
-      for (const line of scene.lines.slice(startIdx, startIdx + 8)) {
+      for (const line of scene.lines.slice(
+        Math.max(0, activeLineIdx),
+        Math.max(0, activeLineIdx) + 8,
+      )) {
         if (line.narragansett)
           await prefetchSpeak(line.narragansett, "narragansett");
       }
     })();
 
-    applyPendingResume(v!);
+    if (v) applyPendingResume(v);
 
     if (v && typeof startAt === "number" && Number.isFinite(startAt)) {
       try {
@@ -739,24 +732,14 @@ export function ScenePlayer({
       }
     }
 
-    await enterFullscreen();
-    bumpChrome();
-
-    // Speak first line immediately (gesture-safe), then bring video up when ready
-    if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
-      lastSpokenLine.current = activeLine.id;
-      void speakLine(activeLine, voice);
-    }
-
+    // Start video FIRST (gesture still warm), then fullscreen
     const videoOk = await startVideoSoft(v);
     if (!videoOk) {
       setOralOnly(true);
       setMediaError("video-unavailable-oral-continues");
-      setPlaying(true);
-      // Oral walkthrough of remaining lines while video is down
       if (voice !== "off") {
         const token = learnToken.current;
-        for (let i = activeLineIdx + 1; i < scene.lines.length; i++) {
+        for (let i = activeLineIdx; i < scene.lines.length; i++) {
           if (learnToken.current !== token || !userIntentPlay.current) break;
           setActiveLineIdx(i);
           lastSpokenLine.current = scene.lines[i].id;
@@ -770,12 +753,19 @@ export function ScenePlayer({
       }
       return;
     }
-    setPlaying(true);
+
     setOralOnly(false);
+    void enterFullscreen();
+    bumpChrome();
+
+    if (voice !== "off" && activeLine && lastSpokenLine.current !== activeLine.id) {
+      lastSpokenLine.current = activeLine.id;
+      void speakLine(activeLine, voice);
+    }
   }
 
   async function togglePlay() {
-    await unlockAudioPlayback();
+    void unlockAudioPlayback();
     if (playing || userIntentPlay.current) {
       userIntentPlay.current = false;
       learnToken.current += 1;
@@ -807,9 +797,10 @@ export function ScenePlayer({
       await playContinuousFrom(start);
       return;
     }
-    await enterFullscreen();
-    bumpChrome();
+    // Learn: start sequence immediately; fullscreen after
     void runLearnSequence(activeLineIdx);
+    void enterFullscreen();
+    bumpChrome();
   }
 
   function seekLine(idx: number) {
@@ -1192,7 +1183,7 @@ export function ScenePlayer({
           src={videoSrc}
           poster={scene.posterSrc}
           playsInline
-          muted={!(ambientOn && mediaHasAudio !== false)}
+          muted={!(ambientOn && mediaHasAudio === true)}
           loop={false}
           preload="auto"
           onTimeUpdate={onTime}
