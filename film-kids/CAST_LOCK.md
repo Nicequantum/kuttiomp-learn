@@ -1,65 +1,29 @@
-# Little Ones — Cast Lock (Hello Kid Friends)
+# Little Ones — Cast Lock (HQ)
 
-**Authority clip:** `public/scenes/greeting-kids.mp4` · title *Hello, friend (kids)*  
-**Refs:** `film-kids/refs/hello-frame-*.jpg` · `hello-poster.jpg` · `cast-two.jpg`  
-**Rule:** Every Little Ones picture and clip uses **only these two children**. No new faces. No adult cast. No style drift.
+**Authority faces:** Hello Kid Friends pair (Friend Tan + Friend Teal), upgraded to **cinematic storybook HQ** while keeping identity.
+**Refs:** `film-kids/bible/` (cast sheets) · `film-kids/refs/hello-frame-*.jpg` (identity seed)
+**Grade:** Premium children’s cinematic storybook — see `PROMPT_PACK.md` STYLE_MASTER.
+**Export:** **720×1280**, shot-per-line I2V stitch (`scripts/stitch-kids-hq.py`).
 
----
+## Leads (every clip)
 
-## The two friends (locked)
+| ID | Look |
+|----|------|
+| Friend Tan | ~8, longer dark braid, **tan hide tunic**, warm brown skin |
+| Friend Teal | ~7, shorter/twin-braid dark hair, **teal hide tunic**, warm brown skin |
 
-### Friend Tan (home side / answers)
+## Supporting (family-kids only)
 
-| Trait | Spec |
-|-------|------|
-| Age read | ~7–9 |
-| Hair | Longer dark hair (braid or soft waves) |
-| Skin | Warm brown (Northeastern Indigenous child) |
-| Costume | Soft **tan / light hide** tunic |
-| Presence | Often left / slightly taller |
-| Role | Welcomes, answers, shares bowl, points to land |
+Father · Mother · Elder man · Elder woman — same people/world; never steal lead focus.
 
-### Friend Teal (greets / asks / waves)
+## Wetu
 
-| Trait | Spec |
-|-------|------|
-| Age read | ~6–8 |
-| Hair | Shorter or twin-braid dark hair |
-| Skin | Warm brown (same people, same world) |
-| Costume | Soft **teal / blue-green** tunic |
-| Presence | Often right / front, wave or point |
-| Role | Says hello, asks, counts, points to birds |
-
-### Together
-
-- Same pair as *Hello, friend (kids)* gold clip
-- Wetu-edge coastal world, soft pines, marsh light
-- Soft kids cartoon watercolor — **not** photoreal, **not** anime
-- Vertical **9:16** (448×672 export)
-- App dialogue speaker label: **Friend** for both
-
----
-
-## Master style block (paste every gen)
-
-```
-Soft kids cartoon illustration matching Hello Kid Friends exactly:
-same two Northeastern Indigenous children only — Friend Tan (longer dark hair, tan hide tunic)
-and Friend Teal (shorter/braided dark hair, teal-blue tunic). Warm brown skin, kind eyes.
-Coastal Algonquian wetu-edge world. Soft watercolor texture. Vertical 9:16.
-Not photoreal. Not anime. No new human faces. No adult characters.
-```
-
-## Reject
-
-- Any third child or adult face  
-- Multi-ethnicity “random cast”  
-- Plains headdress / pan-Indigenous costume pile  
-- Style jump away from Hello Kid Friends cartoon  
+Bent-sapling frame, bark or cattail mats, smoke hole — `PROMPT_PACK.md` WETU_LOCK.
 
 ## Pipeline
 
-1. Still from `cast-two.jpg` / `hello-frame-09.jpg` (never blank people gen)  
-2. I2V ~6s gentle motion → loop/pad to ~18s @ 448×672  
-3. Wire under `series: "Little Ones"`; Little Ones mode **only** sees this series  
-4. Language first via oral path (Hear / learn); expand mux later when kids line audio packs exist  
+1. Bible stills in `film-kids/bible/`
+2. Per-line stills in `film-kids/stills-hq/<clip>/`
+3. 6s I2V → `film-kids/shots-hq/<clip>/`
+4. `python3 scripts/stitch-kids-hq.py <clip>`
+5. Wire durationSec to stitched length in `scenes-data.ts`
