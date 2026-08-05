@@ -29,11 +29,24 @@ function sortByPath(a: LearningScene, b: LearningScene) {
   return a.title.localeCompare(b.title);
 }
 
+/**
+ * Little Ones: only Hello Kid Friends pack (same two cartoon friends).
+ * Other modes keep the full catalog.
+ */
 export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] {
   const m = mode === undefined ? currentMode() : mode;
-  const list = !m
-    ? SCENES.filter((s) => s.modesAllowed.includes("core_adult"))
-    : SCENES.filter((s) => s.modesAllowed.includes(m));
+  let list: LearningScene[];
+  if (!m) {
+    list = SCENES.filter((s) => s.modesAllowed.includes("core_adult"));
+  } else if (m === "little_ones") {
+    list = SCENES.filter(
+      (s) =>
+        s.modesAllowed.includes("little_ones") &&
+        (s.series === "Little Ones" || (s.tags ?? []).includes("kids")),
+    );
+  } else {
+    list = SCENES.filter((s) => s.modesAllowed.includes(m));
+  }
   return [...list].sort(sortByPath);
 }
 
@@ -43,6 +56,14 @@ export function getSceneById(id: string): LearningScene | undefined {
   const mode = currentMode();
   if (!mode) return scene;
   if (!scene.modesAllowed.includes(mode)) return undefined;
+  // Little Ones: only kids pack even on direct links
+  if (
+    mode === "little_ones" &&
+    scene.series !== "Little Ones" &&
+    !(scene.tags ?? []).includes("kids")
+  ) {
+    return undefined;
+  }
   return scene;
 }
 

@@ -51,3 +51,8 @@ film-v5/shots/
 scripts/__pycache__/
 __pycache__/
 *.pyc
+
+# Kids film pipeline intermediates (packaged clips live in public/scenes/)
+film-kids/export/
+film-kids/shots/
+film-kids/stills/
