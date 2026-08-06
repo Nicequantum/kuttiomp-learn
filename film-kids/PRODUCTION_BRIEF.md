@@ -1,4 +1,4 @@
-# Little Ones HQ Production Brief — Cinematic Speak-v3
+# Little Ones HQ Production Brief — Cinematic Speak-v4
 
 **Grade target:** Showcase cinematic storybook — rich detail, volumetric light, locked Northeastern cast. **Not** flat cartoon. **Not** photoreal live-action.
 
@@ -9,20 +9,20 @@
 
 **World lock:** Accurate **wetu** (bent sapling; bark sheets / cattail mats; smoke hole; low doorway). Pine, oak, marsh, shell path, wooden bowls. No Plains tipí, no yurt, no pan-Indigenous warbonnet pile.
 
-## Non-negotiable quality rules (v3)
+## Non-negotiable quality rules (v4)
 
 1. **Style:** Cinematic storybook only. Scrap all soft-flat cartoon masters.  
 2. **Cast lock:** Same two children (and locked family) in every Little Ones video — forever for this section.  
-3. **Speak-first:** Every dialogue line has **open + closed mouth stills**. Packaged motion **flaps the mouth** for the full shot (not frozen I2V smile).  
+3. **Syllable mouth:** Mouth opens **only on syllable peaks** of the Narragansett line (or RMS of packaged line audio). **Closed** before speech, between words, and for the rest of the shot. Never a fixed metronome flap.  
 4. **Export master:** **1080×1920** · H.264 high · CRF ≤17 · ~30s (5×6s shots) · `scripts/rebuild-kids-speak-v3.py`.  
-5. **Language:** App oral path timed to lines; picture serves the word.  
+5. **Language:** App oral path timed to lines; picture serves the word. Optional: `public/audio/kids/<lineId>.mp3` for RMS-true lips.  
 6. **Cartoon scrap:** No cartoon-tagged Little Ones media in the catalog.
 
 ## Pipeline
 
 1. Bible stills from `film-kids/bible/` (cast + wetu + family).  
 2. **Open + closed still per line** under `film-kids/stills-v2/<id>/`.  
-3. Speak-Ken Burns 6s flap + zoom.  
+3. Speak-Ken Burns 6s with **syllable (or audio-RMS) mouth enable** + zoom.  
 4. Stitch → `public/scenes/{id}.mp4` + `.jpg`.  
 5. `scenes-data.ts`: `style: "cinematic"`, `durationSec: 30`, tags `hq`, `cinematic`, `speak`.
 
@@ -48,6 +48,8 @@
 - Flat cartoon / muddy soft style  
 - Wrong dwelling or Plains warbonnets on children  
 - Frozen closed mouths on dialogue lines  
-- Random third child / wrong faces  
-- Horizontal masters  
-- Masters left at 448×672 cartoon resolution  
+- Constant metronome mouth flap independent of the word  
+
+## Template for other learner sections
+
+Same scripts + open/closed bible stills + line text list. Swap cast bible (young / adult / elder) and rebuild.

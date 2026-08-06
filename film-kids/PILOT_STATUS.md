@@ -1,21 +1,22 @@
-# Little Ones — Cinematic Speak-v3 (all 12)
+# Little Ones — Speak-v4 syllable mouth (all 12)
 
 **Shipped to app:** all 12 Little Ones clips  
-**Masters:** **1080×1920** · ~30s · 5 shots × 6s · H.264 high · ~4–5.5 Mbps  
-**Pipeline:** open/closed mouth pairs + Ken Burns speak flap (`scripts/speak-kenburns-shot.py` + `scripts/rebuild-kids-speak-v3.py`)  
+**Masters:** **1080×1920** · ~30s · 5 shots × 6s · H.264 high  
+**Pipeline:** open/closed stills + **syllable-timed mouth** (`scripts/speak-kenburns-shot.py` + `scripts/rebuild-kids-speak-v3.py`)  
 **Docs:** `PRODUCTION_BRIEF.md` · `PROMPT_PACK.md` · `SHOT_LIST_V2.md` · `CAST_LOCK.md`  
 **Bible:** `film-kids/bible/` (cast-duo, family, wetu)
 
-## What shipped
+## Mouth sync (v4 fix)
 
-| | Old cartoon | Prior I2V pack | **Speak-v3 (now)** |
-|--|-------------|----------------|---------------------|
-| Resolution | 448×672 | upscaled ~720–1080 | **Native package 1080×1920** |
-| Structure | 1 ambient loop | shot-per-line | **shot-per-line** |
-| Style | Soft flat cartoon | Cinematic stills | **Cinematic storybook only** |
-| Mouth | None | Often frozen in I2V | **Guaranteed open/closed flap every line** |
-| Cast | Mixed | Friend Tan + Teal | **Locked Tan + Teal + family bible** |
-| Clips | partial | 8 of 12 | **All 12** |
+| | Speak-v3 (broken) | **Speak-v4 (now)** |
+|--|-------------------|---------------------|
+| Mouth drive | Fixed **3.2 Hz** square flap | **Syllable peaks** of Narragansett text |
+| Rest of shot | Kept flapping | **Closed** after speech ends |
+| Short words (Nip, Yòh) | Same endless flap | **One open pulse** |
+| Long words | Same endless flap | **One open per syllable** |
+| Optional upgrade | — | Drop `public/audio/kids/<lineId>.mp3` → **RMS energy** drives mouth |
+
+Each shot writes a sidecar `NN.mouth.txt` listing open intervals for QA.
 
 ## Clip list (all live)
 
@@ -23,10 +24,13 @@
 5. home-kids · 6. day-kids · 7. seasons-kids · 8. birds-kids  
 9. water-kids · 10. sleep-kids · 11. path-kids · 12. land-kids  
 
-## Why speak flap (not I2V lips)
+## Template for other sections (Young / Adult / Elder)
 
-I2V cinematic motion looked richer in body/camera, but mouths often stayed closed.  
-Speak-v3 alternates locked **open-mouth** and **closed-mouth** stills at ~3.2 Hz with a slow push-in/out so every dialogue line clearly talks. Language audio remains the app oral path timed to lines.
+1. Lock cast bible (open + closed mouth stills per shot).  
+2. List lines: `(line_id, narragansett)` in rebuild script.  
+3. `python3 scripts/speak-kenburns-shot.py closed.jpg open.jpg out.mp4 --text "…"`  
+4. Concat shots → public scene master.  
+5. Optional: package living-speaker mp3 as `public/audio/kids/<lineId>.mp3` for RMS-true lips.
 
 ## Rebuild
 
