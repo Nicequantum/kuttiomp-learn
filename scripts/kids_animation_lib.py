@@ -423,6 +423,54 @@ def audio_viseme_keys(audio: Path, *, fps: int = FPS, dur: float = DUR) -> list[
     return keys
 
 
+
+def hybrid_viseme_keys(
+    text: str,
+    audio: Path,
+    *,
+    fps: int = FPS,
+    dur: float = DUR,
+) -> list[VisemeKey]:
+    """Text multi-viseme shapes time-warped onto real audio speech window.
+
+    Shared clock: peaks live only where the packaged oral has energy;
+    shapes still follow Narragansett orthography (wide/round/slight).
+    """
+    a_keys = audio_viseme_keys(audio, fps=fps, dur=dur)
+    # Build text keys with zero lead so we can scale purely relative
+    t_keys = syllable_viseme_keys(text, lead=0.0, max_end=12.0)
+    if not a_keys and not t_keys:
+        return []
+    if not a_keys:
+        return t_keys
+    if not t_keys:
+        return a_keys
+
+    # Speech window from audio (with tiny pad)
+    a0 = max(0.0, a_keys[0].t0 - 0.02)
+    a1 = min(dur - 0.05, a_keys[-1].t1 + 0.04)
+    t0 = t_keys[0].t0
+    t1 = t_keys[-1].t1
+    span_t = max(0.12, t1 - t0)
+    span_a = max(0.12, a1 - a0)
+    scale = span_a / span_t
+
+    out: list[VisemeKey] = []
+    for k in t_keys:
+        nt0 = a0 + (k.t0 - t0) * scale
+        nt1 = a0 + (k.t1 - t0) * scale
+        if nt1 > nt0 + 0.03 and nt0 < dur:
+            out.append(
+                VisemeKey(
+                    round(max(0.0, nt0), 4),
+                    round(min(dur - 0.02, nt1), 4),
+                    k.viseme,
+                    k.strength,
+                )
+            )
+    return out if out else a_keys
+
+
 def sample_viseme(t: float, keys: list[VisemeKey]) -> tuple[int, float]:
     """Return (viseme_id, alpha 0..1) at time t with smooth attack/release."""
     best_a = 0.0

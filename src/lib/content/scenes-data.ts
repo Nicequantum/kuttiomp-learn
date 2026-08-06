@@ -156,11 +156,11 @@ export const SCENES: LearningScene[] = [
     tags: ["kids", "hq", "greeting", "cinematic", "speak"],
     lines: timed(
       [
-        { id: "k1", speaker: "Friend", narragansett: "Ascowequassunnúmmis", english: "Good morning." },
-        { id: "k2", speaker: "Friend", narragansett: "Askuttaaquompsín", english: "How are you?" },
-        { id: "k3", speaker: "Friend", narragansett: "Asnpaumpmaúntam", english: "I am very well." },
-        { id: "k4", speaker: "Friend", narragansett: "Cowaúnckamish", english: "My respects to you." },
-        { id: "k5", speaker: "Friend", narragansett: "Taubotneanawáyean", english: "I thank you." },
+        { id: "k1", speaker: "Friend", narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
+        { id: "k2", speaker: "Friend", narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
+        { id: "k3", speaker: "Friend", narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
+        { id: "k4", speaker: "Friend", narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
+        { id: "k5", speaker: "Friend", narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
       ],
       30,
     ),

@@ -390,14 +390,15 @@ export function ScenePlayer({
     if (!v) return;
     v.playbackRate = speed;
     // Prefer muted flag over volume=0 (volume 0 can prevent some engines from advancing)
-    if (ambientOn && mediaHasAudio === true) {
+    // Kids v9+ masters carry language on the film — unmute in continuous watch
+    if (mediaHasAudio === true && (ambientOn || isContinuous)) {
       v.muted = false;
       v.volume = 0.85;
     } else {
       v.muted = true;
       v.volume = 1;
     }
-  }, [speed, videoSrc, ambientOn, mediaHasAudio]);
+  }, [speed, videoSrc, ambientOn, mediaHasAudio, isContinuous]);
 
   // Continuous stall recovery — silent; no "Loading…" chrome
   useEffect(() => {
@@ -615,7 +616,11 @@ export function ScenePlayer({
                     /^(mm|pp|lc|ft|ws|sw|et|nr)\d/,
                   )
                 ? `/audio/day/${line.id}.mp3`
-                : undefined);
+                : line.id.match(
+                      /^(k|mk|ck|fkids|hk|dk|sk|bk|wk|skids|pk|lk)\d+$/,
+                    )
+                  ? `/audio/kids/${line.id}.mp3`
+                  : undefined);
 
       if (track === "english") {
         await speakWord({
@@ -715,7 +720,7 @@ export function ScenePlayer({
       const ok = await ensureVideoPlaying(v);
       if (!ok) return false;
       // Apply ambient only after successful start, and only if a track exists
-      if (ambientOn && mediaHasAudio === true) {
+      if (mediaHasAudio === true && (ambientOn || isContinuous)) {
         try {
           v.muted = false;
           v.volume = 0.85;
@@ -893,7 +898,7 @@ export function ScenePlayer({
     // Continuous watch: if film soundtrack is on and carries language, do not
     // also fire oral overlay on start (would echo). Oral still used in Learn.
     const filmCarriesLanguage =
-      ambientOn && mediaHasAudio === true;
+      isContinuous && mediaHasAudio === true;
     if (
       voice !== "off" &&
       activeLine &&
@@ -1213,7 +1218,7 @@ export function ScenePlayer({
       // picture track — do not dual-speak via oral overlay (echo).
       // Learn mode and Hear always use the oral path.
       const filmCarriesLanguage =
-        isContinuous && ambientOn && mediaHasAudio === true;
+        isContinuous && mediaHasAudio === true;
       if (
         userIntentPlay.current &&
         voice !== "off" &&
@@ -1468,7 +1473,7 @@ export function ScenePlayer({
           src={videoSrc}
           poster={scene.posterSrc}
           playsInline
-          muted={!(ambientOn && mediaHasAudio === true)}
+          muted={!(mediaHasAudio === true && (ambientOn || isContinuous))}
           loop={false}
           preload="auto"
           onTimeUpdate={onTime}
@@ -1493,8 +1498,17 @@ export function ScenePlayer({
             }
             const has = detectVideoHasAudio(el);
             setMediaHasAudio(has);
-            // Continuous film / day-act: language is baked into the soundtrack — keep on
-            if (has === true && (fromUpload || continuousFilm || progressKind === "story" || progressKind === "day-act")) {
+            // Language baked into the picture track (one-day, day-act, community, kids v9+)
+            // → single clock: film audio on, no dual TTS echo
+            if (
+              has === true &&
+              (fromUpload ||
+                continuousFilm ||
+                progressKind === "story" ||
+                progressKind === "day-act" ||
+                scene.series === "Little Ones" ||
+                scene.tags?.includes("speak"))
+            ) {
               setAmbientOn(true);
             }
           }}

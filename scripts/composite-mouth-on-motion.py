@@ -27,6 +27,7 @@ from kids_animation_lib import (  # noqa: E402
     blend_viseme_plates,
     build_mouth_bank,
     face_band,
+    hybrid_viseme_keys,
     load_cover,
     sample_viseme,
     syllable_viseme_keys,
@@ -59,7 +60,10 @@ def main() -> int:
 
     keys = []
     source = "none"
-    if args.audio and Path(args.audio).exists():
+    if args.audio and Path(args.audio).exists() and args.text.strip():
+        keys = hybrid_viseme_keys(args.text.strip(), Path(args.audio))
+        source = f"hybrid-audio-text ({len(keys)}) · {args.text.strip()[:40]}"
+    elif args.audio and Path(args.audio).exists():
         keys = audio_viseme_keys(Path(args.audio))
         source = f"audio-rms ({len(keys)})"
     if not keys and args.text.strip():
