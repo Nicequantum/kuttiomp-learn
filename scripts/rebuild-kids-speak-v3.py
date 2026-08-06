@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Rebuild Little Ones: elegant soft-syllable mouth + Ken Burns → 1080×1920.
+"""Rebuild Little Ones: Phase A/B ROI mouth + Ken Burns → 1080×1920.
 
-Uses soft-speak stills (gentle lip part, not wide open) with smooth raised-cosine
-syllable envelopes. Optional RMS if public/audio/kids/<lineId>.mp3 exists.
+Default --mode roi: align open→closed, blend mouth region only.
+Falls back to closed-only if faces are too misaligned (no head-nod glitch).
 """
 from __future__ import annotations
 
@@ -19,6 +19,9 @@ AUDIO_KIDS = ROOT / "public" / "audio" / "kids"
 SPEAK = ROOT / "scripts" / "speak-kenburns-shot.py"
 FFMPEG = "/usr/local/bin/ffmpeg"
 W, H = 1080, 1920
+
+# Default: roi (safe). Override: python rebuild… --mode none|full
+MOUTH_MODE = "roi"
 
 CLIPS: dict[str, list[tuple[str, str]]] = {
     "greeting-kids": [
@@ -109,7 +112,7 @@ CLIPS: dict[str, list[tuple[str, str]]] = {
 
 
 def run(cmd: list[str], quiet: bool = False) -> None:
-    print("+", " ".join(str(c) for c in cmd[:12]), "..." if len(cmd) > 12 else "", flush=True)
+    print("+", " ".join(str(c) for c in cmd[:14]), "..." if len(cmd) > 14 else "", flush=True)
     kwargs = {}
     if quiet:
         kwargs["stdout"] = subprocess.DEVNULL
@@ -117,7 +120,7 @@ def run(cmd: list[str], quiet: bool = False) -> None:
     subprocess.run(cmd, check=True, **kwargs)
 
 
-def build_shots(clip: str) -> list[Path]:
+def build_shots(clip: str, mouth_mode: str) -> list[Path]:
     lines = CLIPS[clip]
     base = STILLS / clip
     out_dir = SHOTS / clip
@@ -126,7 +129,6 @@ def build_shots(clip: str) -> list[Path]:
     for i, (line_id, text) in enumerate(lines, 1):
         closed = base / "closed" / f"{i:02d}.jpg"
         open_m = base / "open" / f"{i:02d}.jpg"
-        soft = base / "soft" / f"{i:02d}.jpg"
         if not closed.exists() or not open_m.exists():
             raise FileNotFoundError(f"missing stills for {clip} shot {i}")
         out = out_dir / f"{i:02d}.mp4"
@@ -142,11 +144,9 @@ def build_shots(clip: str) -> list[Path]:
             zoom,
             "--text",
             text,
-            "--soft-mix",
-            "0.30",
+            "--mode",
+            mouth_mode,
         ]
-        if soft.exists():
-            cmd.extend(["--soft", str(soft)])
         if audio.exists():
             cmd.extend(["--audio", str(audio)])
         run(cmd)
@@ -202,13 +202,20 @@ def concat_and_ship(clip: str, shots: list[Path]) -> None:
 
 
 def main() -> int:
-    only = sys.argv[1:] if len(sys.argv) > 1 else list(CLIPS.keys())
+    args = sys.argv[1:]
+    mouth_mode = MOUTH_MODE
+    if "--mode" in args:
+        i = args.index("--mode")
+        mouth_mode = args[i + 1]
+        args = args[:i] + args[i + 2 :]
+    only = args if args else list(CLIPS.keys())
+    print(f"Mouth mode: {mouth_mode}", flush=True)
     for clip in only:
         if clip not in CLIPS:
             print(f"unknown clip: {clip}", file=sys.stderr)
             return 1
         print(f"\n=== {clip} ===", flush=True)
-        shots = build_shots(clip)
+        shots = build_shots(clip, mouth_mode)
         concat_and_ship(clip, shots)
     print("\nALL DONE", flush=True)
     return 0

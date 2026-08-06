@@ -1,26 +1,32 @@
-# Little Ones — Status + Mouth Sync
+# Little Ones — Status
 
-**Shipped masters:** all 12 clips · 1080×1920 · shot-per-line  
-**Current mouth mode:** Speak-v5 soft blend (known issues — see audit)
+**Masters:** all 12 · 1080×1920 · shot-per-line  
+**Mouth encode:** Speak-v6 **ROI + glitch gate** (Phase A/B)
 
-## Read this first
+## Docs
 
-**Deep audit + fine-tune plan:** [`MOUTH_SYNC_AUDIT.md`](./MOUTH_SYNC_AUDIT.md)
+| Doc | What |
+|-----|------|
+| [`MOUTH_SYNC_AUDIT.md`](./MOUTH_SYNC_AUDIT.md) | Root causes of glitch + dual clocks |
+| [`ANIMATION_PATH.md`](./ANIMATION_PATH.md) | Why hybrid animated mouth beats freeze morph |
 
-### Known issues (do not ignore)
+## What v6 does now
 
-1. **Head-nod / glitch** — full-frame blend of misaligned open/closed stills  
-2. **Lips ≠ voice** — mouth baked from text syllables; voice is separate runtime TTS  
-3. **Kids MP4s are silent** — no packaged `public/audio/kids/` yet  
-4. **One viseme axis** — not true pronunciation shapes  
+- Align open → closed; blend **mouth ROI only** (not full-frame morph)
+- If face residual > 6.5 → **closed-only** (no head-nod)
+- ~47/60 shots ROI mouth; ~13/60 safe static (bad open stills)
+- Still text-syllable timed until packaged kids audio exists
 
-### Next work (Phase A → C, no gen required)
+## Next (no gen required for C)
 
-See audit §5–§8. Phase A = stop morph glitch; Phase B = mouth-ROI only; Phase C = audio is the clock.
+1. Package oral audio per line → `public/audio/kids/<id>.mp3`  
+2. Drive envelopes from audio RMS + mux into MP4  
+3. Runtime `MouthOverlay` driven by same oral audio (language Learn mode)  
+4. When gen returns: pose-locked viseme plates from closed only  
 
-## Rebuild (current)
+## Rebuild
 
 ```bash
 python3 scripts/rebuild-kids-speak-v3.py
-python3 scripts/rebuild-kids-speak-v3.py greeting-kids
+python3 scripts/rebuild-kids-speak-v3.py greeting-kids --mode roi
 ```
