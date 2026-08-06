@@ -37,12 +37,13 @@ REST, SLIGHT, MID, WIDE, ROUND = 0, 1, 2, 3, 4
 VISEME_NAMES = ("rest", "slight", "mid", "wide", "round")
 
 # Peak jaw amounts per viseme (blend toward open plate inside ROI)
+# v11: slightly stronger so lips read on short words and soft-light plates
 VISEME_OPEN = {
     REST: 0.0,
-    SLIGHT: 0.22,
-    MID: 0.42,
-    WIDE: 0.62,
-    ROUND: 0.48,
+    SLIGHT: 0.30,
+    MID: 0.55,
+    WIDE: 0.78,
+    ROUND: 0.62,
 }
 
 MAX_FACE_RESIDUAL = 7.0  # after align; above → procedural jaw (no open-plate morph)

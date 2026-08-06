@@ -81,7 +81,12 @@ def main() -> int:
     elif args.track == "off":
         do_track = False
     else:
-        do_track = "motion-v7" in motion_s or "i2v" in motion_s.lower()
+        do_track = (
+            "motion-v7" in motion_s
+            or "motion-v11" in motion_s
+            or "i2v" in motion_s.lower()
+        )
+
 
     ref_band = face_band(closed) if do_track else None
 
