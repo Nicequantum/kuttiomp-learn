@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Rebuild Little Ones: syllable-synced mouth + Ken Burns → 1080×1920.
+"""Rebuild Little Ones: elegant soft-syllable mouth + Ken Burns → 1080×1920.
 
-Mouth opens only on syllable peaks of each Narragansett line (or RMS if
-per-line audio is present under public/audio/kids/<lineId>.mp3).
+Uses soft-speak stills (gentle lip part, not wide open) with smooth raised-cosine
+syllable envelopes. Optional RMS if public/audio/kids/<lineId>.mp3 exists.
 """
 from __future__ import annotations
 
@@ -20,9 +20,7 @@ SPEAK = ROOT / "scripts" / "speak-kenburns-shot.py"
 FFMPEG = "/usr/local/bin/ffmpeg"
 W, H = 1080, 1920
 
-# Shot order matches timed() line order in scenes-data.ts (5 lines × 6s = 30s)
 CLIPS: dict[str, list[tuple[str, str]]] = {
-    # (line_id, narragansett)
     "greeting-kids": [
         ("k1", "Ascowequassunnúmmis"),
         ("k2", "Askuttaaquompsín"),
@@ -111,7 +109,7 @@ CLIPS: dict[str, list[tuple[str, str]]] = {
 
 
 def run(cmd: list[str], quiet: bool = False) -> None:
-    print("+", " ".join(cmd[:10]), "..." if len(cmd) > 10 else "", flush=True)
+    print("+", " ".join(str(c) for c in cmd[:12]), "..." if len(cmd) > 12 else "", flush=True)
     kwargs = {}
     if quiet:
         kwargs["stdout"] = subprocess.DEVNULL
@@ -128,6 +126,7 @@ def build_shots(clip: str) -> list[Path]:
     for i, (line_id, text) in enumerate(lines, 1):
         closed = base / "closed" / f"{i:02d}.jpg"
         open_m = base / "open" / f"{i:02d}.jpg"
+        soft = base / "soft" / f"{i:02d}.jpg"
         if not closed.exists() or not open_m.exists():
             raise FileNotFoundError(f"missing stills for {clip} shot {i}")
         out = out_dir / f"{i:02d}.mp4"
@@ -143,7 +142,11 @@ def build_shots(clip: str) -> list[Path]:
             zoom,
             "--text",
             text,
+            "--soft-mix",
+            "0.30",
         ]
+        if soft.exists():
+            cmd.extend(["--soft", str(soft)])
         if audio.exists():
             cmd.extend(["--audio", str(audio)])
         run(cmd)

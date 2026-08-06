@@ -1,34 +1,49 @@
 #!/usr/bin/env python3
-"""6s 1080×1920 speak-shot: syllable- or audio-driven mouth + Ken Burns.
+"""6s 1080×1920 speak-shot: elegant soft mouth + Ken Burns.
 
-Mouth is CLOSED by default. Opens only on speech energy (preferred) or on
-syllable peaks derived from the Narragansett line text — never a fixed flap.
+Mouth motion is subtle and speech-timed:
+  • Soft-speak still = mostly closed + light mix of open (never full scream)
+  • Smooth raised-cosine alpha on each syllable peak (not hard on/off)
+  • Mouth rest closed before speech, between words, and after the line
+
+Optional --audio uses RMS energy for the envelope instead of syllables.
 """
 from __future__ import annotations
 
 import argparse
+import math
 import re
 import struct
 import subprocess
 import tempfile
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
+
 W, H, FPS, DUR = 1080, 1920, 24, 6.0
 FFMPEG = "/usr/local/bin/ffmpeg"
 
-# Algonquian orthography vowel nuclei (Williams-style + common diacritics)
-_VOWELS = set("aeiouáéíóúàèìòùâêîôûäëïöüāēīōūăĕĭŏŭæœyAEIOUÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÄËÏÖÜĀĒĪŌŪĂĔĬŎŬÆŒY")
+_VOWELS = set(
+    "aeiouáéíóúàèìòùâêîôûäëïöüāēīōūăĕĭŏŭæœy"
+    "AEIOUÁÉÍÓÚÀÈÌÒÙÂÊÎÔÛÄËÏÖÜĀĒĪŌŪĂĔĬŎŬÆŒY"
+)
+
+# Soft-speak intensity: fraction of the (often too-wide) open still mixed into closed.
+# Lower = more elegant / less scream. 0.28–0.38 is natural teaching speech.
+SOFT_MIX = 0.32
+# Peak blend of soft-speak over closed during a syllable (1.0 = full soft-speak still).
+PEAK_ALPHA = 0.92
+# Residual never fully hits 1.0 of the old wide open.
 
 
 def syllable_spans(text: str) -> list[tuple[str, int]]:
-    """Return [(word, n_syllables), ...] for spoken content."""
     cleaned = re.sub(r"[?!,.;:\"()]+", " ", text)
     words: list[tuple[str, int]] = []
     for raw in cleaned.split():
         w = raw.strip("-–—")
         if not w or w.lower() in {"or", "and", "a", "the"}:
             continue
-        # vowel-group count; treat each contiguous vowel run as a syllable nucleus
         n = 0
         in_v = False
         for ch in w:
@@ -36,187 +51,198 @@ def syllable_spans(text: str) -> list[tuple[str, int]]:
             if is_v and not in_v:
                 n += 1
             in_v = is_v
-        n = max(1, n)
-        words.append((w, n))
+        words.append((w, max(1, n)))
     return words
 
 
-def syllable_open_intervals(
+def syllable_peaks(
     text: str,
     *,
-    lead: float = 0.28,
-    open_s: float = 0.12,
-    gap_s: float = 0.055,
-    word_gap: float = 0.14,
-    max_end: float = 4.6,
-) -> list[tuple[float, float]]:
-    """Open-mouth [start, end) intervals timed to syllable peaks of the line."""
+    lead: float = 0.30,
+    open_s: float = 0.15,
+    gap_s: float = 0.04,
+    word_gap: float = 0.12,
+    max_end: float = 4.5,
+) -> list[tuple[float, float, float]]:
+    """Return (start, end, peak_strength) with smooth envelopes intended."""
     words = syllable_spans(text)
     if not words:
         return []
-
-    # Slow, clear teaching pace; longer words stretch slightly but stay inside window
     total_syl = sum(n for _, n in words)
-    # Target speech length ~0.17s per syllable + word gaps, clamped
     est = lead + total_syl * (open_s + gap_s) + max(0, len(words) - 1) * (word_gap - gap_s)
     scale = 1.0
     if est > max_end:
         scale = (max_end - lead) / max(0.2, est - lead)
+    o, g, wg = open_s * scale, gap_s * scale, word_gap * scale
 
-    o = open_s * scale
-    g = gap_s * scale
-    wg = word_gap * scale
-
-    opens: list[tuple[float, float]] = []
+    peaks: list[tuple[float, float, float]] = []
     t = lead
-    for wi, (_w, n) in enumerate(words):
+    for _w, n in words:
         for si in range(n):
-            # hold the last syllable of each word a touch longer (stress)
-            hold = o * (1.25 if si == n - 1 else 1.0)
+            # last syllable of word slightly stronger (stress), unstressed softer
+            strength = 1.0 if si == n - 1 else 0.72
+            hold = o * (1.15 if si == n - 1 else 1.0)
             a, b = t, t + hold
             if a >= max_end:
-                return opens
+                return peaks
             b = min(b, max_end)
-            if b > a + 0.04:
-                opens.append((round(a, 4), round(b, 4)))
+            if b > a + 0.05:
+                peaks.append((round(a, 4), round(b, 4), strength))
             t = b + g
         t += max(0.0, wg - g)
         if t >= max_end:
             break
-    return opens
+    return peaks
 
 
-def audio_open_intervals(
+def audio_peaks(
     audio: Path,
     *,
     fps: int = FPS,
     dur: float = DUR,
-    lead_pad: float = 0.0,
-) -> list[tuple[float, float]]:
-    """Derive open intervals from speech RMS energy of an audio file."""
+) -> list[tuple[float, float, float]]:
     sr = 16000
-    cmd = [
-        FFMPEG,
-        "-v",
-        "error",
-        "-i",
-        str(audio),
-        "-ac",
-        "1",
-        "-ar",
-        str(sr),
-        "-f",
-        "s16le",
-        "-",
-    ]
-    raw = subprocess.check_output(cmd)
+    raw = subprocess.check_output(
+        [
+            FFMPEG,
+            "-v",
+            "error",
+            "-i",
+            str(audio),
+            "-ac",
+            "1",
+            "-ar",
+            str(sr),
+            "-f",
+            "s16le",
+            "-",
+        ]
+    )
     if len(raw) < 4:
         return []
     n = len(raw) // 2
     samples = struct.unpack(f"<{n}h", raw)
-    # frame RMS
     hop = max(1, sr // fps)
-    rms: list[float] = []
+    rms = []
     for i in range(0, n, hop):
         chunk = samples[i : i + hop]
         if not chunk:
             break
         acc = sum(s * s for s in chunk) / len(chunk)
         rms.append(acc**0.5)
-
     if not rms:
         return []
     peak = max(rms) or 1.0
-    # Adaptive gate: open when energy is a meaningful fraction of peak
-    thr = max(peak * 0.18, 120.0)
-    # Hysteresis + min open / min closed (frames)
-    min_open_f, min_closed_f = 2, 1
-    open_flags = [v >= thr for v in rms]
-    # smooth: close 1-frame holes
-    for i in range(1, len(open_flags) - 1):
-        if open_flags[i - 1] and open_flags[i + 1]:
-            open_flags[i] = True
-
-    opens: list[tuple[float, float]] = []
+    thr = max(peak * 0.16, 100.0)
+    flags = [v >= thr for v in rms]
+    for i in range(1, len(flags) - 1):
+        if flags[i - 1] and flags[i + 1]:
+            flags[i] = True
+    peaks: list[tuple[float, float, float]] = []
     i = 0
-    while i < len(open_flags):
-        if not open_flags[i]:
+    while i < len(flags):
+        if not flags[i]:
             i += 1
             continue
         j = i
-        while j < len(open_flags) and open_flags[j]:
+        while j < len(flags) and flags[j]:
             j += 1
-        if j - i >= min_open_f:
-            a = i / fps + lead_pad
-            b = j / fps + lead_pad
-            if a < dur:
-                opens.append((round(a, 4), round(min(b, dur - 0.05), 4)))
-        # skip short closed runs already handled by outer loop
-        i = max(j, i + min_closed_f)
-    return opens
+        if j - i >= 2:
+            a, b = i / fps, min(j / fps, dur - 0.05)
+            # strength from mean RMS in segment
+            seg = rms[i:j]
+            strength = min(1.0, (sum(seg) / len(seg)) / (peak * 0.55 + 1e-6))
+            strength = max(0.55, min(1.0, strength))
+            peaks.append((round(a, 4), round(b, 4), strength))
+        i = max(j, i + 1)
+    return peaks
 
 
-def enable_expr(opens: list[tuple[float, float]]) -> str:
-    if not opens:
-        return "0"
-    parts = [f"between(t\\,{a:.3f}\\,{b:.3f})" for a, b in opens]
-    return "+".join(parts)
+def alpha_at(t: float, peaks: list[tuple[float, float, float]]) -> float:
+    """Raised-cosine soft envelope; max PEAK_ALPHA * strength. Elegant, not binary."""
+    a = 0.0
+    for s, e, strength in peaks:
+        if t < s or t > e:
+            continue
+        # raised cosine 0→1→0 over [s,e]
+        u = (t - s) / max(1e-6, e - s)
+        env = 0.5 - 0.5 * math.cos(2 * math.pi * u)  # full cosine bump
+        # prefer a softer top: use sin^1.2 for slightly flatter mid then fall
+        env = math.sin(math.pi * u) ** 1.15
+        a = max(a, env * PEAK_ALPHA * strength)
+    return min(1.0, a)
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("closed", type=Path)
-    ap.add_argument("open", type=Path)
-    ap.add_argument("out", type=Path)
-    ap.add_argument("--zoom", choices=["in", "out"], default="in")
-    ap.add_argument("--text", default="", help="Narragansett line (syllable mouth track)")
-    ap.add_argument("--audio", type=Path, default=None, help="Optional speech audio for RMS mouth")
-    ap.add_argument("--dur", type=float, default=DUR)
-    args = ap.parse_args()
-    args.out.parent.mkdir(parents=True, exist_ok=True)
+def load_cover(path: Path, w: int = W, h: int = H) -> np.ndarray:
+    im = Image.open(path).convert("RGB")
+    # cover scale + center crop
+    scale = max(w / im.width, h / im.height)
+    nw, nh = int(round(im.width * scale)), int(round(im.height * scale))
+    im = im.resize((nw, nh), Image.Resampling.LANCZOS)
+    left = (nw - w) // 2
+    top = (nh - h) // 2
+    im = im.crop((left, top, left + w, top + h))
+    return np.asarray(im, dtype=np.float32)
 
-    opens: list[tuple[float, float]] = []
-    mode = "closed-only"
-    if args.audio and args.audio.exists():
-        opens = audio_open_intervals(args.audio, dur=args.dur)
-        mode = f"audio-rms ({len(opens)} bursts)"
-    if not opens and args.text.strip():
-        opens = syllable_open_intervals(args.text.strip(), max_end=min(4.6, args.dur - 0.4))
-        mode = f"syllable ({len(opens)} peaks · {args.text.strip()[:40]})"
-    enable = enable_expr(opens)
 
-    # Ken Burns: mild push-in or pull-out over the shot
-    if args.zoom == "in":
-        zexpr = "min(1.0+0.00085*on,1.12)"
+def make_soft_speak(closed: np.ndarray, open_m: np.ndarray, mix: float = SOFT_MIX) -> np.ndarray:
+    """Elegant soft-speak face: mostly closed, tiny open mix — never full gape."""
+    return closed * (1.0 - mix) + open_m * mix
+
+
+def kenburns_crop(frame: np.ndarray, t: float, dur: float, zoom: str) -> np.ndarray:
+    """Mild push-in/out via crop of slightly larger canvas (frame already WxH)."""
+    # We pre-expand: caller passes frame at W,H; we simulate zoom by scaling up then crop
+    z0, z1 = (1.0, 1.08) if zoom == "in" else (1.08, 1.0)
+    z = z0 + (z1 - z0) * (t / max(dur, 1e-6))
+    z = max(1.0, min(1.12, z))
+    if abs(z - 1.0) < 1e-3:
+        return frame.astype(np.uint8)
+    h, w = frame.shape[:2]
+    nh, nw = int(round(h * z)), int(round(w * z))
+    im = Image.fromarray(frame.astype(np.uint8)).resize((nw, nh), Image.Resampling.BILINEAR)
+    left = (nw - w) // 2
+    top = (nh - h) // 2
+    im = im.crop((left, top, left + w, top + h))
+    return np.asarray(im, dtype=np.uint8)
+
+
+def render_shot(
+    closed_path: Path,
+    open_path: Path,
+    out: Path,
+    peaks: list[tuple[float, float, float]],
+    *,
+    zoom: str = "in",
+    dur: float = DUR,
+    fps: int = FPS,
+    soft_mix: float = SOFT_MIX,
+    soft_path: Path | None = None,
+) -> None:
+    closed = load_cover(closed_path)
+    if soft_path and soft_path.exists():
+        soft = load_cover(soft_path)
     else:
-        zexpr = "if(eq(on,1),1.12,max(1.12-0.00085*on,1.0))"
+        open_m = load_cover(open_path)
+        soft = make_soft_speak(closed, open_m, soft_mix)
 
-    fc = (
-        f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,"
-        f"fps={FPS},format=yuv420p,loop=loop=-1:size=1,setpts=N/{FPS}/TB[c];"
-        f"[1:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1,"
-        f"fps={FPS},format=yuv420p,loop=loop=-1:size=1,setpts=N/{FPS}/TB[o];"
-        f"[c][o]overlay=0:0:enable='{enable}'[spk];"
-        f"[spk]scale=iw*1.2:ih*1.2,"
-        f"zoompan=z='{zexpr}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':"
-        f"d=1:s={W}x{H}:fps={FPS},format=yuv420p[v]"
-    )
+    n = int(round(dur * fps))
+    out.parent.mkdir(parents=True, exist_ok=True)
 
+    # rawvideo pipe to ffmpeg for high-quality H.264
     cmd = [
         FFMPEG,
         "-y",
-        "-i",
-        str(args.closed),
-        "-i",
-        str(args.open),
-        "-filter_complex",
-        fc,
-        "-map",
-        "[v]",
-        "-t",
-        str(args.dur),
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        f"{W}x{H}",
         "-r",
-        str(FPS),
+        str(fps),
+        "-i",
+        "-",
         "-an",
         "-c:v",
         "libx264",
@@ -230,17 +256,82 @@ def main() -> int:
         "yuv420p",
         "-movflags",
         "+faststart",
-        str(args.out),
+        str(out),
     ]
-    # Write sidecar mouth track for QA / future sections
-    side = args.out.with_suffix(".mouth.txt")
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    assert proc.stdin is not None
+    try:
+        for i in range(n):
+            t = i / fps
+            a = alpha_at(t, peaks)
+            # blend closed → soft-speak
+            if a < 1e-4:
+                blended = closed
+            else:
+                blended = closed * (1.0 - a) + soft * a
+            frame = kenburns_crop(blended, t, dur, zoom)
+            proc.stdin.write(frame.tobytes())
+    finally:
+        proc.stdin.close()
+        proc.wait()
+        if proc.returncode != 0:
+            raise RuntimeError(f"ffmpeg encode failed for {out}")
+
+    side = out.with_suffix(".mouth.txt")
     side.write_text(
-        f"mode={mode}\n"
-        + "\n".join(f"{a:.3f}-{b:.3f}" for a, b in opens)
-        + ("\n" if opens else "\n(none — mouth stays closed)\n")
+        "mode=soft-syllable\n"
+        f"soft_mix={soft_mix} peak_alpha={PEAK_ALPHA}\n"
+        + "\n".join(f"{s:.3f}-{e:.3f}@{k:.2f}" for s, e, k in peaks)
+        + ("\n" if peaks else "\n(none)\n")
     )
 
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("closed", type=Path)
+    ap.add_argument("open", type=Path)
+    ap.add_argument("out", type=Path)
+    ap.add_argument("--zoom", choices=["in", "out"], default="in")
+    ap.add_argument("--text", default="")
+    ap.add_argument("--audio", type=Path, default=None)
+    ap.add_argument("--soft", type=Path, default=None, help="Optional dedicated soft-speak still")
+    ap.add_argument("--soft-mix", type=float, default=SOFT_MIX)
+    ap.add_argument("--dur", type=float, default=DUR)
+    args = ap.parse_args()
+
+    peaks: list[tuple[float, float, float]] = []
+    mode = "closed-only"
+    if args.audio and args.audio.exists():
+        peaks = audio_peaks(args.audio, dur=args.dur)
+        mode = f"audio-rms ({len(peaks)} peaks)"
+    if not peaks and args.text.strip():
+        peaks = syllable_peaks(args.text.strip(), max_end=min(4.5, args.dur - 0.4))
+        mode = f"soft-syllable ({len(peaks)} peaks · {args.text.strip()[:40]})"
+
+    render_shot(
+        args.closed,
+        args.open,
+        args.out,
+        peaks,
+        zoom=args.zoom,
+        dur=args.dur,
+        soft_mix=args.soft_mix,
+        soft_path=args.soft,
+    )
+    # copy any dedicated soft stills we already generated
+    if args.soft is None:
+        # also write procedural soft still next to open for inspection
+        try:
+            closed = load_cover(args.closed)
+            open_m = load_cover(args.open)
+            soft = make_soft_speak(closed, open_m, args.soft_mix)
+            soft_dir = args.closed.parent.parent / "soft"
+            soft_dir.mkdir(parents=True, exist_ok=True)
+            name = args.closed.name
+            Image.fromarray(soft.astype(np.uint8)).save(soft_dir / name, quality=92)
+        except Exception:
+            pass
+
     print(f"OK {args.out} · {mode}", flush=True)
     return 0
 
