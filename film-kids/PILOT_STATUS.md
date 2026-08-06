@@ -1,33 +1,26 @@
-# Little Ones — Speak-v5 elegant soft mouth (all 12)
+# Little Ones — Status + Mouth Sync
 
-**Shipped to app:** all 12 Little Ones clips  
-**Masters:** **1080×1920** · ~30s · 5 shots × 6s · H.264 high  
-**Pipeline:** soft-speak stills + smooth syllable envelopes  
-(`scripts/speak-kenburns-shot.py` + `scripts/rebuild-kids-speak-v3.py`)
+**Shipped masters:** all 12 clips · 1080×1920 · shot-per-line  
+**Current mouth mode:** Speak-v5 soft blend (known issues — see audit)
 
-## Mouth quality (v5)
+## Read this first
 
-| | v3 metronome | v4 hard syllable | **v5 soft elegant** |
-|--|--------------|------------------|---------------------|
-| Open still | Wide scream | Wide scream on/off | **Soft mix ~30%** (gentle parted lips) |
-| Transition | Hard cut | Hard on/off | **Raised-cosine fade** |
-| Amplitude | Full open | Full open | **Subtle** — teaching speech, not shout |
-| Timing | Fixed 3.2 Hz | Syllable peaks | **Syllable peaks + stress weight** |
-| Rest | Flapping | Closed | **Closed** |
+**Deep audit + fine-tune plan:** [`MOUTH_SYNC_AUDIT.md`](./MOUTH_SYNC_AUDIT.md)
 
-Soft stills live in `film-kids/stills-v2/<id>/soft/` (procedural closed+open mix; optional AI soft stills when available).
+### Known issues (do not ignore)
 
-## Rebuild
+1. **Head-nod / glitch** — full-frame blend of misaligned open/closed stills  
+2. **Lips ≠ voice** — mouth baked from text syllables; voice is separate runtime TTS  
+3. **Kids MP4s are silent** — no packaged `public/audio/kids/` yet  
+4. **One viseme axis** — not true pronunciation shapes  
+
+### Next work (Phase A → C, no gen required)
+
+See audit §5–§8. Phase A = stop morph glitch; Phase B = mouth-ROI only; Phase C = audio is the clock.
+
+## Rebuild (current)
 
 ```bash
-python3 scripts/rebuild-kids-speak-v3.py              # all 12
-python3 scripts/rebuild-kids-speak-v3.py water-kids   # one clip
+python3 scripts/rebuild-kids-speak-v3.py
+python3 scripts/rebuild-kids-speak-v3.py greeting-kids
 ```
-
-## Template for other sections
-
-1. Closed + open stills per line (open can be wider; soft is derived).  
-2. Line list `(id, narragansett)`.  
-3. `speak-kenburns-shot.py closed open out --text "…" --soft soft.jpg --soft-mix 0.30`  
-4. Concat → public master.  
-5. Optional: `public/audio/kids/<lineId>.mp3` → RMS envelope.
