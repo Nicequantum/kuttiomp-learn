@@ -1,0 +1,88 @@
+"""Shared Little Ones line lists (single source for rebuild scripts)."""
+
+CLIPS: dict[str, list[tuple[str, str]]] = {
+    "greeting-kids": [
+        ("k1", "Ascowequassunnúmmis"),
+        ("k2", "Askuttaaquompsín"),
+        ("k3", "Asnpaumpmaúntam"),
+        ("k4", "Cowaúnckamish"),
+        ("k5", "Taubotneanawáyean"),
+    ],
+    "meal-kids": [
+        ("mk1", "Niccàwkatone"),
+        ("mk2", "Nip, or nipéwese"),
+        ("mk3", "Namitch, commetesímmin"),
+        ("mk4", "Téaquacumméich"),
+        ("mk5", "Taubotneanawáyean"),
+    ],
+    "count-kids": [
+        ("ck1", "Nquít"),
+        ("ck2", "Neèse"),
+        ("ck3", "Nìsh"),
+        ("ck4", "Yòh"),
+        ("ck5", "Napánna"),
+    ],
+    "family-kids": [
+        ("fkids1", "Nósh"),
+        ("fkids2", "Okásu"),
+        ("fkids3", "Nippápoos"),
+        ("fkids4", "Hômes"),
+        ("fkids5", "Wénise"),
+    ],
+    "home-kids": [
+        ("hk1", "Wetu"),
+        ("hk2", "Wetuômuck"),
+        ("hk3", "Wunnégin"),
+        ("hk4", "Nkàtaquaum"),
+        ("hk5", "Cowwêtuck"),
+    ],
+    "day-kids": [
+        ("dk1", "Páshisha"),
+        ("dk2", "Mautàbon"),
+        ("dk3", "Nummáttaqúaw"),
+        ("dk4", "Wayaàwi"),
+        ("dk5", "Póppakunnetch"),
+    ],
+    "seasons-kids": [
+        ("sk1", "Séquan"),
+        ("sk2", "Néepun"),
+        ("sk3", "Taquònck"),
+        ("sk4", "Papóne"),
+        ("sk5", "Aukeeteámitch"),
+    ],
+    "birds-kids": [
+        ("bk1", "Hònck"),
+        ("bk2", "Néyhom"),
+        ("bk3", "Chógan"),
+        ("bk4", "Wunnùp"),
+        ("bk5", "Paupock"),
+    ],
+    "water-kids": [
+        ("wk1", "Nip"),
+        ("wk2", "Namaùus"),
+        ("wk3", "Ntaûmen"),
+        ("wk4", "Wunnágehan"),
+        ("wk5", "Nickquénum"),
+    ],
+    "sleep-kids": [
+        ("skids1", "Yo nickowémen?"),
+        ("skids2", "Wunnégin, cówish"),
+        ("skids3", "Nkàtaquaum"),
+        ("skids4", "Cowwêtuck"),
+        ("skids5", "Mattannauke"),
+    ],
+    "path-kids": [
+        ("pk1", "Kokotemíinnea méyi"),
+        ("pk2", "Peemáyagât"),
+        ("pk3", "Mishimmáyagat"),
+        ("pk4", "Taubotneanawáyean"),
+        ("pk5", "Nickquénum"),
+    ],
+    "land-kids": [
+        ("lk1", "Aûke"),
+        ("lk2", "Ewáchim neash"),
+        ("lk3", "Scannémeneash"),
+        ("lk4", "Aukeeteaûmen"),
+        ("lk5", "Sókenug"),
+    ],
+}

@@ -42,6 +42,8 @@ import {
   unlockAudioPlayback,
   checkTtsStatus,
 } from "@/lib/audio/speak";
+import { syntheticEnvelopeFromText } from "@/lib/audio/mouth-envelope";
+import { MouthOverlay } from "@/components/scenes/MouthOverlay";
 import { useProgressStore } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
 
@@ -237,6 +239,10 @@ export function ScenePlayer({
     () => new Set(),
   );
   const [ttsConfigured, setTtsConfigured] = useState<boolean | null>(null);
+  /** Runtime jaw open 0..1 — Learn mode oral pulse (Little Ones hybrid). */
+  const [jawOpen, setJawOpen] = useState(0);
+  const jawRaf = useRef<number | null>(null);
+  const jawStartedAt = useRef(0);
 
   const completeScene = useProgressStore((s) => s.completeScene);
   const completeDayAct = useProgressStore((s) => s.completeDayAct);
@@ -550,6 +556,32 @@ export function ScenePlayer({
     setPracticedLines((p) => new Set(p).add(lineId));
   }
 
+  function stopJawPulse() {
+    if (jawRaf.current != null) {
+      cancelAnimationFrame(jawRaf.current);
+      jawRaf.current = null;
+    }
+    setJawOpen(0);
+  }
+
+  function startJawPulse(text: string) {
+    stopJawPulse();
+    jawStartedAt.current = performance.now();
+    const tick = () => {
+      const t = (performance.now() - jawStartedAt.current) / 1000;
+      const open = syntheticEnvelopeFromText(text, t);
+      setJawOpen(open);
+      // Stop after line window (~4.5s of speech energy)
+      if (t < 5.5) {
+        jawRaf.current = requestAnimationFrame(tick);
+      } else {
+        setJawOpen(0);
+        jawRaf.current = null;
+      }
+    };
+    jawRaf.current = requestAnimationFrame(tick);
+  }
+
   async function speakLine(
     line: (typeof scene.lines)[0],
     track: VoiceTrack = voice,
@@ -564,6 +596,10 @@ export function ScenePlayer({
     }
     ttsBusy.current = true;
     setSpeaking(true);
+    // Little Ones: soft runtime jaw cue locked to oral text clock
+    if (scene.series === "Little Ones" || scene.tags?.includes("speak")) {
+      startJawPulse(line.narragansett || line.english || "");
+    }
     try {
       markLinePracticed(line.id, line.wordId);
       // Language-first: packaged oral clip when present (Narragansett + English baked in)
@@ -599,6 +635,7 @@ export function ScenePlayer({
     } finally {
       setSpeaking(false);
       ttsBusy.current = false;
+      stopJawPulse();
     }
   }
 
@@ -1268,6 +1305,12 @@ export function ScenePlayer({
     return Math.min(100, Math.max(0, (t / d) * 100));
   }, [displayDuration, playMode, activeLine, time]);
 
+  useEffect(() => {
+    return () => {
+      if (jawRaf.current != null) cancelAnimationFrame(jawRaf.current);
+    };
+  }, []);
+
   const subtitleNode = useMemo(() => {
     if (subs === "off" || !activeLine) return null;
     return (
@@ -1472,6 +1515,15 @@ export function ScenePlayer({
             // Do not stop oral practice — learner can still Hear lines
             setOralOnly(true);
           }}
+        />
+
+        <MouthOverlay
+          jawOpen={jawOpen}
+          speakingLabel={
+            speaking && activeLine
+              ? `Speaking ${activeLine.narragansett}`
+              : undefined
+          }
         />
 
         {subtitleNode}

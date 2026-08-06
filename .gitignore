@@ -62,3 +62,12 @@ film-kids/stills-hq/
 film-kids/export-v2/
 film-kids/shots-v2/
 film-kids/stills-v2/
+
+# Hybrid v7/v8 intermediates (masters ship in public/scenes/*-kids.*)
+film-kids/export-v6-backup/
+film-kids/export-v7/
+film-kids/export-v8/
+film-kids/motion-v7/
+film-kids/motion-v8/
+film-kids/shots-v7/
+film-kids/shots-v8/

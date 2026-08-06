@@ -1,32 +1,36 @@
 # Little Ones — Status
 
-**Masters:** all 12 · 1080×1920 · shot-per-line  
-**Mouth encode:** Speak-v6 **ROI + glitch gate** (Phase A/B)
+**Masters:** all 12 · 1080×1920 · shot-per-line · **Hybrid v8**  
+**Mouth:** multi-viseme + phoneme map (+ procedural jaw fallback)  
+**Body:** I2V (greeting/count) or procedural gesture life (all others)
 
 ## Docs
 
 | Doc | What |
 |-----|------|
+| [`HYBRID_V8.md`](./HYBRID_V8.md) | **Current** body + mouth architecture |
 | [`MOUTH_SYNC_AUDIT.md`](./MOUTH_SYNC_AUDIT.md) | Root causes of glitch + dual clocks |
 | [`ANIMATION_PATH.md`](./ANIMATION_PATH.md) | Why hybrid animated mouth beats freeze morph |
 
-## What v6 does now
+## What v8 does now
 
-- Align open → closed; blend **mouth ROI only** (not full-frame morph)
-- If face residual > 6.5 → **closed-only** (no head-nod)
-- ~47/60 shots ROI mouth; ~13/60 safe static (bad open stills)
-- Still text-syllable timed until packaged kids audio exists
-
-## Next (no gen required for C)
-
-1. Package oral audio per line → `public/audio/kids/<id>.mp3`  
-2. Drive envelopes from audio RMS + mux into MP4  
-3. Runtime `MouthOverlay` driven by same oral audio (language Learn mode)  
-4. When gen returns: pose-locked viseme plates from closed only  
+- **Body language** per line (wave, heart, bow, count, beckon, yawn, …)  
+- **Multi-viseme** mouth (rest / slight / mid / wide / round) on mouth ROI only  
+- Face-track mouth on I2V plates; static ROI on procedural body  
+- Misaligned open stills → procedural jaw (still pronounces, no head-nod)  
+- Runtime Learn-mode jaw cue (`MouthOverlay`)  
+- stills-v2 + export-v6-backup **preserved**
 
 ## Rebuild
 
 ```bash
-python3 scripts/rebuild-kids-speak-v3.py
-python3 scripts/rebuild-kids-speak-v3.py greeting-kids --mode roi
+python3 scripts/rebuild-kids-hybrid-v8.py
+python3 scripts/rebuild-kids-hybrid-v8.py greeting-kids
+python3 scripts/rebuild-kids-hybrid-v8.py home-kids --force-body
 ```
+
+## Next fine-tunes
+
+1. Package kids oral audio → RMS mouth + mux  
+2. More I2V body plates (prompt keeps mouth closed)  
+3. Pose-locked viseme plates when gen returns  
