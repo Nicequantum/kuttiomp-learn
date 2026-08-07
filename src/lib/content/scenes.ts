@@ -31,6 +31,7 @@ function sortByPath(a: LearningScene, b: LearningScene) {
 
 /**
  * Little Ones: only Hello Kid Friends pack (same two cartoon friends).
+ * Young Learner: only Young Path (same two friends as teens).
  * Other modes keep the full catalog.
  */
 export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] {
@@ -43,6 +44,12 @@ export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] 
       (s) =>
         s.modesAllowed.includes("little_ones") &&
         (s.series === "Little Ones" || (s.tags ?? []).includes("kids")),
+    );
+  } else if (m === "young_learner") {
+    list = SCENES.filter(
+      (s) =>
+        s.modesAllowed.includes("young_learner") &&
+        (s.series === "Young Path" || (s.tags ?? []).includes("student")),
     );
   } else {
     list = SCENES.filter((s) => s.modesAllowed.includes(m));
@@ -61,6 +68,14 @@ export function getSceneById(id: string): LearningScene | undefined {
     mode === "little_ones" &&
     scene.series !== "Little Ones" &&
     !(scene.tags ?? []).includes("kids")
+  ) {
+    return undefined;
+  }
+  // Young Learner: only Young Path pack even on direct links
+  if (
+    mode === "young_learner" &&
+    scene.series !== "Young Path" &&
+    !(scene.tags ?? []).includes("student")
   ) {
     return undefined;
   }

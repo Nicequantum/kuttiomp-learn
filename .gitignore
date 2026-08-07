@@ -85,3 +85,9 @@ film-kids/motion-v10/
 film-kids/export-v11/
 film-kids/shots-v11/
 film-kids/motion-v11/
+
+# Young Path (Student) pipeline intermediates (masters ship in public/scenes/*-student.*)
+film-student/export/
+film-student/shots/
+film-student/motion/
+film-student/stills/
