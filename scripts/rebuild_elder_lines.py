@@ -1,0 +1,240 @@
+"""Shared Elder Path line lists — sole source for rebuild + catalog.
+
+Elder Path is *not* living ceremony. Religion and Death chapters are isSacred=True
+in the Williams seed and are never used here.
+
+Content is solemn public discourse from careful/sensitive/everyday Williams chapters
+that deeper speakers use: council, news, sky, wampum, trade, marriage-custom language,
+care of the sick, hunt, public games, peace-making, and weather reading.
+
+Cast: Friend Tan + Friend Teal as tribal elders (same identities as Little Ones → Young → Adult).
+"""
+
+from __future__ import annotations
+
+# clip_id → list of (line_id, narragansett, english)
+CLIPS: dict[str, list[tuple[str, str, str]]] = {
+    "council-elder": [
+        ("ec1", "Miâwene", "A court or meeting."),
+        ("ec2", "Wépe cummiâwene", "Come to the meeting."),
+        ("ec3", "Miawêtuck", "Let us meet."),
+        ("ec4", "Wauóntam", "A wise man or counsellor."),
+        ("ec5", "Mishaúntowash", "Speak out."),
+    ],
+    "word-elder": [
+        ("ew1", "Nanántowash", "Speak plain."),
+        ("ew2", "Enatch neèn ánowa", "Let my word stand."),
+        ("ew3", "Wunnadsittamútta", "Let us search into it."),
+        ("ew4", "Nnowaúntum", "I am sorry."),
+        ("ew5", "Konkeeteatch Ewo", "Let him live."),
+    ],
+    "discourse-elder": [
+        ("ed1", "Aunchemokauhettíttea", "Let us discourse, or tell news."),
+        ("ed2", "Tocketeáunchim?", "What news?"),
+        ("ed3", "Wetapwâuwwas", "Sit and talk with us."),
+        ("ed4", "Wunnáumwash", "Speak the truth."),
+        ("ed5", "Taúpowaw", "A wise speaker."),
+    ],
+    "sky-elder": [
+        ("es1", "Kéesuck", "The heavens."),
+        ("es2", "Nippâwus", "The sun."),
+        ("es3", "Pashpíshea", "The moon is up."),
+        ("es4", "Yò Ockquitteunk", "A new moon."),
+        ("es5", "Mishánnock", "The morning star."),
+    ],
+    "wampum-elder": [
+        ("emp1", "Anâwsuck", "Shells."),
+        ("emp2", "Enomphómmin", "To thread or string."),
+        ("emp3", "Aconaqúnnaûog", "Thread the beads."),
+        ("emp4", "Enomphósachick", "Strung ones."),
+        ("emp5", "Naumpacoûin", "To hang about the neck."),
+    ],
+    "trade-elder": [
+        ("et1", "Anaqushénto", "Let us trade."),
+        ("et2", "Nowèkineam", "I like this."),
+        ("et3", "Tahenautu?", "What price?"),
+        ("et4", "Wauwunnegachick", "Very good."),
+        ("et5", "Aquie Wussaúmowash", "Do not ask much."),
+    ],
+    "match-elder": [
+        ("em1", "Wusséntam", "He goes a-wooing."),
+        ("em2", "Wussenetûock", "They make a match."),
+        ("em3", "Awetawátuonck", "Of marriage."),
+        ("em4", "Waumaûsu", "Loving."),
+        ("em5", "Aquèipokesháttous", "Do not break the knot."),
+    ],
+    "care-elder": [
+        ("eka1", "Nnanowweteem", "I am going to visit."),
+        ("eka2", "Achie nummaùchnem", "I am very sick."),
+        ("eka3", "Pitch nkéeteem?", "Shall I recover?"),
+        ("eka4", "Kitummâyi nickêekon", "I am just now recovered."),
+        ("eka5", "Puttuckhúmma", "Cover me."),
+    ],
+    "hunt-elder": [
+        ("eh1", "Auchaûtuck", "Let us hunt."),
+        ("eh2", "Ntauchaûmen", "I go to hunt."),
+        ("eh3", "Nummíshkommin", "I have found a deer."),
+        ("eh4", "Poskáttuck", "A whole deer."),
+        ("eh5", "Paushinummauatíttea", "Let us divide."),
+    ],
+    "games-elder": [
+        ("eg1", "Nippauochâumen", "We are dancing."),
+        ("eg2", "Pauochaúog", "They are playing or dancing."),
+        ("eg3", "Ahânuock", "They are merry."),
+        ("eg4", "Pasuckquakohowaûog", "They meet to play."),
+        ("eg5", "Tawhitchahânean", "Why do you laugh?"),
+    ],
+    "peace-elder": [
+        ("ep1", "Aquène", "Peace."),
+        ("ep2", "Aquie musquàntash", "Cease from anger."),
+        ("ep3", "Kekuttokaúnta", "Let us parley."),
+        ("ep4", "Wunnishaûnta", "Let us agree."),
+        ("ep5", "Wetompátitea", "Let us make friends."),
+    ],
+    "weather-elder": [
+        ("evt1", "Wekineaûquat", "Fair weather."),
+        ("evt2", "Sókenun", "Rain."),
+        ("evt3", "Neimpâuog", "Thunder."),
+        ("evt4", "Wunnágehan", "Fair wind."),
+        ("evt5", "Mishitáshin", "A storm."),
+    ],
+}
+
+CLIP_META: dict[str, dict] = {
+    "council-elder": {
+        "title": "Council fire",
+        "summary": "Meeting and counsel words with Friend Tan and Friend Teal as elders — Elder Path, solemn public discourse.",
+        "chapter": "Of government and justice",
+        "chapterNum": 22,
+        "domain": "governance",
+        "pathOrder": 1,
+        "sensitivity": "careful",
+        "tags": ["hq", "elder", "council", "cinematic", "speak", "elder-path", "discourse"],
+    },
+    "word-elder": {
+        "title": "Let the word stand",
+        "summary": "Plain speech, inquiry, mercy — Elder Path justice language (Williams public record).",
+        "chapter": "Of government and justice",
+        "chapterNum": 22,
+        "domain": "governance",
+        "pathOrder": 2,
+        "sensitivity": "careful",
+        "tags": ["hq", "elder", "justice", "cinematic", "speak", "elder-path", "discourse"],
+    },
+    "discourse-elder": {
+        "title": "Evening words",
+        "summary": "Discourse and news by the fire — deeper conversation than the daily packs.",
+        "chapter": "Of discourse and news",
+        "chapterNum": 8,
+        "domain": "other",
+        "pathOrder": 3,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "discourse", "cinematic", "speak", "elder-path"],
+    },
+    "sky-elder": {
+        "title": "Sky and moon",
+        "summary": "Heavens, sun, moon, and morning star — sky-reading language for elders.",
+        "chapter": "Of the heavenly lights",
+        "chapterNum": 12,
+        "domain": "weather",
+        "pathOrder": 4,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "sky", "cinematic", "speak", "elder-path"],
+    },
+    "wampum-elder": {
+        "title": "Shell and strand",
+        "summary": "Wampum shells, stringing, and wearing — formal public exchange language.",
+        "chapter": "Of their coin",
+        "chapterNum": 24,
+        "domain": "tools",
+        "pathOrder": 5,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "wampum", "cinematic", "speak", "elder-path"],
+    },
+    "trade-elder": {
+        "title": "Fair trade",
+        "summary": "Trade talk — like, price, and fair dealing with the elder cast.",
+        "chapter": "Of buying and selling",
+        "chapterNum": 25,
+        "domain": "tools",
+        "pathOrder": 6,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "trade", "cinematic", "speak", "elder-path"],
+    },
+    "match-elder": {
+        "title": "Making a match",
+        "summary": "Marriage-custom language from Williams (public social record — not living sacred rite).",
+        "chapter": "Of marriage",
+        "chapterNum": 23,
+        "domain": "kinship",
+        "pathOrder": 7,
+        "sensitivity": "careful",
+        "tags": ["hq", "elder", "marriage", "cinematic", "speak", "elder-path", "careful"],
+    },
+    "care-elder": {
+        "title": "Visit the sick",
+        "summary": "Care and recovery words — visiting, sickness, covering, healing.",
+        "chapter": "Of their sickness",
+        "chapterNum": 31,
+        "domain": "medicine",
+        "pathOrder": 8,
+        "sensitivity": "careful",
+        "tags": ["hq", "elder", "care", "cinematic", "speak", "elder-path"],
+    },
+    "hunt-elder": {
+        "title": "The hunt",
+        "summary": "Hunting words — go out, find deer, divide the gift.",
+        "chapter": "Of hunting",
+        "chapterNum": 27,
+        "domain": "fauna",
+        "pathOrder": 9,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "hunt", "cinematic", "speak", "elder-path"],
+    },
+    "games-elder": {
+        "title": "Dance and play",
+        "summary": "Public games and merry dance words from Williams sports chapter.",
+        "chapter": "Of their sports",
+        "chapterNum": 28,
+        "domain": "other",
+        "pathOrder": 10,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "games", "cinematic", "speak", "elder-path"],
+    },
+    "peace-elder": {
+        "title": "Make peace",
+        "summary": "Peace-making language — cease anger, parley, agree, make friends (Wars chapter, public forms only).",
+        "chapter": "Of their wars",
+        "chapterNum": 29,
+        "domain": "governance",
+        "pathOrder": 11,
+        "sensitivity": "sensitive",
+        "tags": ["hq", "elder", "peace", "cinematic", "speak", "elder-path", "sensitive"],
+    },
+    "weather-elder": {
+        "title": "Read the sky",
+        "summary": "Fair weather, rain, thunder, wind, and storm — seasonal reading for elders.",
+        "chapter": "Of the weather",
+        "chapterNum": 13,
+        "domain": "weather",
+        "pathOrder": 12,
+        "sensitivity": "everyday",
+        "tags": ["hq", "elder", "weather", "cinematic", "speak", "elder-path"],
+    },
+}
+
+# Scene hero image prompts (closed mouth, same two elders)
+HERO_SCENES: dict[str, str] = {
+    "council-elder": "two tribal elders seated at a council fire circle outside a bark wetu at dusk, calm authority, speaking soft-closed mouths",
+    "word-elder": "two tribal elders standing in a formal gathering space by a wetu, one hand raised gently in plain speech, soft-closed mouths",
+    "discourse-elder": "two tribal elders sitting together by indoor wetu firelight sharing news, soft-closed mouths, warm amber light",
+    "sky-elder": "two tribal elders outdoors at night looking up at moon and stars over coastal woodland, soft-closed mouths",
+    "wampum-elder": "two tribal elders carefully stringing white and purple wampum beads by firelight, soft-closed mouths",
+    "trade-elder": "two tribal elders at a trading blanket with furs and shell beads, fair dealing pose, soft-closed mouths",
+    "match-elder": "two tribal elders blessing a quiet family moment near a wetu entrance with dignity, soft-closed mouths, no wedding ritual staging",
+    "care-elder": "two tribal elders gently visiting a resting person on mats inside a wetu, caring presence, soft-closed mouths",
+    "hunt-elder": "two tribal elders in autumn woodland with a dressed deer gift to share, respectful, soft-closed mouths",
+    "games-elder": "two tribal elders watching village games and merry play near wetu, warm smiles, soft-closed mouths",
+    "peace-elder": "two tribal elders extending open hands in peace under evening sky, no weapons, soft-closed mouths",
+    "weather-elder": "two tribal elders reading storm clouds and wind on a coastal ridge, soft-closed mouths",
+}

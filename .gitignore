@@ -97,3 +97,10 @@ film-adult/export/
 film-adult/shots/
 film-adult/motion/
 film-adult/stills/
+
+# Elder Path pipeline intermediates (masters ship in public/scenes/*-elder.*)
+film-elder/export/
+film-elder/shots/
+film-elder/motion/
+film-elder/stills/
+film-elder/audio-raw/

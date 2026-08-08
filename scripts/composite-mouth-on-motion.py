@@ -89,6 +89,7 @@ def main() -> int:
             or "-amp." in motion_s
             or "film-adult" in motion_s
             or "film-student" in motion_s
+            or "film-elder" in motion_s
         )
 
 

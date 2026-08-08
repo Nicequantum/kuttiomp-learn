@@ -32,9 +32,8 @@ function sortByPath(a: LearningScene, b: LearningScene) {
 /**
  * Little Ones: only Hello Kid Friends pack (same two cartoon friends).
  * Young Learner: only Young Path (same two friends as teens).
- * Core Adult: Adult Path pack first (same friends as adults), plus daily-life
- *   catalog — excludes Little Ones / Young Path age-locked packs.
- * Elder: full catalog (all ages).
+ * Core Adult: Adult Path pack + daily-life catalog (excludes age-locked packs).
+ * Elder: only Elder Path (solemn public discourse — not living ceremony).
  */
 export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] {
   const m = mode === undefined ? currentMode() : mode;
@@ -54,14 +53,21 @@ export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] 
         (s.series === "Young Path" || (s.tags ?? []).includes("student")),
     );
   } else if (m === "core_adult") {
-    // Prefer Adult Path cinematic pack; keep daily-life catalog; hide kids/student packs
     list = SCENES.filter(
       (s) =>
         s.modesAllowed.includes("core_adult") &&
         s.series !== "Little Ones" &&
         s.series !== "Young Path" &&
+        s.series !== "Elder Path" &&
         !(s.tags ?? []).includes("kids") &&
-        !(s.tags ?? []).includes("student"),
+        !(s.tags ?? []).includes("student") &&
+        !(s.tags ?? []).includes("elder-path"),
+    );
+  } else if (m === "elder") {
+    list = SCENES.filter(
+      (s) =>
+        s.modesAllowed.includes("elder") &&
+        (s.series === "Elder Path" || (s.tags ?? []).includes("elder-path")),
     );
   } else {
     list = SCENES.filter((s) => s.modesAllowed.includes(m));
@@ -75,7 +81,6 @@ export function getSceneById(id: string): LearningScene | undefined {
   const mode = currentMode();
   if (!mode) return scene;
   if (!scene.modesAllowed.includes(mode)) return undefined;
-  // Little Ones: only kids pack even on direct links
   if (
     mode === "little_ones" &&
     scene.series !== "Little Ones" &&
@@ -83,7 +88,6 @@ export function getSceneById(id: string): LearningScene | undefined {
   ) {
     return undefined;
   }
-  // Young Learner: only Young Path pack even on direct links
   if (
     mode === "young_learner" &&
     scene.series !== "Young Path" &&
@@ -91,13 +95,21 @@ export function getSceneById(id: string): LearningScene | undefined {
   ) {
     return undefined;
   }
-  // Core Adult: hide age-locked kids/student packs on direct links
   if (
     mode === "core_adult" &&
     (scene.series === "Little Ones" ||
       scene.series === "Young Path" ||
+      scene.series === "Elder Path" ||
       (scene.tags ?? []).includes("kids") ||
-      (scene.tags ?? []).includes("student"))
+      (scene.tags ?? []).includes("student") ||
+      (scene.tags ?? []).includes("elder-path"))
+  ) {
+    return undefined;
+  }
+  if (
+    mode === "elder" &&
+    scene.series !== "Elder Path" &&
+    !(scene.tags ?? []).includes("elder-path")
   ) {
     return undefined;
   }
@@ -119,6 +131,9 @@ export function getSceneDomains(): { id: string; label: string; count: number }[
     tools: "Trade",
     time: "Numbers & time",
     flora: "Land",
+    governance: "Council",
+    medicine: "Care",
+    fauna: "Hunt",
     other: "Talk",
   };
   return [...map.entries()]
