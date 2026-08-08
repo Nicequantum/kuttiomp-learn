@@ -85,6 +85,10 @@ def main() -> int:
             "motion-v7" in motion_s
             or "motion-v11" in motion_s
             or "i2v" in motion_s.lower()
+            or "bodylife" in motion_s
+            or "-amp." in motion_s
+            or "film-adult" in motion_s
+            or "film-student" in motion_s
         )
 
 

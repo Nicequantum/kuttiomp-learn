@@ -32,7 +32,9 @@ function sortByPath(a: LearningScene, b: LearningScene) {
 /**
  * Little Ones: only Hello Kid Friends pack (same two cartoon friends).
  * Young Learner: only Young Path (same two friends as teens).
- * Other modes keep the full catalog.
+ * Core Adult: Adult Path pack first (same friends as adults), plus daily-life
+ *   catalog — excludes Little Ones / Young Path age-locked packs.
+ * Elder: full catalog (all ages).
  */
 export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] {
   const m = mode === undefined ? currentMode() : mode;
@@ -50,6 +52,16 @@ export function getScenesForMode(mode?: LearningModeId | null): LearningScene[] 
       (s) =>
         s.modesAllowed.includes("young_learner") &&
         (s.series === "Young Path" || (s.tags ?? []).includes("student")),
+    );
+  } else if (m === "core_adult") {
+    // Prefer Adult Path cinematic pack; keep daily-life catalog; hide kids/student packs
+    list = SCENES.filter(
+      (s) =>
+        s.modesAllowed.includes("core_adult") &&
+        s.series !== "Little Ones" &&
+        s.series !== "Young Path" &&
+        !(s.tags ?? []).includes("kids") &&
+        !(s.tags ?? []).includes("student"),
     );
   } else {
     list = SCENES.filter((s) => s.modesAllowed.includes(m));
@@ -76,6 +88,16 @@ export function getSceneById(id: string): LearningScene | undefined {
     mode === "young_learner" &&
     scene.series !== "Young Path" &&
     !(scene.tags ?? []).includes("student")
+  ) {
+    return undefined;
+  }
+  // Core Adult: hide age-locked kids/student packs on direct links
+  if (
+    mode === "core_adult" &&
+    (scene.series === "Little Ones" ||
+      scene.series === "Young Path" ||
+      (scene.tags ?? []).includes("kids") ||
+      (scene.tags ?? []).includes("student"))
   ) {
     return undefined;
   }

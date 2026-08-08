@@ -425,6 +425,111 @@ def audio_viseme_keys(audio: Path, *, fps: int = FPS, dur: float = DUR) -> list[
 
 
 
+
+def audio_rms_envelope(audio: Path, *, fps: int = FPS, sr: int = 16000) -> list[float]:
+    """Per-frame RMS 0..1 for an oral clip."""
+    raw = subprocess.check_output(
+        [FFMPEG, "-v", "error", "-i", str(audio), "-ac", "1", "-ar", str(sr), "-f", "s16le", "-"]
+    )
+    if len(raw) < 4:
+        return []
+    n = len(raw) // 2
+    samples = struct.unpack(f"<{n}h", raw)
+    hop = max(1, sr // fps)
+    rms = []
+    for i in range(0, n, hop):
+        chunk = samples[i : i + hop]
+        if not chunk:
+            break
+        acc = sum(s * s for s in chunk) / len(chunk)
+        rms.append(acc ** 0.5)
+    peak = max(rms) if rms else 1.0
+    return [min(1.0, r / (peak + 1e-6)) for r in rms]
+
+
+def detect_speech_window(
+    audio: Path, *, sr: int = 16000, thr_ratio: float = 0.10
+) -> tuple[float, float]:
+    """Return (onset_s, offset_s) of primary speech in oral file."""
+    raw = subprocess.check_output(
+        [FFMPEG, "-v", "error", "-i", str(audio), "-ac", "1", "-ar", str(sr), "-f", "s16le", "-"]
+    )
+    if len(raw) < 4:
+        return 0.0, 0.0
+    n = len(raw) // 2
+    samples = struct.unpack(f"<{n}h", raw)
+    peak = max(abs(s) for s in samples) or 1
+    thr = max(int(peak * thr_ratio), 400)
+    # 20ms hop
+    hop = max(1, sr // 50)
+    active = []
+    for i in range(0, n, hop):
+        chunk = samples[i : i + hop]
+        if max(abs(s) for s in chunk) >= thr:
+            active.append(i / sr)
+    if not active:
+        return 0.0, n / sr
+    return active[0], active[-1] + hop / sr
+
+
+def normalize_oral_slot(
+    src: Path,
+    dst: Path,
+    *,
+    lead: float = 0.22,
+    total: float = DUR,
+    sr: int = 24000,
+) -> dict:
+    """Trim silence, place speech at fixed lead, pad to total seconds.
+
+    This is the shared clock contract: bake mouth and mux the *same* normalized
+    oral so lips and language cannot drift.
+    """
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    onset, offset = detect_speech_window(src)
+    speech_dur = max(0.12, offset - onset)
+    # Cap speech so it fits after lead with 0.25s tail room
+    max_speech = max(0.4, total - lead - 0.25)
+    use_dur = min(speech_dur, max_speech)
+    # Extract speech, then pad front with lead silence via adelay + apad
+    tmp = dst.with_suffix(".raw.wav")
+    # -ss onset -t use_dur then pad
+    cmd = [
+        FFMPEG, "-y",
+        "-ss", f"{onset:.4f}",
+        "-i", str(src),
+        "-t", f"{use_dur:.4f}",
+        "-af",
+        f"aformat=sample_rates={sr}:channel_layouts=mono,"
+        f"adelay={int(lead*1000)}|{int(lead*1000)},"
+        f"apad=whole_dur={total:.3f},atrim=0:{total:.3f},asetpts=PTS-STARTPTS",
+        "-ar", str(sr), "-ac", "1", "-c:a", "pcm_s16le",
+        str(tmp),
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    # encode mp3 for packaging when dst ends with .mp3
+    if dst.suffix.lower() == ".mp3":
+        subprocess.run(
+            [
+                FFMPEG, "-y", "-i", str(tmp),
+                "-codec:a", "libmp3lame", "-b:a", "128k",
+                str(dst),
+            ],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        tmp.unlink(missing_ok=True)
+    else:
+        tmp.replace(dst)
+    meta = {
+        "onset_src": round(onset, 4),
+        "offset_src": round(offset, 4),
+        "lead": lead,
+        "speech_used": round(use_dur, 4),
+        "total": total,
+    }
+    return meta
+
+
 def hybrid_viseme_keys(
     text: str,
     audio: Path,
@@ -456,17 +561,25 @@ def hybrid_viseme_keys(
     span_a = max(0.12, a1 - a0)
     scale = span_a / span_t
 
+    env = audio_rms_envelope(audio, fps=fps)
     out: list[VisemeKey] = []
     for k in t_keys:
         nt0 = a0 + (k.t0 - t0) * scale
         nt1 = a0 + (k.t1 - t0) * scale
         if nt1 > nt0 + 0.03 and nt0 < dur:
+            mid = (nt0 + nt1) * 0.5
+            idx = int(round(mid * fps))
+            rel = env[idx] if 0 <= idx < len(env) else 0.5
+            # Shape from text; open amount gated hard by real oral energy
+            strength = min(1.0, k.strength * (0.25 + 0.95 * rel))
+            if rel < 0.08:
+                strength *= 0.15  # near-silent → nearly closed
             out.append(
                 VisemeKey(
                     round(max(0.0, nt0), 4),
                     round(min(dur - 0.02, nt1), 4),
                     k.viseme,
-                    k.strength,
+                    strength,
                 )
             )
     return out if out else a_keys
@@ -838,6 +951,67 @@ LINE_GESTURES: dict[str, GesturePlan] = {
     "ls3": GesturePlan(GESTURE_OFFER, peak_t=1.5, peak_w=2.0, strength=0.85),
     "ls4": GesturePlan(GESTURE_IDLE, peak_t=1.5, peak_w=2.0, strength=0.6, breath=1.2),
     "ls5": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.75),
+    # Adult Path — parallel to Young Path / Little Ones
+    "ga1": GesturePlan(GESTURE_WAVE, peak_t=1.2, peak_w=2.4, strength=0.95),
+    "ga2": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "ga3": GesturePlan(GESTURE_HEART, peak_t=1.3, peak_w=2.2, strength=0.9),
+    "ga4": GesturePlan(GESTURE_BOW, peak_t=1.6, peak_w=2.4, strength=0.88),
+    "ga5": GesturePlan(GESTURE_THANK, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "ma1": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.3, peak_w=1.8, strength=0.85),
+    "ma2": GesturePlan(GESTURE_OFFER, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "ma3": GesturePlan(GESTURE_BECKON, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "ma4": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=1.8, strength=0.85),
+    "ma5": GesturePlan(GESTURE_THANK, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "ca1": GesturePlan(GESTURE_COUNT, peak_t=1.2, peak_w=1.6, strength=0.95),
+    "ca2": GesturePlan(GESTURE_COUNT, peak_t=1.3, peak_w=1.6, strength=0.95),
+    "ca3": GesturePlan(GESTURE_COUNT, peak_t=1.3, peak_w=1.6, strength=0.95),
+    "ca4": GesturePlan(GESTURE_COUNT, peak_t=1.2, peak_w=1.5, strength=0.95),
+    "ca5": GesturePlan(GESTURE_COUNT, peak_t=1.4, peak_w=1.8, strength=1.0),
+    "fa1": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.2, strength=0.85),
+    "fa2": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.2, strength=0.85),
+    "fa3": GesturePlan(GESTURE_POINT_SELF, peak_t=1.3, peak_w=2.0, strength=0.9),
+    "fa4": GesturePlan(GESTURE_LISTEN, peak_t=1.6, peak_w=2.4, strength=0.85),
+    "fa5": GesturePlan(GESTURE_LISTEN, peak_t=1.6, peak_w=2.4, strength=0.85),
+    "ha1": GesturePlan(GESTURE_LOOK, peak_t=1.8, peak_w=2.5, strength=0.85),
+    "ha2": GesturePlan(GESTURE_IDLE, peak_t=1.5, peak_w=2.0, strength=0.7, breath=1.25),
+    "ha3": GesturePlan(GESTURE_BECKON, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "ha4": GesturePlan(GESTURE_YAWN, peak_t=1.6, peak_w=2.2, strength=0.85),
+    "ha5": GesturePlan(GESTURE_SETTLE, peak_t=2.0, peak_w=2.8, strength=0.9),
+    "da1": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.2, strength=0.85),
+    "da2": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=2.0, strength=0.85),
+    "da3": GesturePlan(GESTURE_WAVE, peak_t=1.5, peak_w=2.0, strength=0.8),
+    "da4": GesturePlan(GESTURE_LOOK, peak_t=1.6, peak_w=2.2, strength=0.85),
+    "da5": GesturePlan(GESTURE_SETTLE, peak_t=1.8, peak_w=2.4, strength=0.85),
+    "sa1": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=2.0, strength=0.85),
+    "sa2": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "sa3": GesturePlan(GESTURE_IDLE, peak_t=1.5, peak_w=2.0, strength=0.7, breath=1.2),
+    "sa4": GesturePlan(GESTURE_SETTLE, peak_t=1.6, peak_w=2.2, strength=0.85),
+    "sa5": GesturePlan(GESTURE_OFFER, peak_t=1.5, peak_w=2.0, strength=0.9),
+    "ba1": GesturePlan(GESTURE_LOOK, peak_t=1.3, peak_w=2.0, strength=0.85),
+    "ba2": GesturePlan(GESTURE_LOOK, peak_t=1.4, peak_w=2.0, strength=0.85),
+    "ba3": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=1.8, strength=0.85),
+    "ba4": GesturePlan(GESTURE_WAVE, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "ba5": GesturePlan(GESTURE_POINT_SELF, peak_t=1.3, peak_w=1.8, strength=0.85),
+    "wa1": GesturePlan(GESTURE_OFFER, peak_t=1.3, peak_w=1.8, strength=0.9),
+    "wa2": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "wa3": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=1.8, strength=0.85),
+    "wa4": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "wa5": GesturePlan(GESTURE_WAVE, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "sla1": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=2.0, strength=0.85),
+    "sla2": GesturePlan(GESTURE_BECKON, peak_t=1.5, peak_w=2.0, strength=0.9),
+    "sla3": GesturePlan(GESTURE_YAWN, peak_t=1.5, peak_w=2.2, strength=0.9),
+    "sla4": GesturePlan(GESTURE_SETTLE, peak_t=1.8, peak_w=2.5, strength=0.9),
+    "sla5": GesturePlan(GESTURE_SETTLE, peak_t=2.0, peak_w=2.6, strength=0.85),
+    "pa1": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "pa2": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "pa3": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.85),
+    "pa4": GesturePlan(GESTURE_THANK, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "pa5": GesturePlan(GESTURE_WAVE, peak_t=1.4, peak_w=2.0, strength=0.9),
+    "la1": GesturePlan(GESTURE_OPEN_HAND, peak_t=1.4, peak_w=2.0, strength=0.85),
+    "la2": GesturePlan(GESTURE_OFFER, peak_t=1.5, peak_w=2.0, strength=0.9),
+    "la3": GesturePlan(GESTURE_OFFER, peak_t=1.5, peak_w=2.0, strength=0.9),
+    "la4": GesturePlan(GESTURE_IDLE, peak_t=1.5, peak_w=2.0, strength=0.75, breath=1.25),
+    "la5": GesturePlan(GESTURE_LOOK, peak_t=1.5, peak_w=2.0, strength=0.85),
 }
 
 

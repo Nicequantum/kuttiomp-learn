@@ -91,3 +91,9 @@ film-student/export/
 film-student/shots/
 film-student/motion/
 film-student/stills/
+
+# Adult Path pipeline intermediates (masters ship in public/scenes/*-adult.*)
+film-adult/export/
+film-adult/shots/
+film-adult/motion/
+film-adult/stills/
