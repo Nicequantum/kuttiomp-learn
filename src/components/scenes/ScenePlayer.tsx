@@ -219,6 +219,8 @@ export function ScenePlayer({
   const learnToken = useRef(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSpokenLine = useRef<string | null>(null);
+  /** Tracks film language authority so ambient-off / probe-silent can re-arm oral. */
+  const prevFilmCarriesLanguage = useRef<boolean | null>(null);
   /** User wants continuous film playing — auto-resume if browser stalls */
   const userIntentPlay = useRef(false);
   /** Guard against overlapping TTS during continuous watch */
@@ -469,6 +471,41 @@ export function ScenePlayer({
     oralOnly,
     filmAudioShouldPlay,
   ]);
+
+  /**
+   * When film loses language authority (ambient muted, or probe proves no track),
+   * clear the spoken-line lock and fill the current line once via oral — otherwise
+   * Watch goes silent until the next line boundary.
+   * When film gains authority, stop oral so film is the only language clock.
+   */
+  useEffect(() => {
+    const prev = prevFilmCarriesLanguage.current;
+    prevFilmCarriesLanguage.current = filmCarriesLanguage;
+    if (prev === null || prev === filmCarriesLanguage) return;
+    if (!isContinuous) return;
+
+    if (filmCarriesLanguage) {
+      stopSpeaking();
+      setSpeaking(false);
+      ttsBusy.current = false;
+      if (activeLine) lastSpokenLine.current = activeLine.id;
+      return;
+    }
+
+    // Film no longer carries language → oral may fill.
+    lastSpokenLine.current = null;
+    if (
+      userIntentPlay.current &&
+      voice !== "off" &&
+      activeLine &&
+      !ttsBusy.current
+    ) {
+      lastSpokenLine.current = activeLine.id;
+      void speakLine(activeLine, voice).catch(() => {});
+    }
+    // speakLine is stable enough for this transition; intentional omit from deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only on filmCarriesLanguage edge
+  }, [filmCarriesLanguage, isContinuous, voice, activeLine]);
 
   // Continuous stall recovery — silent; no "Loading…" chrome
   useEffect(() => {
