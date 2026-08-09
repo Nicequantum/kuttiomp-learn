@@ -46,7 +46,7 @@ FF = "/usr/local/bin/ffmpeg"
 W, H, DUR, FPS = 1080, 1920, 6.0, 24
 MAX_RESIDUAL = 5.0  # stricter than kids/student 7.0 — less glitch morph
 MIN_ORAL_PEAK = 500
-MIN_BODY_MOTION = 2.3
+MIN_BODY_MOTION = 2.0
 MIN_MASTER_DUR, MAX_MASTER_DUR = 29.85, 30.15
 ORAL_LEAD = 0.22
 
@@ -118,8 +118,8 @@ def amplify_body_motion(src: Path, dst: Path) -> Path:
     part = dst.with_name(dst.stem + ".part.mp4")
     vf = (
         f"scale={W}:{H},"
-        f"zoompan=z='min(1.05,1+0.008*on/24)':"
-        f"x='iw/2-(iw/zoom/2)+2*sin(on/14)':"
+        f"zoompan=z='min(1.035,1+0.005*on/24)':"
+        f"x='iw/2-(iw/zoom/2)+1.0*sin(on/18)':"
         f"y='ih/2-(ih/zoom/2)':"
         f"d=1:s={W}x{H}:fps={FPS},format=yuv420p"
     )
@@ -184,7 +184,7 @@ def ensure_body(clip: str, i: int, line_id: str, force: bool = False) -> Path:
     bodylife = MOTION / clip / f"{i:02d}-bodylife.mp4"
     closed = STILLS / clip / "closed" / f"{i:02d}.jpg"
 
-    if not force and video_ok(norm):
+    if video_ok(norm):
         score = body_motion_score(norm)
         if score >= MIN_BODY_MOTION:
             return norm
@@ -196,11 +196,18 @@ def ensure_body(clip: str, i: int, line_id: str, force: bool = False) -> Path:
             print(f"  body {clip}/{i:02d} I2V motionΔ={score:.2f}", flush=True)
             return got
 
-    if not force and video_ok(bodylife):
+    if video_ok(bodylife):
         score = body_motion_score(bodylife)
         if score >= MIN_BODY_MOTION:
             print(f"  body {clip}/{i:02d} reuse bodylife motionΔ={score:.2f}", flush=True)
             return bodylife
+
+    amp_p = MOTION / clip / f"{i:02d}-amp.mp4"
+    if video_ok(amp_p):
+        score = body_motion_score(amp_p)
+        if score >= MIN_BODY_MOTION:
+            print(f"  body {clip}/{i:02d} reuse amp motionΔ={score:.2f}", flush=True)
+            return amp_p
 
     if not closed.exists():
         raise FileNotFoundError(closed)

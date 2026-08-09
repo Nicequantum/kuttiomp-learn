@@ -482,18 +482,53 @@ def normalize_oral_slot(
 ) -> dict:
     """Trim silence, place speech at fixed lead, pad to total seconds.
 
-    This is the shared clock contract: bake mouth and mux the *same* normalized
-    oral so lips and language cannot drift.
+    Shared clock contract: bake mouth and mux the *same* normalized oral.
+    Short words are expanded / fall back so ffmpeg never collapses to silence.
     """
     dst.parent.mkdir(parents=True, exist_ok=True)
     onset, offset = detect_speech_window(src)
-    speech_dur = max(0.12, offset - onset)
-    # Cap speech so it fits after lead with 0.25s tail room
-    max_speech = max(0.4, total - lead - 0.25)
+    raw_dur = max(0.0, offset - onset)
+    min_extract = 0.35
+    if raw_dur < min_extract:
+        mid = (onset + offset) / 2.0 if offset > onset else max(0.0, onset)
+        onset = max(0.0, mid - min_extract / 2.0)
+        offset = onset + min_extract
+    speech_dur = max(min_extract, offset - onset)
+    max_speech = max(0.5, total - lead - 0.25)
     use_dur = min(speech_dur, max_speech)
-    # Extract speech, then pad front with lead silence via adelay + apad
     tmp = dst.with_suffix(".raw.wav")
-    # -ss onset -t use_dur then pad
+
+    def _peak_wav(path: Path) -> int:
+        try:
+            raw = subprocess.check_output(
+                [
+                    FFMPEG, "-v", "error", "-i", str(path),
+                    "-ac", "1", "-ar", "8000", "-f", "s16le", "-",
+                ]
+            )
+        except Exception:
+            return 0
+        if len(raw) < 2:
+            return 0
+        import struct
+        samples = struct.unpack(f"<{len(raw)//2}h", raw)
+        return max(abs(x) for x in samples) if samples else 0
+
+    def _encode_from_tmp() -> None:
+        if dst.suffix.lower() == ".mp3":
+            subprocess.run(
+                [
+                    FFMPEG, "-y", "-i", str(tmp),
+                    "-codec:a", "libmp3lame", "-b:a", "128k",
+                    str(dst),
+                ],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            tmp.unlink(missing_ok=True)
+        else:
+            tmp.replace(dst)
+
+    # Primary: extract window → delay to lead → pad
     cmd = [
         FFMPEG, "-y",
         "-ss", f"{onset:.4f}",
@@ -501,33 +536,61 @@ def normalize_oral_slot(
         "-t", f"{use_dur:.4f}",
         "-af",
         f"aformat=sample_rates={sr}:channel_layouts=mono,"
+        f"volume=1.15,"
         f"adelay={int(lead*1000)}|{int(lead*1000)},"
         f"apad=whole_dur={total:.3f},atrim=0:{total:.3f},asetpts=PTS-STARTPTS",
         "-ar", str(sr), "-ac", "1", "-c:a", "pcm_s16le",
         str(tmp),
     ]
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    # encode mp3 for packaging when dst ends with .mp3
-    if dst.suffix.lower() == ".mp3":
-        subprocess.run(
-            [
-                FFMPEG, "-y", "-i", str(tmp),
-                "-codec:a", "libmp3lame", "-b:a", "128k",
-                str(dst),
-            ],
-            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        )
+    peak = _peak_wav(tmp)
+
+    # Fallback: silence-remove whole file (no hard -ss trim)
+    if peak < 500:
+        cmd = [
+            FFMPEG, "-y",
+            "-i", str(src),
+            "-af",
+            f"aformat=sample_rates={sr}:channel_layouts=mono,"
+            f"silenceremove=start_periods=1:start_silence=0.02:start_threshold=-40dB,"
+            f"volume=1.2,"
+            f"adelay={int(lead*1000)}|{int(lead*1000)},"
+            f"apad=whole_dur={total:.3f},atrim=0:{total:.3f},asetpts=PTS-STARTPTS",
+            "-ar", str(sr), "-ac", "1", "-c:a", "pcm_s16le",
+            str(tmp),
+        ]
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        peak = _peak_wav(tmp)
+
+    # Last resort: pad whole source, keep original onset
+    if peak < 500:
+        cmd = [
+            FFMPEG, "-y",
+            "-i", str(src),
+            "-af",
+            f"aformat=sample_rates={sr}:channel_layouts=mono,"
+            f"volume=1.3,"
+            f"apad=whole_dur={total:.3f},atrim=0:{total:.3f},asetpts=PTS-STARTPTS",
+            "-ar", str(sr), "-ac", "1", "-c:a", "pcm_s16le",
+            str(tmp),
+        ]
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        peak = _peak_wav(tmp)
+
+    if peak < 500:
         tmp.unlink(missing_ok=True)
-    else:
-        tmp.replace(dst)
-    meta = {
+        raise RuntimeError(f"normalize_oral_slot produced silence for {src} peak={peak}")
+
+    _encode_from_tmp()
+    return {
         "onset_src": round(onset, 4),
         "offset_src": round(offset, 4),
         "lead": lead,
         "speech_used": round(use_dur, 4),
         "total": total,
+        "peak": peak,
     }
-    return meta
+
 
 
 def hybrid_viseme_keys(

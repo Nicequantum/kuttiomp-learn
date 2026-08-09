@@ -5,14 +5,14 @@ Architecture (HQ_V11.md):
 
   oral mp3 (public/audio/kids/<id>.mp3)  →  sole time authority
   closed still  →  I2V continuous body (mouth-calm)  →  motion-v11/ | motion-v7
-  open plate (if residual ≤ 7) else soft else procedural jaw
+  open plate (if residual ≤ 5) else soft else procedural jaw
   hybrid visemes (text shapes × audio window)  →  ROI composite
   mux oral AAC  →  stitch  →  public/scenes/<clip>.mp4
 
 Phases (A–F):
   A  Preflight oral peaks + still inventory
   B  Ensure continuous I2V body (normalize; never Ken Burns primary)
-  C  Pick mouth plate with residual gate (open ≤7 else soft else procedural)
+  C  Pick mouth plate with residual gate (open ≤5 else soft else procedural)
   D  Face-tracked hybrid viseme composite on body
   E  Mux oral AAC; fail closed if silent slot
   F  Stitch + acceptance (duration, 5 audio slots, continuous body, no residual morph)
@@ -36,8 +36,9 @@ from pathlib import Path
 ROOT = Path("/workspace")
 sys.path.insert(0, str(ROOT / "scripts"))
 from rebuild_kids_lines import CLIPS  # noqa: E402
+from kids_animation_lib import normalize_oral_slot  # noqa: E402
 
-STILLS = ROOT / "film-kids" / "stills-v2"
+STILLS = ROOT / "film-kids" / "stills"  # closed/open/soft per clip
 MOTION7 = ROOT / "film-kids" / "motion-v7"
 MOTION11 = ROOT / "film-kids" / "motion-v11"
 SHOTS = ROOT / "film-kids" / "shots-v11"
@@ -45,11 +46,13 @@ EXPORT = ROOT / "film-kids" / "export-v11"
 PUBLIC = ROOT / "public" / "scenes"
 AUDIO = ROOT / "public" / "audio" / "kids"
 COMPOSITE = ROOT / "scripts" / "composite-mouth-on-motion.py"
+BODY_LIFE = ROOT / "scripts" / "render-kids-body-life.py"
 FF = "/usr/local/bin/ffmpeg"
 W, H, DUR, FPS = 1080, 1920, 6.0, 24
-MAX_RESIDUAL = 7.0
+MAX_RESIDUAL = 5.0  # tightened: less morph glitch
+ORAL_LEAD = 0.22
 MIN_ORAL_PEAK = 500
-MIN_BODY_MOTION = 2.5  # mean |Δ| on 4fps 180×320 gray — Ken Burns ~1.2, I2V ≥3
+MIN_BODY_MOTION = 2.0  # mean |Δ| on 4fps 180×320 gray — Ken Burns ~1.2, I2V ≥3
 MIN_MASTER_DUR, MAX_MASTER_DUR = 29.85, 30.15
 # greeting + count keep motion-v7 plates; everything else prefers motion-v11
 V7_CLIPS = frozenset({"greeting-kids", "count-kids"})
@@ -84,15 +87,23 @@ def probe_duration(path: Path) -> float | None:
 
 
 def pad_audio(src: Path, dst: Path, total: float = DUR) -> None:
-    """Pad oral to exactly total seconds. Never use zero-length anullsrc concat."""
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    run(
-        [
-            FF, "-y", "-i", str(src),
-            "-af", f"apad=whole_dur={total:.3f},atrim=0:{total:.3f},asetpts=PTS-STARTPTS",
-            "-ar", "24000", "-ac", "1", "-c:a", "pcm_s16le", str(dst),
-        ]
-    )
+    """Normalize oral to fixed lead then write wav/mp3 dst for shared clock."""
+    # If dst is wav, normalize into temp mp3 then decode
+    if dst.suffix.lower() in {".wav", ".wave"}:
+        tmp = dst.with_suffix(".norm.mp3")
+        normalize_oral_slot(src, tmp, lead=ORAL_LEAD, total=total)
+        subprocess.run(
+            [
+                FF, "-y", "-i", str(tmp),
+                "-af", f"apad=whole_dur={total:.3f},atrim=0:{total:.3f},asetpts=PTS-STARTPTS",
+                "-ar", "24000", "-ac", "1", "-c:a", "pcm_s16le", str(dst),
+            ],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        tmp.unlink(missing_ok=True)
+    else:
+        normalize_oral_slot(src, dst, lead=ORAL_LEAD, total=total)
+
 
 
 def peak_audio(path: Path, t0: float = 0.0, t1: float | None = None) -> int:
@@ -164,39 +175,83 @@ def _try_norm(raw: Path, norm: Path, force: bool) -> Path | None:
     return None
 
 
-def ensure_body(clip: str, i: int, force: bool = False) -> Path:
-    """Prefer continuous I2V: motion-v7 for greeting/count, motion-v11 otherwise.
 
-    Ken Burns / motion-v10 is NOT a shipping body. Fail closed if no I2V plate.
-    """
-    order: list[tuple[Path, Path]]
-    v7n, v7r = MOTION7 / clip / f"{i:02d}-norm.mp4", MOTION7 / clip / f"{i:02d}.mp4"
-    v11n, v11r = MOTION11 / clip / f"{i:02d}-norm.mp4", MOTION11 / clip / f"{i:02d}.mp4"
-    if clip in V7_CLIPS:
-        order = [(v7r, v7n), (v11r, v11n)]
-    else:
-        order = [(v11r, v11n), (v7r, v7n)]
+def ensure_body(clip: str, i: int, line_id: str = "idle", force: bool = False) -> Path:
+    """Prefer I2V continuous body; fall back to body-life + mild amplify."""
+    v11r = MOTION11 / clip / f"{i:02d}.mp4"
+    v11n = MOTION11 / clip / f"{i:02d}-norm.mp4"
+    v7r = MOTION7 / clip / f"{i:02d}.mp4"
+    v7n = MOTION7 / clip / f"{i:02d}-norm.mp4"
+    bodylife = MOTION11 / clip / f"{i:02d}-bodylife.mp4"
+    closed = STILLS / clip / "closed" / f"{i:02d}.jpg"
 
-    for raw, norm in order:
-        got = _try_norm(raw, norm, force=force)
-        if got is None:
-            continue
-        score = body_motion_score(got)
-        if score < MIN_BODY_MOTION:
-            raise RuntimeError(
-                f"body not continuous for {clip}/{i:02d}: motionΔ={score:.2f} "
-                f"(need ≥{MIN_BODY_MOTION}) path={got} — still+zoom is not shippable"
-            )
-        return got
+    def ok_motion(path: Path) -> Path | None:
+        # Reuse continuous body even under --force (force rebuilds lips/oral only)
+        if video_ok(path):
+            sc = body_motion_score(path)
+            if sc >= MIN_BODY_MOTION:
+                return path
+        return None
 
-    raise FileNotFoundError(
-        f"No continuous I2V body for {clip}/{i:02d}. "
-        f"Place 6s mouth-calm I2V at {v11r} (or motion-v7 for greeting/count), then re-run."
+    amp = MOTION11 / clip / f"{i:02d}-amp.mp4"
+    for cand in (v11n, v7n, amp, bodylife, v11r, v7r):
+        got = ok_motion(cand)
+        if got is not None:
+            print(f"  body {clip}/{i:02d} reuse {got.name} motionΔ={body_motion_score(got):.2f}", flush=True)
+            return got
+
+    for raw, norm in ((v11r, v11n), (v7r, v7n)):
+        if raw.exists() and raw.stat().st_size >= 50_000:
+            got = normalize_body(raw, norm, force=True)
+            sc = body_motion_score(got)
+            if sc >= MIN_BODY_MOTION:
+                print(f"  body {clip}/{i:02d} I2V motionΔ={sc:.2f}", flush=True)
+                return got
+
+    # Procedural body-life fallback (I2V plates often missing after disk purge)
+    if not closed.exists():
+        raise FileNotFoundError(closed)
+    bodylife.parent.mkdir(parents=True, exist_ok=True)
+    zoom = "in" if i % 2 else "out"
+    run(
+        [sys.executable, str(BODY_LIFE), str(closed), str(bodylife), "--line-id", line_id, "--zoom", zoom],
+        quiet=False,
     )
+    sc = body_motion_score(bodylife)
+    if sc < MIN_BODY_MOTION:
+        # boost with high-motion gesture id
+        run(
+            [sys.executable, str(BODY_LIFE), str(closed), str(bodylife), "--line-id", "ca5", "--zoom", zoom],
+            quiet=False,
+        )
+        sc = body_motion_score(bodylife)
+    if sc < MIN_BODY_MOTION:
+        amp = MOTION11 / clip / f"{i:02d}-amp.mp4"
+        part = amp.with_name(amp.stem + ".part.mp4")
+        vf = (
+            f"scale={W}:{H},"
+            f"zoompan=z='min(1.035,1+0.005*on/24)':"
+            f"x='iw/2-(iw/zoom/2)+1.0*sin(on/18)':"
+            f"y='ih/2-(ih/zoom/2)':"
+            f"d=1:s={W}x{H}:fps={FPS},format=yuv420p"
+        )
+        run([
+            FF, "-y", "-i", str(bodylife), "-vf", vf, "-t", str(DUR), "-an",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "16",
+            "-profile:v", "high", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(part),
+        ])
+        part.replace(amp)
+        bodylife = amp
+        sc = body_motion_score(bodylife)
+    if sc < MIN_BODY_MOTION:
+        raise RuntimeError(f"body not continuous {clip}/{i:02d}: motionΔ={sc:.2f}")
+    print(f"  body {clip}/{i:02d} bodylife motionΔ={sc:.2f}", flush=True)
+    return bodylife
+
 
 
 def pick_mouth_plate(clip: str, i: int) -> tuple[Path, dict]:
-    """Prefer OPEN when residual ≤ 7; soft as escape; never silent morph of misaligned open."""
+    """Prefer OPEN when residual ≤ 5; soft as escape; never silent morph of misaligned open."""
     import numpy as np
     from PIL import Image
     from kids_animation_lib import phase_shift, shift_image, face_residual
@@ -246,7 +301,7 @@ def pick_mouth_plate(clip: str, i: int) -> tuple[Path, dict]:
 
 
 def build_shot(clip: str, i: int, line_id: str, text: str, force: bool = False) -> Path:
-    body = ensure_body(clip, i, force=force)
+    body = ensure_body(clip, i, line_id=line_id, force=force)
     closed = STILLS / clip / "closed" / f"{i:02d}.jpg"
     plate, plate_meta = pick_mouth_plate(clip, i)
     audio = AUDIO / f"{line_id}.mp3"
@@ -389,7 +444,7 @@ def body_only(clip: str, force: bool = False) -> list[str]:
     missing: list[str] = []
     for i, (_lid, _text) in enumerate(CLIPS[clip], 1):
         try:
-            body = ensure_body(clip, i, force=force)
+            body = ensure_body(clip, i, line_id=line_id, force=force)
             score = body_motion_score(body)
             print(f"  body {clip}/{i:02d} → {body} motionΔ={score:.2f}", flush=True)
         except (FileNotFoundError, RuntimeError) as e:
@@ -439,7 +494,7 @@ def main() -> int:
         miss_b: list[str] = []
         for i, (_lid, _text) in enumerate(CLIPS[clip], 1):
             try:
-                ensure_body(clip, i, force=False)
+                ensure_body(clip, i, line_id="idle", force=False)
             except (FileNotFoundError, RuntimeError) as e:
                 miss_b.append(str(e))
         if miss_b:

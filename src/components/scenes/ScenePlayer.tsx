@@ -111,6 +111,33 @@ function isTypingTarget(t: EventTarget | null) {
   );
 }
 
+
+/**
+ * HQ cinematic packs + long films bake Narragansett into the picture track.
+ * Catalog flag — do not wait on flaky browser audioTracks heuristics.
+ */
+function sceneHasLanguageFilm(
+  scene: LearningScene,
+  opts: {
+    continuousFilm: boolean;
+    progressKind: ProgressKind;
+    fromUpload: boolean;
+  },
+): boolean {
+  if (opts.fromUpload) return true;
+  if (opts.continuousFilm) return true;
+  if (opts.progressKind === "story" || opts.progressKind === "day-act")
+    return true;
+  if (scene.tags?.includes("speak")) return true;
+  const series = scene.series ?? "";
+  return (
+    series === "Little Ones" ||
+    series === "Young Path" ||
+    series === "Adult Path" ||
+    series === "Elder Path"
+  );
+}
+
 /**
  * Ensure media can start. Never call video.load() (it resets the element
  * and was blocking play). Prefer immediate muted play for autoplay policy.
@@ -225,7 +252,11 @@ export function ScenePlayer({
    * Learn mode still uses the separate oral path for line-by-line practice.
    */
   const [ambientOn, setAmbientOn] = useState(
-    () => continuousFilm || progressKind === "story" || progressKind === "day-act",
+    () =>
+      continuousFilm ||
+      progressKind === "story" ||
+      progressKind === "day-act" ||
+      Boolean(scene.tags?.includes("speak")),
   );
   const [mediaHasAudio, setMediaHasAudio] = useState<boolean | null>(null);
   /** native = Fullscreen API; css = fixed overlay (iframe-safe) */
@@ -297,6 +328,36 @@ export function ScenePlayer({
    * continuousFilm must never force Learn into continuous playback.
    */
   const isContinuous = playMode === "watch";
+  const isLearn = playMode === "learn";
+
+  const languageFilm = useMemo(
+    () =>
+      sceneHasLanguageFilm(scene, {
+        continuousFilm,
+        progressKind,
+        fromUpload,
+      }),
+    [scene, continuousFilm, progressKind, fromUpload],
+  );
+
+  /** Proven or catalog-assumed language track (covers Watch start race). */
+  const filmHasLanguageTrack =
+    mediaHasAudio === true || (languageFilm && mediaHasAudio !== false);
+
+  /**
+   * Unmute film only in Watch with ambient on + language track.
+   * Learn always mutes — oral is the single language clock.
+   */
+  const filmAudioShouldPlay =
+    isContinuous && ambientOn && filmHasLanguageTrack && !oralOnly;
+
+  /**
+   * Suppress oral when film already carries language (Watch + ambient).
+   * If user mutes film soundtrack, oral may fill the gap.
+   */
+  const filmCarriesLanguage =
+    isContinuous && ambientOn && filmHasLanguageTrack;
+
   /** Media length available for this scene (window or full file). */
   const effectiveMediaLen = hasMediaWindow
     ? Math.max(0.05, (windowEnd as number) - windowStart)
@@ -389,16 +450,25 @@ export function ScenePlayer({
     const v = videoRef.current;
     if (!v) return;
     v.playbackRate = speed;
-    // Prefer muted flag over volume=0 (volume 0 can prevent some engines from advancing)
-    // Kids v9+ masters carry language on the film — unmute in continuous watch
-    if (mediaHasAudio === true && (ambientOn || isContinuous)) {
+    // Single language clock: unmute film only in Watch + ambient + language track.
+    // Learn always keeps film muted (oral path). Never ambientOn || isContinuous.
+    if (filmAudioShouldPlay) {
       v.muted = false;
       v.volume = 0.85;
     } else {
       v.muted = true;
       v.volume = 1;
     }
-  }, [speed, videoSrc, ambientOn, mediaHasAudio, isContinuous]);
+  }, [
+    speed,
+    videoSrc,
+    ambientOn,
+    mediaHasAudio,
+    isContinuous,
+    isLearn,
+    oralOnly,
+    filmAudioShouldPlay,
+  ]);
 
   // Continuous stall recovery — silent; no "Loading…" chrome
   useEffect(() => {
@@ -443,8 +513,10 @@ export function ScenePlayer({
             setPlaying(true);
           })
           .catch(() => {
-            // Keep oral path alive even if video autoplay fails
-            void speakLine(activeLine, voice).catch(() => {});
+            // Only oral-fallback when film is not already the language clock
+            if (!filmCarriesLanguage && voice !== "off" && activeLine) {
+              void speakLine(activeLine, voice).catch(() => {});
+            }
           });
       }
     }, 800);
@@ -597,6 +669,9 @@ export function ScenePlayer({
     }
     ttsBusy.current = true;
     setSpeaking(true);
+    // Force film mute while oral plays — prevents Learn/Hear dual-speak
+    const vMute = videoRef.current;
+    if (vMute) vMute.muted = true;
     // Little Ones: soft runtime jaw cue locked to oral text clock
     if (scene.series === "Little Ones" || scene.tags?.includes("speak")) {
       startJawPulse(line.narragansett || line.english || "");
@@ -641,6 +716,16 @@ export function ScenePlayer({
       setSpeaking(false);
       ttsBusy.current = false;
       stopJawPulse();
+      // Restore Watch film audio if ambient policy allows
+      const vRest = videoRef.current;
+      if (vRest) {
+        if (filmAudioShouldPlay) {
+          vRest.muted = false;
+          vRest.volume = 0.85;
+        } else {
+          vRest.muted = true;
+        }
+      }
     }
   }
 
@@ -719,8 +804,8 @@ export function ScenePlayer({
     try {
       const ok = await ensureVideoPlaying(v);
       if (!ok) return false;
-      // Apply ambient only after successful start, and only if a track exists
-      if (mediaHasAudio === true && (ambientOn || isContinuous)) {
+      // Learn: always muted. Watch: ambient + language track only.
+      if (filmAudioShouldPlay) {
         try {
           v.muted = false;
           v.volume = 0.85;
@@ -770,11 +855,11 @@ export function ScenePlayer({
         setTime(line.startSec);
         seekMediaToLine(i);
 
-        // Keep video rolling after seek
+        // Keep video rolling after seek — film stays muted in Learn
         if (v && !oralOnly) {
           try {
+            v.muted = true;
             if (v.paused && !v.ended) {
-              v.muted = true;
               await v.play().catch(() => {});
             }
           } catch {
@@ -895,15 +980,16 @@ export function ScenePlayer({
     void enterFullscreen();
     bumpChrome();
 
-    // Continuous watch: if film soundtrack is on and carries language, do not
-    // also fire oral overlay on start (would echo). Oral still used in Learn.
-    const filmCarriesLanguage =
-      isContinuous && mediaHasAudio === true;
+    // Continuous watch: film language track → no oral overlay (no dual clock).
+    // Uses catalog languageFilm so we do not race mediaHasAudio === null.
+    if (filmCarriesLanguage) {
+      if (activeLine) lastSpokenLine.current = activeLine.id;
+      return;
+    }
     if (
       voice !== "off" &&
       activeLine &&
-      lastSpokenLine.current !== activeLine.id &&
-      !filmCarriesLanguage
+      lastSpokenLine.current !== activeLine.id
     ) {
       lastSpokenLine.current = activeLine.id;
       void speakLine(activeLine, voice);
@@ -1099,6 +1185,9 @@ export function ScenePlayer({
     if (!activeLine) return;
     await unlockAudioPlayback();
     if (playing && !isContinuous) stopLearn();
+    // Mute film while Hear plays so we never dual-speak
+    const v = videoRef.current;
+    if (v) v.muted = true;
     const track: VoiceTrack =
       lang === "n" ? "narragansett" : lang === "e" ? "english" : "both";
     ttsBusy.current = false;
@@ -1217,8 +1306,6 @@ export function ScenePlayer({
       // Continuous watch with film soundtrack on: language is already in the
       // picture track — do not dual-speak via oral overlay (echo).
       // Learn mode and Hear always use the oral path.
-      const filmCarriesLanguage =
-        isContinuous && mediaHasAudio === true;
       if (
         userIntentPlay.current &&
         voice !== "off" &&
@@ -1265,6 +1352,7 @@ export function ScenePlayer({
     effectiveMediaLen,
     ambientOn,
     mediaHasAudio,
+    filmCarriesLanguage,
   ]);
 
   function onEnded() {
@@ -1473,15 +1561,12 @@ export function ScenePlayer({
           src={videoSrc}
           poster={scene.posterSrc}
           playsInline
-          muted={!(mediaHasAudio === true && (ambientOn || isContinuous))}
+          muted={!filmAudioShouldPlay}
           loop={false}
           preload="auto"
           onTimeUpdate={onTime}
           onWaiting={() => {
             /* intentional: no learner-facing loading chrome */
-          }}
-          onPlaying={() => {
-            if (userIntentPlay.current) setPlaying(true);
           }}
           onLoadedMetadata={(e) => {
             const el = e.currentTarget;
@@ -1497,20 +1582,30 @@ export function ScenePlayer({
               applyPendingResume(el);
             }
             const has = detectVideoHasAudio(el);
-            setMediaHasAudio(has);
-            // Language baked into the picture track (one-day, day-act, community, kids v9+)
-            // → single clock: film audio on, no dual TTS echo
+            if (has === true) setMediaHasAudio(true);
+            else if (has === false) setMediaHasAudio(false);
+            // Language films: ambient on for Watch; Learn still mutes film.
             if (
-              has === true &&
+              (has === true || languageFilm) &&
               (fromUpload ||
                 continuousFilm ||
                 progressKind === "story" ||
                 progressKind === "day-act" ||
                 scene.series === "Little Ones" ||
+                scene.series === "Young Path" ||
+                scene.series === "Adult Path" ||
+                scene.series === "Elder Path" ||
                 scene.tags?.includes("speak"))
             ) {
               setAmbientOn(true);
             }
+          }}
+          onPlaying={(e) => {
+            // Re-probe after decode — Safari often reports audio only after play
+            const el = e.currentTarget;
+            const has = detectVideoHasAudio(el);
+            if (has === true) setMediaHasAudio(true);
+            if (userIntentPlay.current) setPlaying(true);
           }}
           onPlay={() => {
             if (isContinuous) setPlaying(true);
