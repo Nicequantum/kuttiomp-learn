@@ -127,6 +127,71 @@ def mouth_ellipse_mask(
     return m.astype(np.float32)[:, :, None]
 
 
+def adaptive_mouth_mask(closed: np.ndarray) -> np.ndarray:
+    """Face-aware mouth ROI(s). Handles single or dual kids without clothing bleed.
+
+    Default fixed MOUTH_Y0/Y1 sits too low on close-up duo portraits and pulls
+    tunic colors into the jaw. Detect skin mass in the upper frame and place
+    tight ellipses on the lower third of each face.
+    """
+    h, w = closed.shape[:2]
+    r = closed[:, :, 0]
+    g = closed[:, :, 1]
+    b = closed[:, :, 2]
+    skin = (
+        (r > 80)
+        & (g > 35)
+        & (b > 20)
+        & (r > g * 0.9)
+        & (r > b)
+        & ((r - g) > 8)
+    )
+    # Upper body only — ignore grass/tunic lower half
+    y_lo, y_hi = int(h * 0.12), int(h * 0.58)
+    skin[:y_lo] = False
+    skin[y_hi:] = False
+
+    def face_center(x0: int, x1: int) -> tuple[float, float, float, float] | None:
+        band = skin[:, x0:x1]
+        if band.sum() < h * 0.004 * max(x1 - x0, 1):
+            return None
+        ys, xs = np.where(band)
+        if len(ys) < 12:
+            return None
+        face_top, face_bot = int(ys.min()), int(ys.max())
+        face_h = max(face_bot - face_top, 20)
+        cx = float(x0 + xs.mean())
+        # Mouth sits just above the lower face edge (chin-heavy boxes push too low)
+        cy = face_top + face_h * 0.58
+        ry = face_h * 0.12
+        rx = max((xs.max() - xs.min()) * 0.20, w * 0.042)
+        return cx, cy, rx, ry
+
+    # Prefer left/right half split (Little Ones duo); fall back to full frame
+    candidates: list[tuple[float, float, float, float]] = []
+    mid = w // 2
+    for x0, x1 in ((0, mid), (mid, w)):
+        hit = face_center(x0, x1)
+        if hit is not None:
+            candidates.append(hit)
+    if not candidates:
+        hit = face_center(0, w)
+        if hit is not None:
+            candidates.append(hit)
+    if not candidates:
+        return mouth_ellipse_mask(h, w)
+
+    mask = np.zeros((h, w), dtype=np.float32)
+    for cx, cy, rx, ry in candidates:
+        mask = np.maximum(
+            mask,
+            mouth_ellipse_mask(h, w, cy=cy, cx=cx, ry=ry, rx=rx)[:, :, 0],
+        )
+    if mask.max() < 0.05:
+        return mouth_ellipse_mask(h, w)
+    return mask[:, :, None]
+
+
 def soft_dilate(m2d: np.ndarray, k: int = 9) -> np.ndarray:
     from numpy.lib.stride_tricks import sliding_window_view
 
@@ -215,7 +280,7 @@ def build_mouth_bank(closed: np.ndarray, open_m: np.ndarray) -> MouthBank:
         "mode": "multi-viseme",
     }
 
-    base_mask = mouth_ellipse_mask(closed.shape[0], closed.shape[1])
+    base_mask = adaptive_mouth_mask(closed)
     mask = soft_dilate(base_mask[:, :, 0], k=11)
     mask = gaussian_blur_mask(mask, radius=5.5)[:, :, None]
 
