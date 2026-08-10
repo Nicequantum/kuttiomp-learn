@@ -5,7 +5,7 @@
  * Requires XAI_API_KEY + XAI_VOICE_AGENT_ID
  */
 import WebSocket from "ws";
-import { writeFileSync } from "fs";
+import { writeFileSync, unlinkSync } from "fs";
 import { spawnSync } from "child_process";
 
 const text = process.argv[2];
@@ -54,7 +54,7 @@ function finish(code) {
   writeFileSync(wavPath, wav);
   if (out.endsWith(".mp3")) {
     const r = spawnSync("ffmpeg", ["-y", "-i", wavPath, "-codec:a", "libmp3lame", "-b:a", "128k", out], { stdio: "ignore" });
-    try { require("fs").unlinkSync(wavPath); } catch {}
+    try { unlinkSync(wavPath); } catch {}
     process.exit(r.status === 0 ? 0 : 1);
   }
   process.exit(0);
@@ -73,20 +73,14 @@ ws.on("open", () => {
       },
     },
   }));
+  // Match agent-speak.server.ts: force_message speaks exact text (no free chat)
   ws.send(JSON.stringify({
     type: "conversation.item.create",
     item: {
-      type: "message",
-      role: "user",
-      content: [{ type: "input_text", text }],
-    },
-  }));
-  // force_message style — send response create with instructions to speak exactly
-  ws.send(JSON.stringify({
-    type: "response.create",
-    response: {
-      modalities: ["audio"],
-      instructions: `Speak the following text exactly, slowly and clearly, with no extra words: ${text}`,
+      type: "force_message",
+      role: "assistant",
+      interruptible: false,
+      content: [{ type: "output_text", text }],
     },
   }));
 });

@@ -42,6 +42,12 @@ import {
   unlockAudioPlayback,
   checkTtsStatus,
 } from "@/lib/audio/speak";
+import {
+  sceneHasLanguageFilm,
+  computeFilmHasLanguageTrack,
+  computeFilmAudioShouldPlay,
+  computeFilmCarriesLanguage,
+} from "@/lib/audio/film-language-clock";
 import { syntheticEnvelopeFromText } from "@/lib/audio/mouth-envelope";
 import { MouthOverlay } from "@/components/scenes/MouthOverlay";
 import { useProgressStore } from "@/lib/progress/store";
@@ -113,30 +119,9 @@ function isTypingTarget(t: EventTarget | null) {
 
 
 /**
- * HQ cinematic packs + long films bake Narragansett into the picture track.
- * Catalog flag — do not wait on flaky browser audioTracks heuristics.
+ * Language-film catalog policy lives in film-language-clock.ts
+ * (shared with dual-audio acceptance tests).
  */
-function sceneHasLanguageFilm(
-  scene: LearningScene,
-  opts: {
-    continuousFilm: boolean;
-    progressKind: ProgressKind;
-    fromUpload: boolean;
-  },
-): boolean {
-  if (opts.fromUpload) return true;
-  if (opts.continuousFilm) return true;
-  if (opts.progressKind === "story" || opts.progressKind === "day-act")
-    return true;
-  if (scene.tags?.includes("speak")) return true;
-  const series = scene.series ?? "";
-  return (
-    series === "Little Ones" ||
-    series === "Young Path" ||
-    series === "Adult Path" ||
-    series === "Elder Path"
-  );
-}
 
 /**
  * Ensure media can start. Never call video.load() (it resets the element
@@ -343,22 +328,31 @@ export function ScenePlayer({
   );
 
   /** Proven or catalog-assumed language track (covers Watch start race). */
-  const filmHasLanguageTrack =
-    mediaHasAudio === true || (languageFilm && mediaHasAudio !== false);
+  const filmHasLanguageTrack = computeFilmHasLanguageTrack(
+    mediaHasAudio,
+    languageFilm,
+  );
 
   /**
    * Unmute film only in Watch with ambient on + language track.
    * Learn always mutes — oral is the single language clock.
    */
-  const filmAudioShouldPlay =
-    isContinuous && ambientOn && filmHasLanguageTrack && !oralOnly;
+  const filmAudioShouldPlay = computeFilmAudioShouldPlay({
+    isContinuous,
+    ambientOn,
+    filmHasLanguageTrack,
+    oralOnly,
+  });
 
   /**
    * Suppress oral when film already carries language (Watch + ambient).
    * If user mutes film soundtrack, oral may fill the gap.
    */
-  const filmCarriesLanguage =
-    isContinuous && ambientOn && filmHasLanguageTrack;
+  const filmCarriesLanguage = computeFilmCarriesLanguage({
+    isContinuous,
+    ambientOn,
+    filmHasLanguageTrack,
+  });
 
   /** Media length available for this scene (window or full file). */
   const effectiveMediaLen = hasMediaWindow
@@ -748,6 +742,8 @@ export function ScenePlayer({
         // Packaged clips already include a short English gloss after Narragansett
         includeEnglish: track === "both" && !packaged,
         primaryAudioUrl: packaged,
+        // Never fall back to en-US browser TTS on packaged Narragansett lines
+        disallowBrowserFallback: Boolean(packaged),
       });
     } finally {
       setSpeaking(false);
@@ -1483,6 +1479,9 @@ export function ScenePlayer({
         mediaHasAudio === null ? "unknown" : mediaHasAudio ? "true" : "false"
       }
       data-oral-only={oralOnly ? "true" : "false"}
+      data-ambient={ambientOn ? "true" : "false"}
+      data-film-audio-should-play={filmAudioShouldPlay ? "true" : "false"}
+      data-film-carries-language={filmCarriesLanguage ? "true" : "false"}
     >
       {scene.mediaStatus === "awaiting_upload" && !fromUpload && (
         <p className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-warn)_12%,transparent)] px-3 py-2 text-sm text-[var(--color-muted)]">
@@ -1774,6 +1773,7 @@ export function ScenePlayer({
               {mediaHasAudio !== false && (
                 <button
                   type="button"
+                  data-testid="scene-player-ambient"
                   onClick={() => setAmbientOn((a) => !a)}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/90 hover:bg-white/10"
                   aria-label={

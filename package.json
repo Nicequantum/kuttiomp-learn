@@ -16,7 +16,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "verify:contract": "node scripts/verify-contract.mjs",
-    "verify": "npm run typecheck && npm run verify:contract"
+    "verify": "npm run typecheck && npm run verify:contract && npm run verify:dual-audio-policy",
+    "verify:path-media": "node scripts/verify-path-media.mjs",
+    "verify:dual-audio-policy": "node scripts/verify-dual-audio-policy.mjs",
+    "verify:dual-audio": "node scripts/verify-dual-audio.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.3",
@@ -93,5 +96,5 @@
     "typescript-eslint": "^8.56.1",
     "vite": "^8.1.0"
   },
-  "description": "Kuttiomp learner frontend — Narragansett language revitalization"
+  "description": "Kuttiomp learner frontend \u2014 Narragansett language revitalization"
 }

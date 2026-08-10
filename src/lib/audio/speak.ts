@@ -270,6 +270,12 @@ export async function speakWord(opts: {
   includeEnglish?: boolean;
   /** Living speaker recording from public API */
   primaryAudioUrl?: string;
+  /**
+   * When true, never use en-US speechSynthesis for the primary language line.
+   * Path packs set this when packaged oral exists so a failed load does not
+   * fall through to English browser TTS on Narragansett forms.
+   */
+  disallowBrowserFallback?: boolean;
 }): Promise<"recording" | "grok" | "browser" | "none"> {
   try {
     await unlockAudioPlayback();
@@ -305,6 +311,16 @@ export async function speakWord(opts: {
   }
 
   if (!opts.narragansett?.trim() && !opts.english?.trim()) return "none";
+
+  // Path / packaged oral: do not English-browser-speak Narragansett forms.
+  // English gloss may still use browser when cloud TTS is unavailable.
+  if (opts.disallowBrowserFallback) {
+    if (opts.includeEnglish && opts.english) {
+      await browserSpeak(opts.english, { rate: 0.9 });
+    }
+    return "none";
+  }
+
   await browserSpeak(opts.narragansett || opts.english || "", { rate: 0.7 });
   if (opts.includeEnglish && opts.english) {
     await browserSpeak(opts.english, { rate: 0.9 });
