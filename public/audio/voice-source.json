@@ -1,0 +1,6 @@
+{
+  "provider": "scaffold-edge-tts",
+  "voice": "en-US-ChristopherNeural",
+  "note": "Packaged mp3s are a scaffold. When XAI_VOICE_AGENT_ID is set, Learn/Hear/Watch speak through that agent instead of these files. Re-bake this folder from the agent to make offline packs match.",
+  "preferLiveAgent": true
+}

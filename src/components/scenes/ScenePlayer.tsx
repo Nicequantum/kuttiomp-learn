@@ -1336,9 +1336,9 @@ export function ScenePlayer({
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
       const line = scene.lines[idx];
-      // Continuous watch with film soundtrack on: language is already in the
-      // picture track — do not dual-speak via oral overlay (echo).
-      // Learn mode and Hear always use the oral path.
+      // Path packs are picture-only: oral/agent is the language clock in
+      // Watch and Learn so the programmed voice is never swapped for a
+      // leftover scaffold AAC. Stories/uploads may still carry language.
       if (
         userIntentPlay.current &&
         voice !== "off" &&
@@ -1507,12 +1507,10 @@ export function ScenePlayer({
         Default: <strong className="text-[var(--color-fg)]">hear Narragansett</strong>
         {" · "}
         <strong className="text-[var(--color-fg)]">read English</strong>
-        . Language is first — on the continuous film it is embedded in the soundtrack
-        (and spoken line-by-line in Learn mode)
-        {mediaHasAudio === false
-          ? " — this film has no embedded soundtrack yet; use Hear / Learn for oral practice"
-          : ""}
-        .{" "}
+        . Language is first — the same voice speaks in Learn and Watch
+        (your Voice Agent when connected). Path films are the picture;
+        they do not play a second computer voice.
+        {" "}
         {isContinuous ? (
           <>
             <strong className="text-[var(--color-fg)]">Play full film</strong> runs

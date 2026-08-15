@@ -125,10 +125,10 @@ try {
   }
   if (a?.continuous !== "true") fail("Watch continuous", a);
   else pass("Watch continuous");
-  if (a?.filmShould !== "true") fail("Watch filmAudioShouldPlay attrs", a);
-  else pass("Watch filmAudioShouldPlay=true");
-  if (a?.carries !== "true") fail("Watch filmCarriesLanguage attrs", a);
-  else pass("Watch filmCarriesLanguage=true (oral suppressed)");
+  if (a?.filmShould !== "false") fail("Watch path pack must mute film", a);
+  else pass("Watch filmAudioShouldPlay=false (picture-only path)");
+  if (a?.carries !== "false") fail("Watch must use oral/agent on path pack", a);
+  else pass("Watch filmCarriesLanguage=false (oral/agent is the voice)");
 
   // Start Watch playback and confirm video unmutes
   const played = await page.evaluate(async () => {
@@ -158,8 +158,8 @@ try {
     await page.waitForTimeout(600);
     a = await rootAttrs();
   }
-  if (a?.muted !== false) fail("Watch video should be unmuted", { ...a, played });
-  else pass("Watch video.muted=false");
+  if (a?.muted !== true) fail("Watch path film stays muted", { ...a, played });
+  else pass("Watch video.muted=true (picture-only; oral/agent speaks)");
 
   await exitFullscreenIfNeeded();
 

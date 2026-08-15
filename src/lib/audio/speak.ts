@@ -8,6 +8,7 @@
 let currentAudio: HTMLAudioElement | null = null;
 let currentUtterance: SpeechSynthesisUtterance | null = null;
 let grokAvailable: boolean | null = null;
+let ttsProvider: string | null = null;
 let lastTtsError: string | null = null;
 let audioUnlocked = false;
 
@@ -30,6 +31,15 @@ export function getLastTtsError() {
 
 export function isGrokTtsAvailable() {
   return grokAvailable === true;
+}
+
+/** True when the programmed Voice Agent (or Grok TTS) is live. */
+export function isCloudVoiceLive() {
+  return grokAvailable === true;
+}
+
+export function getTtsProvider() {
+  return ttsProvider;
 }
 
 /**
@@ -76,6 +86,7 @@ export async function checkTtsStatus(): Promise<{
     const res = await fetch("/api/tts", { method: "GET" });
     if (!res.ok) {
       grokAvailable = false;
+      ttsProvider = "browser-fallback";
       return { configured: false, provider: "browser-fallback", voice: null };
     }
     const data = (await res.json()) as {
@@ -85,9 +96,11 @@ export async function checkTtsStatus(): Promise<{
       agentId?: string | null;
     };
     grokAvailable = data.configured;
+    ttsProvider = data.provider;
     return data;
   } catch {
     grokAvailable = false;
+    ttsProvider = "browser-fallback";
     return { configured: false, provider: "browser-fallback", voice: null };
   }
 }
@@ -283,23 +296,13 @@ export async function speakWord(opts: {
     /* ignore */
   }
 
-  // 1) Living speaker recording (production path)
-  if (opts.primaryAudioUrl) {
-    const ok = await playUrl(opts.primaryAudioUrl);
-    if (ok) {
-      if (opts.includeEnglish && opts.english) {
-        if (grokAvailable === null) await checkTtsStatus();
-        if (grokAvailable) await grokSpeak(opts.english, "english");
-        else await browserSpeak(opts.english, { rate: 0.9 });
-      }
-      return "recording";
-    }
-  }
-
   if (grokAvailable === null) {
     await checkTtsStatus();
   }
 
+  // Programmed Voice Agent / Grok TTS wins over scaffold packs.
+  // Packs are only the same voice after an agent bake; until then they
+  // are a different speaker and must not override the agent.
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett");
     if (ok) {
@@ -307,6 +310,17 @@ export async function speakWord(opts: {
         await grokSpeak(opts.english, "english");
       }
       return "grok";
+    }
+  }
+
+  // 2) Packaged oral (scaffold or agent-baked) when cloud voice is down
+  if (opts.primaryAudioUrl) {
+    const ok = await playUrl(opts.primaryAudioUrl);
+    if (ok) {
+      if (opts.includeEnglish && opts.english) {
+        await browserSpeak(opts.english, { rate: 0.9 });
+      }
+      return "recording";
     }
   }
 

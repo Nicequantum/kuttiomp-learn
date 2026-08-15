@@ -1,9 +1,13 @@
 /**
  * Single language clock policy for ScenePlayer.
  *
- * Watch + ambient + language film → film carries language (mute oral).
- * Learn always uses oral; film stays muted.
- * Ambient off / silent probe → oral may fill the current line.
+ * Path packs (Little Ones / Young / Adult / Elder) are PICTURE ONLY.
+ * Their muxed AAC is a leftover scaffold voice and must never play —
+ * Learn and Watch both speak through the oral path (Voice Agent when
+ * configured, else the packaged oral that matches that agent bake).
+ *
+ * Community uploads, Full Day, and long Stories may still carry language
+ * on the film; oral is suppressed only then.
  */
 
 import type { LearningScene } from "@/lib/content/scenes-data";
@@ -16,40 +20,48 @@ export type LanguageFilmOpts = {
   fromUpload: boolean;
 };
 
+const PATH_SERIES = new Set([
+  "Little Ones",
+  "Young Path",
+  "Adult Path",
+  "Elder Path",
+]);
+
+export function isPathPictureOnly(scene: LearningScene): boolean {
+  const series = scene.series ?? "";
+  if (PATH_SERIES.has(series)) return true;
+  if (scene.tags?.includes("speak") && scene.tags?.includes("hq")) return true;
+  return false;
+}
+
 /**
- * HQ cinematic packs + long films bake Narragansett into the picture track.
- * Catalog flag — do not wait on flaky browser audioTracks heuristics.
+ * True only when the film is allowed to be the language clock.
+ * Path reconstructions are never language films (picture-only).
  */
 export function sceneHasLanguageFilm(
   scene: LearningScene,
   opts: LanguageFilmOpts,
 ): boolean {
+  if (isPathPictureOnly(scene) && !opts.fromUpload) return false;
   if (opts.fromUpload) return true;
   if (opts.continuousFilm) return true;
   if (opts.progressKind === "story" || opts.progressKind === "day-act")
     return true;
-  if (scene.tags?.includes("speak")) return true;
-  const series = scene.series ?? "";
-  return (
-    series === "Little Ones" ||
-    series === "Young Path" ||
-    series === "Adult Path" ||
-    series === "Elder Path"
-  );
+  return false;
 }
 
-/** Proven or catalog-assumed language track (covers Watch start race). */
+/**
+ * Proven language track. Picture-only packs ignore AAC entirely so a
+ * leftover scaffold voice cannot suppress the programmed agent.
+ */
 export function computeFilmHasLanguageTrack(
   mediaHasAudio: boolean | null,
   languageFilm: boolean,
 ): boolean {
-  return mediaHasAudio === true || (languageFilm && mediaHasAudio !== false);
+  if (!languageFilm) return false;
+  return mediaHasAudio === true || mediaHasAudio !== false;
 }
 
-/**
- * Unmute film only in Watch with ambient on + language track.
- * Learn always mutes — oral is the single language clock.
- */
 export function computeFilmAudioShouldPlay(opts: {
   isContinuous: boolean;
   ambientOn: boolean;
@@ -64,16 +76,10 @@ export function computeFilmAudioShouldPlay(opts: {
   );
 }
 
-/**
- * Suppress oral when film already carries language (Watch + ambient).
- * If user mutes film soundtrack, oral may fill the gap.
- */
 export function computeFilmCarriesLanguage(opts: {
   isContinuous: boolean;
   ambientOn: boolean;
   filmHasLanguageTrack: boolean;
 }): boolean {
-  return (
-    opts.isContinuous && opts.ambientOn && opts.filmHasLanguageTrack
-  );
+  return opts.isContinuous && opts.ambientOn && opts.filmHasLanguageTrack;
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Pure dual-audio policy unit checks (no browser).
+ * Pure language-clock policy unit checks (no browser).
  * Mirrors src/lib/audio/film-language-clock.ts — keep in sync.
  */
 let failed = 0;
@@ -12,7 +12,8 @@ function assert(cond, msg) {
 }
 
 function computeFilmHasLanguageTrack(mediaHasAudio, languageFilm) {
-  return mediaHasAudio === true || (languageFilm && mediaHasAudio !== false);
+  if (!languageFilm) return false;
+  return mediaHasAudio === true || mediaHasAudio !== false;
 }
 function computeFilmAudioShouldPlay({
   isContinuous,
@@ -30,7 +31,30 @@ function computeFilmCarriesLanguage({
   return isContinuous && ambientOn && filmHasLanguageTrack;
 }
 
-// Learn: never film audio, never film carries language
+// Path packs: leftover AAC must not become the language clock
+{
+  const track = computeFilmHasLanguageTrack(true, false);
+  assert(track === false, "picture-only pack ignores AAC");
+  assert(
+    !computeFilmAudioShouldPlay({
+      isContinuous: true,
+      ambientOn: true,
+      filmHasLanguageTrack: track,
+      oralOnly: false,
+    }),
+    "Watch mutes picture-only path film",
+  );
+  assert(
+    !computeFilmCarriesLanguage({
+      isContinuous: true,
+      ambientOn: true,
+      filmHasLanguageTrack: track,
+    }),
+    "Watch uses oral/agent on path packs (does not suppress)",
+  );
+}
+
+// Learn: never film audio
 {
   const track = computeFilmHasLanguageTrack(true, true);
   assert(
@@ -52,9 +76,9 @@ function computeFilmCarriesLanguage({
   );
 }
 
-// Watch + ambient + language: film plays, oral suppressed
+// Story / upload language film: Watch ambient on → film plays, oral suppressed
 {
-  const track = computeFilmHasLanguageTrack(null, true); // catalog assume before probe
+  const track = computeFilmHasLanguageTrack(null, true);
   assert(track === true, "catalog language film assumed while probe null");
   assert(
     computeFilmAudioShouldPlay({
@@ -63,7 +87,7 @@ function computeFilmCarriesLanguage({
       filmHasLanguageTrack: track,
       oralOnly: false,
     }),
-    "Watch ambient on unmutes film",
+    "Watch ambient on unmutes language film (stories/uploads)",
   );
   assert(
     computeFilmCarriesLanguage({
@@ -71,7 +95,7 @@ function computeFilmCarriesLanguage({
       ambientOn: true,
       filmHasLanguageTrack: track,
     }),
-    "Watch ambient on suppresses oral",
+    "Watch ambient on suppresses oral on language film",
   );
 }
 
@@ -97,18 +121,10 @@ function computeFilmCarriesLanguage({
   );
 }
 
-// Probe proves silent → no language track even if catalog said yes
+// Silent probe on a language film
 {
   const track = computeFilmHasLanguageTrack(false, true);
   assert(track === false, "silent probe overrides catalog language film");
-  assert(
-    !computeFilmCarriesLanguage({
-      isContinuous: true,
-      ambientOn: true,
-      filmHasLanguageTrack: track,
-    }),
-    "silent film does not suppress oral",
-  );
 }
 
 // oralOnly never unmutes film

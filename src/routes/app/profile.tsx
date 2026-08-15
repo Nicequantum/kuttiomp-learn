@@ -144,12 +144,12 @@ function ProfilePage() {
         <div className="surface-card pad-mode space-y-2">
           <p className="font-medium">{tts}</p>
           <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-            To use the agent you created, set{" "}
+            Learn, Hear, and Watch all use this same voice. Path films are
+            picture-only so a leftover computer voice cannot replace the agent
+            you programmed. Set{" "}
+            <code className="text-[var(--color-fg)]">XAI_API_KEY</code> and{" "}
             <code className="text-[var(--color-fg)]">XAI_VOICE_AGENT_ID</code>{" "}
-            to your <code className="text-[var(--color-fg)]">agent_…</code> id
-            (or put that id in{" "}
-            <code className="text-[var(--color-fg)]">XAI_TTS_VOICE</code>). The
-            app speaks through that agent’s voice via realtime WebSocket.
+            on the server (your <code className="text-[var(--color-fg)]">agent_…</code> id).
           </p>
         </div>
       </section>
