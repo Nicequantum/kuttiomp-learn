@@ -12,7 +12,7 @@ const modeScene: Record<LearningMode, keyof typeof SCENERY> = {
 
 /**
  * Full land photography for every mode — including Elder.
- * Elder only differs in content blocks (white cards), not a blank white page.
+ * Elder uses a heavier dusk wash so ivory type stays readable (no white stage).
  * Ken Burns disabled for Elder + reduced-motion.
  */
 export function ScenicBackdrop({ className }: { className?: string }) {

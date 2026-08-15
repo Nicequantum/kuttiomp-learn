@@ -1441,12 +1441,19 @@ export function ScenePlayer({
     if (subs === "off" || !activeLine) return null;
     return (
       <div className="pointer-events-none absolute inset-x-0 bottom-16 z-10 flex justify-center px-3 sm:bottom-20">
-        <div className="max-w-[92%] rounded-lg bg-black/65 px-3 py-2 text-center backdrop-blur-sm">
+        <div
+          className={cn(
+            "max-w-[94%] text-center shadow-2xl",
+            largeTargets
+              ? "rounded-xl bg-black/90 px-4 py-3 ring-2 ring-[var(--color-primary)]"
+              : "rounded-lg bg-black/80 px-3 py-2 backdrop-blur-sm",
+          )}
+        >
           {(subs === "narragansett" || subs === "both") && (
             <p
               className={cn(
-                "font-medium text-white",
-                largeTargets || isFullscreen ? "text-2xl sm:text-3xl" : "text-xl",
+                "font-display font-bold tracking-tight text-[#fff8ee]",
+                largeTargets || isFullscreen ? "text-3xl leading-snug sm:text-4xl" : "text-xl",
               )}
             >
               {activeLine.narragansett}
@@ -1455,8 +1462,8 @@ export function ScenePlayer({
           {(subs === "english" || subs === "both") && (
             <p
               className={cn(
-                "text-white/90",
-                largeTargets || isFullscreen ? "text-lg sm:text-xl" : "text-base",
+                "font-semibold text-[#f0e2c4]",
+                largeTargets || isFullscreen ? "text-xl leading-snug sm:text-2xl" : "text-base",
                 subs === "both" && "mt-1",
               )}
             >
@@ -1985,10 +1992,20 @@ export function ScenePlayer({
             </div>
             {activeLine && (
               <>
-                <p className="text-content text-[length:calc(var(--mode-font-body)*1.05)] font-medium text-[var(--color-fg)]">
+                <p
+                  className={cn(
+                    "font-display font-bold leading-snug text-[var(--color-fg)]",
+                    largeTargets ? "text-[length:calc(var(--mode-font-title))]" : "text-content",
+                  )}
+                >
                   {activeLine.narragansett}
                 </p>
-                <p className="text-content text-[var(--color-muted)]">
+                <p
+                  className={cn(
+                    "font-semibold text-[var(--color-muted)]",
+                    largeTargets ? "mt-2 text-content" : "text-content",
+                  )}
+                >
                   {activeLine.english}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">

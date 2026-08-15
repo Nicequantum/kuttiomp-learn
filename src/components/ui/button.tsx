@@ -15,7 +15,7 @@ const buttonVariants = cva(
         ghost:
           "bg-transparent text-[var(--color-fg)] hover:bg-[color-mix(in_oklab,var(--color-fg)_6%,transparent)]",
         soft: "bg-[color-mix(in_oklab,var(--color-primary)_12%,transparent)] text-[var(--color-primary)] hover:bg-[color-mix(in_oklab,var(--color-primary)_18%,transparent)]",
-        land: "bg-[var(--color-land)] text-white hover:brightness-110",
+        land: "bg-[var(--color-land)] text-[var(--color-accent-fg)] hover:brightness-110",
       },
       size: {
         default: "text-[length:var(--mode-font-body)] h-[var(--mode-target)]",

@@ -50,10 +50,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="safe-pt sticky top-0 z-30 border-b border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-bg)_78%,transparent)] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
-            <p className="font-display text-lg tracking-tight text-[var(--color-fg)]">
+            <p className={cn(
+              "font-display tracking-tight text-[var(--color-fg)]",
+              isElder ? "text-2xl font-bold" : "text-lg",
+            )}>
               {APP_NAME}
             </p>
-            <p className="truncate text-sm text-[var(--color-primary)]">
+            <p className={cn(
+              "truncate font-semibold text-[var(--color-primary)]",
+              isElder ? "text-base" : "text-sm",
+            )}>
               {modeLabel} path
               {isElder ? " · large type" : ""}
             </p>
@@ -62,15 +68,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               to="/app/guide"
               className={cn(
-                "rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]",
-                "min-h-10 inline-flex items-center",
+                "rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 font-semibold text-[var(--color-fg)] hover:border-[var(--color-border-strong)]",
+                isElder ? "min-h-12 text-base" : "min-h-10 text-sm inline-flex items-center",
+                "inline-flex items-center",
               )}
             >
               Guide
             </Link>
             <Link
               to="/app/profile"
-              className="inline-flex min-h-10 items-center rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]"
+              className={cn(
+                "inline-flex items-center rounded-full border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_90%,transparent)] px-3 py-1.5 font-semibold text-[var(--color-fg)] hover:border-[var(--color-border-strong)]",
+                isElder ? "min-h-12 text-base" : "min-h-10 text-sm",
+              )}
             >
               Mode
             </Link>
@@ -101,7 +111,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 to={tab.to}
                 className={cn(
                   "flex min-h-[var(--mode-nav-height)] min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-mode px-1 font-medium transition-colors",
-                  isElder ? "text-[0.8rem]" : "text-[0.7rem]",
+                  isElder ? "text-[0.95rem] font-bold" : "text-[0.7rem]",
                   active
                     ? "text-[var(--color-primary)]"
                     : "text-[var(--color-subtle)] hover:text-[var(--color-muted)]",
@@ -111,7 +121,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Icon
                   className={cn(
                     active && "stroke-[2.35]",
-                    isElder ? "h-6 w-6" : "h-5 w-5",
+                    isElder ? "h-7 w-7" : "h-5 w-5",
                   )}
                   aria-hidden
                 />

@@ -122,35 +122,35 @@
   --scene-vignette: 52%;
 }
 
-/* Elder: land photo stage; white cards get their own text tokens below */
+/* Elder: dusk-council stage — dark ink + warm ivory. Never white cards. */
 [data-mode="elder"] {
-  --k-bg: #0a100e;
-  --k-surface: #ffffff;
-  --k-surface-elevated: #ffffff;
-  --k-fg: #f2efe6;
-  --k-muted: #d0d6d0;
-  --k-subtle: #a8b0a8;
-  --k-border: color-mix(in oklab, #f2efe6 18%, transparent);
-  --k-border-strong: color-mix(in oklab, #d4a574 45%, transparent);
-  --k-primary: #d4a574;
-  --k-primary-fg: #120e08;
-  --k-accent: #5b8f7b;
-  --k-accent-fg: #f2efe6;
-  --k-land: #3d6b55;
-  --k-warn-soft: #fff8ee;
-  --k-warn-fg: #1a1208;
-  --k-ring: #d4a574;
-  --k-glow: color-mix(in oklab, #d4a574 35%, transparent);
-  --mode-font-body: 1.35rem;
-  --mode-font-title: 2.1rem;
-  --mode-font-display: 2.65rem;
-  --mode-font-content: 1.55rem;
-  --mode-radius: 0.65rem;
-  --mode-card-pad: 1.6rem;
-  --mode-target: 3.55rem;
-  --mode-nav-height: 5.1rem;
-  --scene-wash: 18%;
-  --scene-vignette: 48%;
+  --k-bg: #070806;
+  --k-surface: color-mix(in oklab, #1c1912 94%, transparent);
+  --k-surface-elevated: #262116;
+  --k-fg: #fff8ee;
+  --k-muted: #f0e2c4;
+  --k-subtle: #d8c49a;
+  --k-border: color-mix(in oklab, #f0c070 32%, transparent);
+  --k-border-strong: #e8b45c;
+  --k-primary: #f3c56a;
+  --k-primary-fg: #1a1206;
+  --k-accent: #86c496;
+  --k-accent-fg: #07120a;
+  --k-land: #7dba8c;
+  --k-warn-soft: #3a2a12;
+  --k-warn-fg: #ffe8c0;
+  --k-ring: #f3c56a;
+  --k-glow: color-mix(in oklab, #f3c56a 48%, transparent);
+  --mode-font-body: 1.5rem;
+  --mode-font-title: 2.45rem;
+  --mode-font-display: 3.05rem;
+  --mode-font-content: 1.75rem;
+  --mode-radius: 0.85rem;
+  --mode-card-pad: 1.75rem;
+  --mode-target: 3.85rem;
+  --mode-nav-height: 5.45rem;
+  --scene-wash: 64%;
+  --scene-vignette: 74%;
 }
 
 @layer base {
@@ -242,28 +242,19 @@
   }
 
   /*
-   * Elder cards: solid white + black type.
-   * Re-scope tokens so every child (muted, primary, borders) stays readable.
+   * Elder cards: dark ink panels, gold edge, ivory type.
+   * Tokens stay on the dusk palette — never remapped to white.
    */
   [data-mode="elder"] .surface-card,
   [data-mode="elder"] .focus-stage {
-    --k-fg: #0a0a0a;
-    --k-muted: #1f1f1f;
-    --k-subtle: #333333;
-    --k-border: #1a1a1a;
-    --k-border-strong: #000000;
-    --k-primary: #0a0a0a;
-    --k-primary-fg: #ffffff;
-    --k-surface: #ffffff;
-    --k-surface-elevated: #f5f5f5;
-    --k-ring: #000000;
-    --k-glow: transparent;
-    background: #ffffff;
-    color: #0a0a0a;
-    border: 2px solid #0a0a0a;
-    box-shadow: 0 14px 44px color-mix(in oklab, #000 42%, transparent);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: color-mix(in oklab, #16130e 96%, transparent);
+    color: var(--color-fg);
+    border: 2px solid var(--color-border-strong);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--color-glow) 40%, transparent),
+      0 18px 48px color-mix(in oklab, #000 55%, transparent);
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
   }
 
   .narr-word {
@@ -323,8 +314,9 @@
   }
 
   [data-mode="elder"] .label-eyebrow {
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     color: var(--color-primary);
   }
 
@@ -356,11 +348,20 @@
     outline-offset: 3px;
   }
 
-  /* Elder accessibility — Protocol 11 */
+  /* Elder accessibility — dusk stage, bold ivory type */
   [data-mode="elder"] body,
   [data-mode="elder"] {
-    line-height: 1.65;
+    line-height: 1.55;
     letter-spacing: 0.01em;
+    font-weight: 500;
+  }
+  [data-mode="elder"] h1,
+  [data-mode="elder"] h2,
+  [data-mode="elder"] h3,
+  [data-mode="elder"] .font-display {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-fg);
   }
   [data-mode="elder"] :focus-visible {
     outline-width: 3px;
@@ -368,26 +369,38 @@
   }
   [data-mode="elder"] a:focus-visible,
   [data-mode="elder"] button:focus-visible {
-    outline: 3px solid #000;
+    outline: 3px solid var(--color-primary);
     outline-offset: 3px;
   }
   [data-mode="elder"] .surface-card :focus-visible,
   [data-mode="elder"] .focus-stage :focus-visible {
-    outline: 3px solid #000;
+    outline: 3px solid var(--color-primary);
     outline-offset: 2px;
   }
   [data-mode="elder"] .narr-word {
-    line-height: 1.35;
+    font-weight: 700;
+    line-height: 1.3;
     letter-spacing: 0.02em;
+    color: var(--color-fg);
   }
   [data-mode="elder"] .label-eyebrow {
-    font-size: 0.9rem;
+    font-size: 1rem;
     letter-spacing: 0.1em;
+    font-weight: 700;
   }
-  /* Stronger chrome contrast on photo for elders */
   [data-mode="elder"] header,
   [data-mode="elder"] nav[aria-label="Primary"] {
-    background: color-mix(in oklab, var(--color-bg) 82%, transparent) !important;
+    background: color-mix(in oklab, var(--color-bg) 94%, transparent) !important;
+    border-color: var(--color-border-strong) !important;
+  }
+  [data-mode="elder"] .text-content {
+    color: var(--color-muted);
+    font-weight: 550;
+  }
+  [data-mode="elder"] h1,
+  [data-mode="elder"] h2,
+  [data-mode="elder"] h3 {
+    color: var(--color-fg);
   }
 
 [data-mode="elder"] img.motion-safe\:animate-\[ken_48s_ease-in-out_infinite_alternate\],

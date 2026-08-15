@@ -75,7 +75,7 @@ function HomePage() {
           {meta.id === "little_ones"
             ? "Tap a word, hear the sound, say it back. Short and gentle."
             : meta.id === "elder"
-              ? "Large text, clear audio, one calm step at a time."
+              ? "Large bold type, high contrast, one calm step at a time."
               : "Listen first. Meaning second. Living speakers replace every historical placeholder."}
         </p>
         <p className="text-sm text-[var(--color-subtle)]">
