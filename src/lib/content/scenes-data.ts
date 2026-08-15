@@ -141,7 +141,7 @@ export const SCENES: LearningScene[] = [
   scene({
     id: "greeting-kids",
     title: "Hello, friend (kids)",
-    summary: "HQ shot-per-line hello — same two friends, cinematic storybook, each greeting acted.",
+    summary: "One continuous hello — same two friends, a short spoken greeting, then they stay together.",
     chapter: "Salutation",
     chapterNum: 1,
     domain: "kinship",
@@ -154,16 +154,13 @@ export const SCENES: LearningScene[] = [
     posterSrc: "/scenes/greeting-kids.jpg",
     durationSec: 30,
     tags: ["kids", "hq", "greeting", "cinematic", "speak"],
-    lines: timed(
-      [
-        { id: "k1", speaker: "Friend", narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
-        { id: "k2", speaker: "Friend", narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
-        { id: "k3", speaker: "Friend", narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
-        { id: "k4", speaker: "Friend", narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
-        { id: "k5", speaker: "Friend", narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
-      ],
-      30,
-    ),
+    lines: [
+      { id: "k1", speaker: "Friend", startSec: 1.5, endSec: 4.2, narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
+      { id: "k2", speaker: "Friend", startSec: 4.2, endSec: 6.7, narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
+      { id: "k3", speaker: "Friend", startSec: 6.7, endSec: 9.1, narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
+      { id: "k4", speaker: "Friend", startSec: 9.1, endSec: 11.5, narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
+      { id: "k5", speaker: "Friend", startSec: 11.5, endSec: 16.0, narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
+    ],
   }),
 
   // ——— Eating ———
