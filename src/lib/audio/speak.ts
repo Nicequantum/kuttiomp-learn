@@ -1,8 +1,6 @@
 /**
- * Oral playback — living recording → Grok Agent/TTS → browser.
- *
- * Protocol 7 (oral primacy): language audio must work even when video
- * has no track or fails to load. Unlock audio on the first user gesture.
+ * Oral playback — one speaker at a time.
+ * Voice Agent (when configured) is the only language voice.
  */
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -11,17 +9,30 @@ let grokAvailable: boolean | null = null;
 let ttsProvider: string | null = null;
 let lastTtsError: string | null = null;
 let audioUnlocked = false;
+/** Bumped on every stop / new speak so stale play() cannot overlap. */
+let speakGen = 0;
 
 const audioCache = new Map<string, string>();
 
 export function stopSpeaking() {
+  speakGen += 1;
   if (typeof window === "undefined") return;
   if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.src = "";
+    try {
+      currentAudio.pause();
+      currentAudio.onended = null;
+      currentAudio.onerror = null;
+      currentAudio.src = "";
+    } catch {
+      /* ignore */
+    }
     currentAudio = null;
   }
-  window.speechSynthesis?.cancel();
+  try {
+    window.speechSynthesis?.cancel();
+  } catch {
+    /* ignore */
+  }
   currentUtterance = null;
 }
 
@@ -33,7 +44,6 @@ export function isGrokTtsAvailable() {
   return grokAvailable === true;
 }
 
-/** True when the programmed Voice Agent (or Grok TTS) is live. */
 export function isCloudVoiceLive() {
   return grokAvailable === true;
 }
@@ -42,11 +52,6 @@ export function getTtsProvider() {
   return ttsProvider;
 }
 
-/**
- * Call from the first user gesture (Play / Hear) so later TTS and
- * HTMLAudioElement playback are not blocked by autoplay policy.
- * Never throws; never hangs.
- */
 export async function unlockAudioPlayback(): Promise<void> {
   if (typeof window === "undefined" || audioUnlocked) return;
   try {
@@ -117,15 +122,7 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
       return;
     }
 
-    if (currentAudio) {
-      try {
-        currentAudio.pause();
-        currentAudio.src = "";
-      } catch {
-        /* ignore */
-      }
-      currentAudio = null;
-    }
+    const gen = speakGen;
     try {
       window.speechSynthesis.cancel();
       window.speechSynthesis.resume();
@@ -149,7 +146,6 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
     u.onend = finish;
     u.onerror = finish;
     currentUtterance = u;
-    // Hard cap — speechSynthesis sometimes never fires onend
     const timer = window.setTimeout(finish, 12000);
     try {
       window.speechSynthesis.speak(u);
@@ -157,6 +153,15 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
       finish();
     }
     window.setTimeout(() => {
+      if (gen !== speakGen) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch {
+          /* ignore */
+        }
+        finish();
+        return;
+      }
       try {
         if (!done && window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
@@ -170,9 +175,12 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
 
 function playUrl(url: string): Promise<boolean> {
   return new Promise((resolve) => {
+    const gen = speakGen;
     if (currentAudio) {
       try {
         currentAudio.pause();
+        currentAudio.onended = null;
+        currentAudio.onerror = null;
         currentAudio.src = "";
       } catch {
         /* ignore */
@@ -206,14 +214,33 @@ function playUrl(url: string): Promise<boolean> {
     audio.volume = 1;
     currentAudio = audio;
     audio.onended = () => {
-      currentAudio = null;
+      if (currentAudio === audio) currentAudio = null;
       finish(true);
     };
     audio.onerror = () => {
-      currentAudio = null;
+      if (currentAudio === audio) currentAudio = null;
       finish(false);
     };
-    const timer = window.setTimeout(() => finish(false), 15000);
+    const timer = window.setTimeout(() => {
+      try {
+        audio.pause();
+        audio.src = "";
+      } catch {
+        /* ignore */
+      }
+      if (currentAudio === audio) currentAudio = null;
+      finish(false);
+    }, 20000);
+    if (gen !== speakGen) {
+      try {
+        audio.pause();
+        audio.src = "";
+      } catch {
+        /* ignore */
+      }
+      finish(false);
+      return;
+    }
     void audio.play().catch(() => finish(false));
   });
 }
@@ -261,7 +288,6 @@ async function grokSpeak(
   return playUrl(url);
 }
 
-/** Warm cache without playing — never blocks UI. */
 export async function prefetchSpeak(
   text: string,
   kind: "narragansett" | "english" = "narragansett",
@@ -270,7 +296,6 @@ export async function prefetchSpeak(
   try {
     if (grokAvailable === null) await checkTtsStatus();
     if (!grokAvailable) return false;
-    // Don't stampede a Voice Agent with four warm-up sockets on page load.
     if (ttsProvider === "xai-voice-agent") return false;
     const url = await fetchTtsBlobUrl(text.trim(), kind);
     return Boolean(url);
@@ -283,13 +308,7 @@ export async function speakWord(opts: {
   narragansett: string;
   english?: string;
   includeEnglish?: boolean;
-  /** Living speaker recording from public API */
   primaryAudioUrl?: string;
-  /**
-   * When true, never use en-US speechSynthesis for the primary language line.
-   * Path packs set this when packaged oral exists so a failed load does not
-   * fall through to English browser TTS on Narragansett forms.
-   */
   disallowBrowserFallback?: boolean;
 }): Promise<"recording" | "grok" | "browser" | "none"> {
   try {
@@ -298,23 +317,29 @@ export async function speakWord(opts: {
     /* ignore */
   }
 
+  stopSpeaking();
+  const myGen = speakGen;
+
   if (grokAvailable === null) {
     await checkTtsStatus();
   }
+  if (myGen !== speakGen) return "none";
 
-  // Cloud voice first (Voice Agent, then Grok TTS). If that fails,
-  // packaged oral and browser still speak — never go silent.
+  // When the Voice Agent / Grok TTS is configured it is the only speaker.
+  // Packaged + browser must not start — that is how three voices stacked.
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett");
+    if (myGen !== speakGen) return "none";
     if (ok) {
       if (opts.includeEnglish && opts.english) {
+        if (myGen !== speakGen) return "grok";
         await grokSpeak(opts.english, "english");
       }
       return "grok";
     }
+    return "none";
   }
 
-  // 2) Packaged oral (scaffold or agent-baked) when cloud voice is down
   if (opts.primaryAudioUrl) {
     const ok = await playUrl(opts.primaryAudioUrl);
     if (ok) {
@@ -327,8 +352,6 @@ export async function speakWord(opts: {
 
   if (!opts.narragansett?.trim() && !opts.english?.trim()) return "none";
 
-  // Path / packaged oral: do not English-browser-speak Narragansett forms.
-  // English gloss may still use browser when cloud TTS is unavailable.
   if (opts.disallowBrowserFallback) {
     if (opts.includeEnglish && opts.english) {
       await browserSpeak(opts.english, { rate: 0.9 });

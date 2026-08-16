@@ -41,6 +41,7 @@ import {
   stopSpeaking,
   unlockAudioPlayback,
   checkTtsStatus,
+  getTtsProvider,
 } from "@/lib/audio/speak";
 import {
   sceneHasLanguageFilm,
@@ -549,10 +550,7 @@ export function ScenePlayer({
             setPlaying(true);
           })
           .catch(() => {
-            // Only oral-fallback when film is not already the language clock
-            if (!filmCarriesLanguage && voice !== "off" && activeLine) {
-              void speakLine(activeLine, voice).catch(() => {});
-            }
+            /* do not start a second oral clock — one speaker only */
           });
       }
     }, 800);
@@ -716,7 +714,9 @@ export function ScenePlayer({
       markLinePracticed(line.id, line.wordId);
       // Language-first: packaged oral clip when present (Narragansett + English baked in)
       const packaged =
-        track === "english"
+        ttsConfigured && getTtsProvider() === "xai-voice-agent"
+          ? undefined
+          : track === "english"
           ? undefined
           : line.audioSrc ||
             (line.id.startsWith("od")

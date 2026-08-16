@@ -144,13 +144,29 @@ export const Route = createFileRoute("/api/tts")({
               });
             }
 
-            console.error("[tts] Voice Agent failed, trying REST TTS", result);
+            console.error("[tts] Voice Agent failed", result);
+            return Response.json(
+              {
+                error: "voice_agent_failed",
+                message:
+                  "Your Voice Agent did not return audio. It will not fall through to another voice.",
+                detail: result.error,
+              },
+              { status: 502 },
+            );
           } catch (err) {
-            console.error("[tts] Voice Agent exception, trying REST TTS", err);
+            console.error("[tts] Voice Agent exception", err);
+            return Response.json(
+              {
+                error: "voice_agent_exception",
+                message: "Voice Agent request failed.",
+              },
+              { status: 502 },
+            );
           }
         }
 
-        // REST TTS so Hear never goes silent if the agent socket fails.
+        // REST TTS only when no Voice Agent is configured.
 
         const voiceId = getTtsVoiceId();
         try {

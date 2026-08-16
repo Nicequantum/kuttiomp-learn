@@ -137,6 +137,8 @@ export function speakWithVoiceAgent(opts: {
         JSON.stringify({
           type: "session.update",
           session: {
+            instructions:
+              "Pronunciation only. Do not greet. Do not add words. Speak only the force_message text, then stop.",
             turn_detection: null,
             audio: {
               output: {
