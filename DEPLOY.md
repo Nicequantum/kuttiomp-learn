@@ -43,14 +43,15 @@ Add these in **Vercel → Project → Settings → Environment Variables**
 
 | Variable | Required? | Example | Purpose |
 | --- | --- | --- | --- |
-| `XAI_API_KEY` | **Yes for Grok voice** | `xai-...` | Server-only key for Grok Text-to-Speech. **Never** prefix with `VITE_` — must not ship to the browser. |
-| `XAI_TTS_VOICE` | Optional | `ara` | Voice id (`ara`, `eve`, `leo`, `sal`, `rex`, …). Default in code: `ara`. |
+| `XAI_API_KEY` | **Yes for voice** | `xai-...` | Server-only. Never prefix with `VITE_`. |
+| `XAI_VOICE_AGENT_ID` | **Yes for your agent** | `agent_…` | Your Voice Agent. Learn / Hear / Watch all speak through this. |
+| `XAI_TTS_VOICE` | Optional | `ara` | REST TTS voice **only if** no agent id is set. Do not put `agent_…` here unless you skip `XAI_VOICE_AGENT_ID`. |
 | `VITE_CONTENT_CORPUS` | Optional | `demo_historical` | `demo_historical` (Williams seed) or `keeper_only` (production). |
 | `VITE_KEEPER_PORTAL_URL` | Recommended | `https://admin.yourdomain.com` | Shows “Open Keeper portal” in learner Profile. |
 
 ### Do **not** put the API key in chat or in `VITE_*` vars
 
-Code calls: `process.env.XAI_API_KEY` only inside `/api/tts` on the server.
+Code reads `XAI_API_KEY` and `XAI_VOICE_AGENT_ID` at **request time** on the server (`/api/tts`) so Vercel runtime values are used — they are not baked in at build. Both must be set for Production **and** Preview if you want the agent on preview deploys.
 
 ---
 
@@ -101,7 +102,7 @@ No extra env vars. Modes slightly change which scene is shown.
 ## Checklist before showing Keepers
 
 - [ ] Learner deployed on HTTPS  
-- [ ] `XAI_API_KEY` set → Profile shows “Grok TTS ready”  
+- [ ] `XAI_API_KEY` + `XAI_VOICE_AGENT_ID` set → Profile shows “Your Voice Agent is connected”  
 - [ ] `VITE_KEEPER_PORTAL_URL` set (optional)  
 - [ ] Admin has “Open learner demo” link  
 - [ ] Tested Add to Home Screen on one iPhone  

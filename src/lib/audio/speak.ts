@@ -300,9 +300,9 @@ export async function speakWord(opts: {
     await checkTtsStatus();
   }
 
-  // Programmed Voice Agent / Grok TTS wins over scaffold packs.
-  // Packs are only the same voice after an agent bake; until then they
-  // are a different speaker and must not override the agent.
+  // Programmed Voice Agent / Grok TTS is the language voice when live.
+  // Do not fall through to a different packaged speaker if the agent is
+  // the configured provider — that is how Watch/Hear got two voices.
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett");
     if (ok) {
@@ -310,6 +310,12 @@ export async function speakWord(opts: {
         await grokSpeak(opts.english, "english");
       }
       return "grok";
+    }
+    if (ttsProvider === "xai-voice-agent") {
+      if (opts.includeEnglish && opts.english) {
+        await grokSpeak(opts.english, "english");
+      }
+      return "none";
     }
   }
 

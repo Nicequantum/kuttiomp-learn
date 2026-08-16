@@ -3,18 +3,23 @@ import {
   isVoiceAgentId,
   speakWithVoiceAgent,
 } from "@/lib/audio/agent-speak.server";
+import {
+  getTtsVoiceId,
+  getVoiceAgentId,
+  getXaiApiKey,
+} from "@/lib/audio/env.server";
 
 /**
  * Server-only oral synthesis proxy.
  *
- * Paths:
- * 1) Voice Agent (agent_…) via realtime WebSocket + force_message
- * 2) Grok REST TTS (ara, eve, custom TTS voice ids)
+ * When XAI_VOICE_AGENT_ID is set (Vercel env), this route speaks ONLY
+ * through that agent. It does not fall through to REST TTS or a
+ * different computer voice — that was swapping speakers on deploy.
  *
- * Env:
- *   XAI_API_KEY              required
- *   XAI_VOICE_AGENT_ID       optional — e.g. agent_K9qbsc619Vbg0nvm
- *   XAI_TTS_VOICE            optional — TTS voice, OR agent_ id (we detect)
+ * Env (runtime, not build-time):
+ *   XAI_API_KEY
+ *   XAI_VOICE_AGENT_ID   agent_…
+ *   XAI_TTS_VOICE        optional REST voice if no agent is set
  */
 
 const XAI_TTS_URL = "https://api.x.ai/v1/tts";
@@ -24,20 +29,6 @@ type TtsBody = {
   text?: string;
   kind?: "narragansett" | "english";
 };
-
-function getAgentId(): string | null {
-  const fromDedicated = process.env.XAI_VOICE_AGENT_ID?.trim();
-  if (isVoiceAgentId(fromDedicated)) return fromDedicated!;
-  const fromVoice = process.env.XAI_TTS_VOICE?.trim();
-  if (isVoiceAgentId(fromVoice)) return fromVoice!;
-  return null;
-}
-
-function getTtsVoiceId(): string {
-  const raw = process.env.XAI_TTS_VOICE?.trim() || "";
-  if (!raw || isVoiceAgentId(raw)) return DEFAULT_TTS_VOICE;
-  return raw;
-}
 
 async function callXaiRestTts(opts: {
   apiKey: string;
@@ -79,9 +70,10 @@ export const Route = createFileRoute("/api/tts")({
   server: {
     handlers: {
       GET: async () => {
-        const configured = Boolean(process.env.XAI_API_KEY?.trim());
-        const agentId = getAgentId();
+        const apiKey = getXaiApiKey();
+        const agentId = getVoiceAgentId();
         const ttsVoice = getTtsVoiceId();
+        const configured = Boolean(apiKey);
         return Response.json({
           configured,
           provider: !configured
@@ -90,15 +82,17 @@ export const Route = createFileRoute("/api/tts")({
               ? "xai-voice-agent"
               : "xai-grok-tts",
           voice: configured ? (agentId ?? ttsVoice) : null,
-          agentId: agentId,
-          ttsVoice: ttsVoice,
-          notice: agentId
-            ? "Using your Voice Agent (realtime) for pronunciation."
-            : "Using Grok REST TTS. Set XAI_VOICE_AGENT_ID=agent_… to use your agent.",
+          agentId,
+          ttsVoice,
+          notice: !configured
+            ? "XAI_API_KEY is not set on the server."
+            : agentId
+              ? "Using your Voice Agent for pronunciation."
+              : "Using Grok REST TTS. Set XAI_VOICE_AGENT_ID=agent_… to use your agent.",
         });
       },
       POST: async ({ request }) => {
-        const apiKey = process.env.XAI_API_KEY?.trim();
+        const apiKey = getXaiApiKey();
         if (!apiKey) {
           return Response.json(
             {
@@ -126,20 +120,15 @@ export const Route = createFileRoute("/api/tts")({
 
         const kind = body.kind === "english" ? "english" : "narragansett";
         const speed = kind === "narragansett" ? 0.78 : 0.92;
-        const agentId = getAgentId();
+        const agentId = getVoiceAgentId();
 
-        // —— Path 1: Voice Agent (your agent_ id) ——
-        if (agentId) {
+        // Voice Agent is the only speaker when configured.
+        if (agentId && isVoiceAgentId(agentId)) {
           try {
-            const spoken =
-              kind === "narragansett"
-                ? text // exact form, slow handled by session speed
-                : text;
-
             const result = await speakWithVoiceAgent({
               apiKey,
               agentId,
-              text: spoken,
+              text,
               timeoutMs: 28_000,
             });
 
@@ -155,14 +144,28 @@ export const Route = createFileRoute("/api/tts")({
               });
             }
 
-            console.error("[tts] agent failed, trying REST TTS", result);
-            // fall through to REST TTS
+            console.error("[tts] Voice Agent failed", result);
+            return Response.json(
+              {
+                error: "voice_agent_failed",
+                message:
+                  "Your Voice Agent did not return audio. Check the agent is published and the API key can use it.",
+                detail: result.error,
+              },
+              { status: 502 },
+            );
           } catch (err) {
-            console.error("[tts] agent exception", err);
+            console.error("[tts] Voice Agent exception", err);
+            return Response.json(
+              {
+                error: "voice_agent_exception",
+                message: "Voice Agent request failed.",
+              },
+              { status: 502 },
+            );
           }
         }
 
-        // —— Path 2: REST TTS (ara / eve / custom TTS voice) ——
         const voiceId = getTtsVoiceId();
         try {
           let result = await callXaiRestTts({
@@ -186,10 +189,7 @@ export const Route = createFileRoute("/api/tts")({
               {
                 error: "upstream_tts_failed",
                 status: result.status,
-                message:
-                  agentId
-                    ? "Voice Agent and REST TTS both failed. Check API key and agent status."
-                    : "Grok TTS failed. Check voice id and API key.",
+                message: "Grok TTS failed. Check voice id and API key.",
                 detail: result.body.slice(0, 200),
               },
               { status: 502 },
