@@ -963,8 +963,8 @@ export function ScenePlayer({
     if (v) {
       try {
         v.muted = true;
-        v.playbackRate = 1.22;
-        v.currentTime = scene.lines[0]?.talkAtSec ?? 0.62;
+        v.playbackRate = 1;
+        v.currentTime = scene.lines[0]?.talkAtSec ?? 0;
       } catch {
         /* ignore */
       }
@@ -974,8 +974,8 @@ export function ScenePlayer({
     if (v && videoOk) {
       try {
         v.pause();
-        v.playbackRate = 1.22;
-        v.currentTime = scene.lines[0]?.talkAtSec ?? 0.62;
+        v.playbackRate = 1;
+        v.currentTime = scene.lines[0]?.talkAtSec ?? 0;
       } catch {
         /* ignore */
       }
@@ -994,17 +994,31 @@ export function ScenePlayer({
     for (let i = 0; i < scene.lines.length; i++) {
       if (learnToken.current !== token || !userIntentPlay.current) return;
       const line = scene.lines[i];
+      const talkAt = line.talkAtSec ?? line.startSec ?? 0;
+      const holdAt = Math.max(talkAt + 0.2, (line.endSec ?? talkAt + 3) - 0.06);
       setActiveLineIdx(i);
       lastSpokenLine.current = line.id;
       if (v && videoOk) {
         try {
           v.pause();
-          v.playbackRate = 1.22;
-          v.currentTime = line.talkAtSec ?? line.startSec ?? 0;
+          v.playbackRate = 1;
+          v.currentTime = talkAt;
         } catch {
           /* ignore */
         }
       }
+      const clampTalk = () => {
+        if (!v) return;
+        if (v.currentTime >= holdAt) {
+          try {
+            v.pause();
+            v.currentTime = holdAt;
+          } catch {
+            /* ignore */
+          }
+        }
+      };
+      v?.addEventListener("timeupdate", clampTalk);
       if (i + 1 < scene.lines.length && scene.lines[i + 1].narragansett) {
         void prefetchSpeak(scene.lines[i + 1].narragansett, "narragansett", {
           force: true,
@@ -1015,7 +1029,7 @@ export function ScenePlayer({
           onStart: () => {
             if (!v || !videoOk) return;
             try {
-              v.playbackRate = 1.22;
+              v.playbackRate = 1;
             } catch {
               /* ignore */
             }
@@ -1023,6 +1037,7 @@ export function ScenePlayer({
           },
         });
       }
+      v?.removeEventListener("timeupdate", clampTalk);
       if (v) {
         try {
           v.pause();
