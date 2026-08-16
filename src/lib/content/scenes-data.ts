@@ -155,8 +155,8 @@ export const SCENES: LearningScene[] = [
     pathOrder: 1,
     singleTake: true,
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/hello-friend-kids.mp4?v=teal17",
-    posterSrc: "/scenes/hello-friend-kids.jpg?v=teal17",
+    videoSrc: "/scenes/hello-friend-kids.mp4?v=tealListen",
+    posterSrc: "/scenes/hello-friend-kids.jpg?v=tealListen",
     durationSec: 17,
     tags: ["kids", "hq", "greeting", "cinematic", "speak", "single-take"],
     lines: [
