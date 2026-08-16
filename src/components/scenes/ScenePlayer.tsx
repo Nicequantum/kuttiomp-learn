@@ -697,6 +697,7 @@ export function ScenePlayer({
   async function speakLine(
     line: (typeof scene.lines)[0],
     track: VoiceTrack = voice,
+    extra?: { onStart?: () => void },
   ) {
     if (track === "off" || !line) return;
     // Never cut the Voice Agent off mid-word. Queue the next line.
@@ -708,17 +709,17 @@ export function ScenePlayer({
     }
     ttsBusy.current = true;
     setSpeaking(true);
-    setSpeakingLineId(line.id);
-    // Force film mute while oral plays — prevents Learn/Hear dual-speak
     const vMute = videoRef.current;
     if (vMute) vMute.muted = true;
-    // Little Ones: soft runtime jaw cue locked to oral text clock
-    if (scene.series === "Little Ones" || scene.tags?.includes("speak")) {
-      startJawPulse(line.narragansett || line.english || "");
-    }
+    const onAudioStart = () => {
+      setSpeakingLineId(line.id);
+      if (scene.series === "Little Ones" || scene.tags?.includes("speak")) {
+        startJawPulse(line.narragansett || line.english || "");
+      }
+      extra?.onStart?.();
+    };
     try {
       markLinePracticed(line.id, line.wordId);
-      // Language-first: packaged oral clip when present (Narragansett + English baked in)
       const packaged =
         ttsConfigured && getTtsProvider() === "xai-voice-agent"
           ? undefined
@@ -744,17 +745,17 @@ export function ScenePlayer({
           narragansett: line.english,
           english: line.english,
           includeEnglish: false,
+          onStart: onAudioStart,
         });
         return;
       }
       await speakWord({
         narragansett: line.narragansett,
         english: line.english,
-        // Packaged clips already include a short English gloss after Narragansett
         includeEnglish: track === "both" && !packaged,
         primaryAudioUrl: packaged,
-        // Never fall back to en-US browser TTS on packaged Narragansett lines
         disallowBrowserFallback: Boolean(packaged),
+        onStart: onAudioStart,
       });
     } finally {
       setSpeaking(false);
@@ -762,7 +763,7 @@ export function ScenePlayer({
       stopJawPulse();
       const vRest = videoRef.current;
       if (vRest) {
-        if (filmAudioShouldPlay) {
+        if (filmAudioShouldPlay && !singleTake) {
           vRest.muted = false;
           vRest.volume = 0.85;
         } else {
@@ -946,7 +947,81 @@ export function ScenePlayer({
     videoRef.current?.pause();
   }
 
+  async function playSingleTakeClocked() {
+    const v = videoRef.current;
+    learnToken.current += 1;
+    const token = learnToken.current;
+    userIntentPlay.current = true;
+    setPlaying(true);
+    setMediaError(null);
+    setOralOnly(false);
+    oralQueue.current = [];
+    lastSpokenLine.current = null;
+    setSpeakingLineId(null);
+    void unlockAudioPlayback();
+
+    if (v) {
+      try {
+        v.muted = true;
+        v.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    const videoOk = await startVideoSoft(v);
+    if (v && videoOk) {
+      try {
+        v.pause();
+        v.currentTime = 0;
+      } catch {
+        /* ignore */
+      }
+    } else {
+      setOralOnly(true);
+    }
+    void enterFullscreen();
+    bumpChrome();
+
+    for (let i = 0; i < scene.lines.length; i++) {
+      if (learnToken.current !== token || !userIntentPlay.current) return;
+      const line = scene.lines[i];
+      setActiveLineIdx(i);
+      lastSpokenLine.current = line.id;
+      if (voice !== "off") {
+        await speakLine(line, voice, {
+          onStart: () => {
+            if (!v || !videoOk) return;
+            void v.play().catch(() => {});
+          },
+        });
+      }
+      if (v) {
+        try {
+          v.pause();
+        } catch {
+          /* ignore */
+        }
+      }
+      if (learnToken.current !== token || !userIntentPlay.current) return;
+      if (i < scene.lines.length - 1) {
+        await new Promise((r) => window.setTimeout(r, 280));
+      }
+    }
+
+    if (learnToken.current === token) {
+      userIntentPlay.current = false;
+      setPlaying(false);
+      setSpeakingLineId(null);
+      markComplete();
+    }
+  }
+
   async function playContinuousFrom(startAt?: number) {
+    if (singleTake) {
+      await playSingleTakeClocked();
+      return;
+    }
     const v = videoRef.current;
     learnToken.current += 1;
     setSpeaking(false);
@@ -1347,11 +1422,10 @@ export function ScenePlayer({
       saveStoryPosition(t);
     }
 
+    if (!singleTake) {
     let idx = scene.lines.findIndex(
       (l) => practiceT >= l.startSec && practiceT < l.endSec,
     );
-    // Stay put in the tiny gaps — never snap to the last line
-    // (that replayed "I thank you" between words).
     if (idx < 0) idx = activeLineIdx;
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
@@ -1380,6 +1454,7 @@ export function ScenePlayer({
         lastSpokenLine.current = line.id;
       }
     }
+    }
     if (
       loopLine &&
       !isContinuous &&
@@ -1406,6 +1481,7 @@ export function ScenePlayer({
     ambientOn,
     mediaHasAudio,
     filmCarriesLanguage,
+    singleTake,
   ]);
 
   function onEnded() {

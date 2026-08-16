@@ -173,7 +173,7 @@ function browserSpeak(text: string, opts?: { rate?: number }): Promise<void> {
   });
 }
 
-function playUrl(url: string): Promise<boolean> {
+function playUrl(url: string, onStart?: () => void): Promise<boolean> {
   return new Promise((resolve) => {
     const gen = speakGen;
     if (currentAudio) {
@@ -241,7 +241,22 @@ function playUrl(url: string): Promise<boolean> {
       finish(false);
       return;
     }
-    void audio.play().catch(() => finish(false));
+    void audio
+      .play()
+      .then(() => {
+        if (gen !== speakGen) {
+          try {
+            audio.pause();
+            audio.src = "";
+          } catch {
+            /* ignore */
+          }
+          finish(false);
+          return;
+        }
+        onStart?.();
+      })
+      .catch(() => finish(false));
   });
 }
 
@@ -282,10 +297,11 @@ async function fetchTtsBlobUrl(
 async function grokSpeak(
   text: string,
   kind: "narragansett" | "english",
+  onStart?: () => void,
 ): Promise<boolean> {
   const url = await fetchTtsBlobUrl(text, kind);
   if (!url) return false;
-  return playUrl(url);
+  return playUrl(url, onStart);
 }
 
 export async function prefetchSpeak(
@@ -310,6 +326,8 @@ export async function speakWord(opts: {
   includeEnglish?: boolean;
   primaryAudioUrl?: string;
   disallowBrowserFallback?: boolean;
+  /** Fires when the chosen voice actually starts playing. */
+  onStart?: () => void;
 }): Promise<"recording" | "grok" | "browser" | "none"> {
   try {
     await unlockAudioPlayback();
@@ -328,7 +346,7 @@ export async function speakWord(opts: {
   // When the Voice Agent / Grok TTS is configured it is the only speaker.
   // Packaged + browser must not start — that is how three voices stacked.
   if (grokAvailable) {
-    const ok = await grokSpeak(opts.narragansett, "narragansett");
+    const ok = await grokSpeak(opts.narragansett, "narragansett", opts.onStart);
     if (myGen !== speakGen) return "none";
     if (ok) {
       if (opts.includeEnglish && opts.english) {
@@ -341,7 +359,7 @@ export async function speakWord(opts: {
   }
 
   if (opts.primaryAudioUrl) {
-    const ok = await playUrl(opts.primaryAudioUrl);
+    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
     if (ok) {
       if (opts.includeEnglish && opts.english) {
         await browserSpeak(opts.english, { rate: 0.9 });
