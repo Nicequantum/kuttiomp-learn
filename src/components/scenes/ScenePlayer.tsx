@@ -963,7 +963,8 @@ export function ScenePlayer({
     if (v) {
       try {
         v.muted = true;
-        v.currentTime = 0;
+        v.playbackRate = 1.22;
+        v.currentTime = scene.lines[0]?.talkAtSec ?? 0.62;
       } catch {
         /* ignore */
       }
@@ -973,7 +974,8 @@ export function ScenePlayer({
     if (v && videoOk) {
       try {
         v.pause();
-        v.currentTime = 0;
+        v.playbackRate = 1.22;
+        v.currentTime = scene.lines[0]?.talkAtSec ?? 0.62;
       } catch {
         /* ignore */
       }
@@ -983,15 +985,40 @@ export function ScenePlayer({
     void enterFullscreen();
     bumpChrome();
 
+    if (scene.lines[0]?.narragansett) {
+      await prefetchSpeak(scene.lines[0].narragansett, "narragansett", {
+        force: true,
+      });
+    }
+
     for (let i = 0; i < scene.lines.length; i++) {
       if (learnToken.current !== token || !userIntentPlay.current) return;
       const line = scene.lines[i];
       setActiveLineIdx(i);
       lastSpokenLine.current = line.id;
+      if (v && videoOk) {
+        try {
+          v.pause();
+          v.playbackRate = 1.22;
+          v.currentTime = line.talkAtSec ?? line.startSec ?? 0;
+        } catch {
+          /* ignore */
+        }
+      }
+      if (i + 1 < scene.lines.length && scene.lines[i + 1].narragansett) {
+        void prefetchSpeak(scene.lines[i + 1].narragansett, "narragansett", {
+          force: true,
+        });
+      }
       if (voice !== "off") {
         await speakLine(line, voice, {
           onStart: () => {
             if (!v || !videoOk) return;
+            try {
+              v.playbackRate = 1.22;
+            } catch {
+              /* ignore */
+            }
             void v.play().catch(() => {});
           },
         });

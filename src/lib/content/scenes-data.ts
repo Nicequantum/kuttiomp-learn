@@ -17,6 +17,8 @@ export type SceneLine = {
   english: string;
   startSec: number;
   endSec: number;
+  /** Frame where the mouth is already speaking — used by single-take sync. */
+  talkAtSec?: number;
   /** Optional link into demo Williams lexicon word id */
   wordId?: string;
   /**
@@ -153,16 +155,16 @@ export const SCENES: LearningScene[] = [
     pathOrder: 1,
     singleTake: true,
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/hello-friend-kids.mp4?v=clean28",
-    posterSrc: "/scenes/hello-friend-kids.jpg?v=clean28",
-    durationSec: 28,
+    videoSrc: "/scenes/hello-friend-kids.mp4?v=native15",
+    posterSrc: "/scenes/hello-friend-kids.jpg?v=native15",
+    durationSec: 15,
     tags: ["kids", "hq", "greeting", "cinematic", "speak", "single-take"],
     lines: [
-      { id: "k1", speaker: "Friend", startSec: 0, endSec: 5.6, narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
-      { id: "k2", speaker: "Friend", startSec: 5.6, endSec: 11.2, narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
-      { id: "k3", speaker: "Friend", startSec: 11.2, endSec: 16.8, narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
-      { id: "k4", speaker: "Friend", startSec: 16.8, endSec: 22.4, narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
-      { id: "k5", speaker: "Friend", startSec: 22.4, endSec: 28, narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
+      { id: "k1", speaker: "Friend", startSec: 0, endSec: 3, talkAtSec: 0.62, narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
+      { id: "k2", speaker: "Friend", startSec: 3, endSec: 6, talkAtSec: 0.98, narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
+      { id: "k3", speaker: "Friend", startSec: 6, endSec: 9, talkAtSec: 1.32, narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
+      { id: "k4", speaker: "Friend", startSec: 9, endSec: 12, talkAtSec: 12.35, narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
+      { id: "k5", speaker: "Friend", startSec: 12, endSec: 15, talkAtSec: 12.8, narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
     ],
   }),
 

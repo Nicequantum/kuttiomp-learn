@@ -307,12 +307,13 @@ async function grokSpeak(
 export async function prefetchSpeak(
   text: string,
   kind: "narragansett" | "english" = "narragansett",
+  opts?: { force?: boolean },
 ): Promise<boolean> {
   if (!text?.trim()) return false;
   try {
     if (grokAvailable === null) await checkTtsStatus();
     if (!grokAvailable) return false;
-    if (ttsProvider === "xai-voice-agent") return false;
+    if (ttsProvider === "xai-voice-agent" && !opts?.force) return false;
     const url = await fetchTtsBlobUrl(text.trim(), kind);
     return Boolean(url);
   } catch {
