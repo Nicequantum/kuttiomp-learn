@@ -137,19 +137,7 @@ export default defineConfig(({ command }) => ({
     authPopupPlugin(),
     tailwindcss(),
     tanstackStart(),
-    ...(command === "build"
-      ? [
-          nitro({
-            preset: "vercel",
-            // Voice Agent needs a long enough Node function (not Edge).
-            vercel: {
-              functions: {
-                maxDuration: 60,
-              },
-            },
-          } as Parameters<typeof nitro>[0]),
-        ]
-      : []),
+    ...(command === "build" ? [nitro({ preset: "vercel" })] : []),
     viteReact(),
   ],
 }));

@@ -408,6 +408,7 @@ export function ScenePlayer({
     preparingRef.current = false;
     learnToken.current += 1;
     stopSpeaking();
+    setVideoSrc(scene.videoSrc);
     const resolver = resolveVideo ?? resolveSceneVideoSrc;
     void resolver(scene).then((r) => {
       setVideoSrc(r.src);
