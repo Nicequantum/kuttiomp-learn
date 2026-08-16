@@ -151,14 +151,22 @@ export function speakWithVoiceAgent(opts: {
     });
 
     ws.on("message", (raw) => {
-      if (Buffer.isBuffer(raw) || raw instanceof ArrayBuffer) {
-        const buf = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
-        // Binary PCM frame
+      let textPayload: string | null = null;
+      if (Buffer.isBuffer(raw)) {
+        if (raw.length > 8 && raw[0] !== 0x7b) {
+          chunks.push(raw);
+          return;
+        }
+        textPayload = raw.toString("utf8");
+      } else if (raw instanceof ArrayBuffer) {
+        const buf = Buffer.from(raw);
         if (buf.length > 8 && buf[0] !== 0x7b) {
           chunks.push(buf);
           return;
         }
-        raw = buf.toString("utf8");
+        textPayload = buf.toString("utf8");
+      } else {
+        textPayload = String(raw);
       }
 
       let event: {
@@ -168,7 +176,7 @@ export function speakWithVoiceAgent(opts: {
         error?: { message?: string };
       };
       try {
-        event = JSON.parse(String(raw)) as typeof event;
+        event = JSON.parse(textPayload) as typeof event;
       } catch {
         return;
       }
