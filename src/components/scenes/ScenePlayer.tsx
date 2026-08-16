@@ -226,7 +226,10 @@ export function ScenePlayer({
   const [mediaDuration, setMediaDuration] = useState(scene.durationSec);
   const [voice, setVoice] = useState<VoiceTrack>("narragansett");
   const [subs, setSubs] = useState<SubtitleTrack>("english");
-  const [playMode, setPlayMode] = useState<PlayMode>(defaultPlayMode);
+  const singleTake = Boolean(scene.singleTake || scene.tags?.includes("single-take"));
+  const [playMode, setPlayMode] = useState<PlayMode>(
+    singleTake ? "watch" : defaultPlayMode,
+  );
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const [activeLineIdx, setActiveLineIdx] = useState(0);
   const [loopLine, setLoopLine] = useState(false);
@@ -398,7 +401,7 @@ export function ScenePlayer({
     setPracticedLines(new Set());
     setVoice("narragansett");
     setSubs("english");
-    setPlayMode(defaultPlayMode);
+    setPlayMode(singleTake ? "watch" : defaultPlayMode);
     setMediaError(null);
     setOralOnly(false);
     setMediaHasAudio(null);
@@ -441,6 +444,7 @@ export function ScenePlayer({
     progressKind,
     resolveVideo,
     defaultPlayMode,
+    singleTake,
   ]);
 
   useEffect(() => {
@@ -1216,16 +1220,21 @@ export function ScenePlayer({
   }
 
   async function hearLineManual(lang: "n" | "e" | "both") {
-    if (!activeLine) return;
     await unlockAudioPlayback();
     if (playing && !isContinuous) stopLearn();
-    // Mute film while Hear plays so we never dual-speak
     const v = videoRef.current;
     if (v) v.muted = true;
     const track: VoiceTrack =
       lang === "n" ? "narragansett" : lang === "e" ? "english" : "both";
     ttsBusy.current = false;
     stopSpeaking();
+    if (singleTake) {
+      for (const line of scene.lines) {
+        await speakLine(line, track);
+      }
+      return;
+    }
+    if (!activeLine) return;
     await speakLine(activeLine, track);
   }
 
@@ -1734,13 +1743,7 @@ export function ScenePlayer({
                 data-testid="scene-player-toggle"
                 onClick={() => void togglePlay()}
                 className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-primary-fg)]"
-                aria-label={
-                  playing
-                    ? "Pause"
-                    : isContinuous
-                      ? "Play full film"
-                      : "Play fullscreen"
-                }
+                aria-label={playing ? "Pause" : "Play film"}
               >
                 {playing ? (
                   <Pause className="h-5 w-5" />
@@ -1748,6 +1751,8 @@ export function ScenePlayer({
                   <Play className="h-5 w-5" fill="currentColor" />
                 )}
               </button>
+              {!singleTake && (
+                <>
               <button
                 type="button"
                 data-testid="scene-player-prev-line"
@@ -1766,14 +1771,20 @@ export function ScenePlayer({
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
+                </>
+              )}
               <span
                 className="ml-1 min-w-0 flex-1 truncate text-xs text-white/80 tabular-nums sm:text-sm"
                 data-testid="scene-player-time"
               >
-                Line {activeLineIdx + 1}/{scene.lines.length}
-                {speaking ? " · speaking" : ""}
-                {" · "}
-                {fmt(playMode === "learn" ? activeLine?.startSec ?? 0 : time)} /{" "}
+                {singleTake ? null : (
+                  <>
+                    Line {activeLineIdx + 1}/{scene.lines.length}
+                    {speaking ? " · speaking" : ""}
+                    {" · "}
+                  </>
+                )}
+                {fmt(playMode === "learn" && !singleTake ? activeLine?.startSec ?? 0 : time)} /{" "}
                 {fmt(displayDuration)}
               </span>
               {mediaHasAudio !== false && (
@@ -1835,7 +1846,7 @@ export function ScenePlayer({
               ) : (
                 <>
                   <Play className="h-4 w-4" />{" "}
-                  {isContinuous ? "Play full film" : "Play Learn"}
+                  {isContinuous || singleTake ? "Play film" : "Play Learn"}
                 </>
               )}
             </Button>
@@ -1863,6 +1874,7 @@ export function ScenePlayer({
             )}
           </div>
 
+          {!singleTake && (
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
               <Film className="h-4 w-4" /> Mode
@@ -1889,6 +1901,7 @@ export function ScenePlayer({
               </button>
             ))}
           </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
@@ -1941,6 +1954,7 @@ export function ScenePlayer({
             ))}
           </div>
 
+          {!singleTake && (
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-muted)]">
               <Gauge className="h-4 w-4" /> Speed
@@ -1976,7 +1990,35 @@ export function ScenePlayer({
               {loopLine ? "On" : "Off"}
             </button>
           </div>
+          )}
 
+          {singleTake ? (
+            <div className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_88%,transparent)] p-3">
+              <p className="text-sm font-medium text-[var(--color-fg)]">The greeting</p>
+              <p
+                className={cn(
+                  "mt-2 font-display font-bold leading-snug text-[var(--color-fg)]",
+                  largeTargets ? "text-[length:calc(var(--mode-font-title))]" : "text-content",
+                )}
+              >
+                {scene.lines.map((l) => l.narragansett).join("  ·  ")}
+              </p>
+              <p className="mt-2 font-semibold text-[var(--color-muted)]">
+                {scene.lines.map((l) => l.english).join(" ")}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size={largeTargets ? "lg" : "default"}
+                  onClick={() => void hearLineManual("n")}
+                >
+                  <Ear className="h-4 w-4" />
+                  Hear the greeting
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
           <div className="rounded-mode border border-[var(--color-border)] bg-[color-mix(in_oklab,var(--color-surface)_88%,transparent)] p-3">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-medium text-[var(--color-fg)]">
@@ -2065,12 +2107,14 @@ export function ScenePlayer({
             </ul>
           </div>
 
-          {practicedLines.size > 0 && (
+          {practicedLines.size > 0 && !singleTake && (
             <div className="flex flex-wrap gap-2">
               <Badge tone="neutral">
                 {practicedLines.size}/{scene.lines.length} lines heard
               </Badge>
             </div>
+          )}
+            </>
           )}
         </div>
       )}

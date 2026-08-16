@@ -67,6 +67,8 @@ export type LearningScene = {
    * the [startSec, endSec) window (Film V5 Full Day acts).
    */
   mediaWindow?: MediaWindow;
+  /** One continuous film — no line skipper, Watch-only. */
+  singleTake?: boolean;
 };
 
 const note =
@@ -141,7 +143,7 @@ export const SCENES: LearningScene[] = [
   scene({
     id: "greeting-kids",
     title: "Hello, friend (kids)",
-    summary: "One continuous hello — same two friends, a short spoken greeting, then they stay together.",
+    summary: "One short hello — five greetings in one continuous film.",
     chapter: "Salutation",
     chapterNum: 1,
     domain: "kinship",
@@ -149,17 +151,18 @@ export const SCENES: LearningScene[] = [
     style: "cinematic",
     series: "Little Ones",
     pathOrder: 1,
+    singleTake: true,
     modesAllowed: ["little_ones", "young_learner", "core_adult", "elder"],
-    videoSrc: "/scenes/hello-friend-kids.mp4",
-    posterSrc: "/scenes/hello-friend-kids.jpg",
-    durationSec: 30,
-    tags: ["kids", "hq", "greeting", "cinematic", "speak"],
+    videoSrc: "/scenes/hello-friend-kids.mp4?v=take12",
+    posterSrc: "/scenes/hello-friend-kids.jpg?v=take12",
+    durationSec: 12,
+    tags: ["kids", "hq", "greeting", "cinematic", "speak", "single-take"],
     lines: [
-      { id: "k1", speaker: "Friend", startSec: 0.55, endSec: 2.5, narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
-      { id: "k2", speaker: "Friend", startSec: 6.4, endSec: 8.1, narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
-      { id: "k3", speaker: "Friend", startSec: 12.3, endSec: 13.4, narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
-      { id: "k4", speaker: "Friend", startSec: 13.4, endSec: 14.45, narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
-      { id: "k5", speaker: "Friend", startSec: 14.45, endSec: 16.2, narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
+      { id: "k1", speaker: "Friend", startSec: 0.4, endSec: 1.9, narragansett: "Ascowequassunnúmmis", english: "Good morning.", audioSrc: "/audio/kids/k1.mp3" },
+      { id: "k2", speaker: "Friend", startSec: 2.96, endSec: 4.1, narragansett: "Askuttaaquompsín", english: "How are you?", audioSrc: "/audio/kids/k2.mp3" },
+      { id: "k3", speaker: "Friend", startSec: 5.14, endSec: 6.2, narragansett: "Asnpaumpmaúntam", english: "I am very well.", audioSrc: "/audio/kids/k3.mp3" },
+      { id: "k4", speaker: "Friend", startSec: 7.22, endSec: 8.2, narragansett: "Cowaúnckamish", english: "My respects to you.", audioSrc: "/audio/kids/k4.mp3" },
+      { id: "k5", speaker: "Friend", startSec: 9.21, endSec: 10.4, narragansett: "Taubotneanawáyean", english: "I thank you.", audioSrc: "/audio/kids/k5.mp3" },
     ],
   }),
 
