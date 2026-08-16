@@ -233,6 +233,7 @@ export function ScenePlayer({
   );
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const [activeLineIdx, setActiveLineIdx] = useState(0);
+  const [speakingLineId, setSpeakingLineId] = useState<string | null>(null);
   const [loopLine, setLoopLine] = useState(false);
   /**
    * Film soundtrack (embedded AAC). Film V5 master bakes Narragansett language
@@ -303,6 +304,8 @@ export function ScenePlayer({
           : undefined;
 
   const activeLine = scene.lines[activeLineIdx] ?? scene.lines[0];
+  const captionLine =
+    scene.lines.find((l) => l.id === speakingLineId) ?? activeLine;
   const practiceDuration = scene.durationSec;
   /**
    * Film V5 master-window: day acts play a slice of the master film.
@@ -409,6 +412,7 @@ export function ScenePlayer({
     lastSpokenLine.current = null;
     oralQueue.current = [];
     ttsBusy.current = false;
+    setSpeakingLineId(null);
     stallSince.current = null;
     preparingRef.current = false;
     learnToken.current += 1;
@@ -704,6 +708,7 @@ export function ScenePlayer({
     }
     ttsBusy.current = true;
     setSpeaking(true);
+    setSpeakingLineId(line.id);
     // Force film mute while oral plays — prevents Learn/Hear dual-speak
     const vMute = videoRef.current;
     if (vMute) vMute.muted = true;
@@ -1047,6 +1052,7 @@ export function ScenePlayer({
       setSpeaking(false);
       ttsBusy.current = false;
       oralQueue.current = [];
+      setSpeakingLineId(null);
       setPlaying(false);
       videoRef.current?.pause();
       saveStoryPosition();
@@ -1344,9 +1350,9 @@ export function ScenePlayer({
     let idx = scene.lines.findIndex(
       (l) => practiceT >= l.startSec && practiceT < l.endSec,
     );
-    if (idx < 0 && scene.lines.length) {
-      idx = scene.lines.length - 1;
-    }
+    // Stay put in the tiny gaps — never snap to the last line
+    // (that replayed "I thank you" between words).
+    if (idx < 0) idx = activeLineIdx;
     if (idx >= 0 && idx !== activeLineIdx) {
       setActiveLineIdx(idx);
       const line = scene.lines[idx];
@@ -1452,7 +1458,7 @@ export function ScenePlayer({
   }, []);
 
   const subtitleNode = useMemo(() => {
-    if (subs === "off" || !activeLine) return null;
+    if (subs === "off" || !captionLine) return null;
     return (
       <div className="pointer-events-none absolute inset-x-0 bottom-16 z-10 flex justify-center px-3 sm:bottom-20">
         <div
@@ -1470,7 +1476,7 @@ export function ScenePlayer({
                 largeTargets || isFullscreen ? "text-3xl leading-snug sm:text-4xl" : "text-xl",
               )}
             >
-              {activeLine.narragansett}
+              {captionLine.narragansett}
             </p>
           )}
           {(subs === "english" || subs === "both") && (
@@ -1481,13 +1487,13 @@ export function ScenePlayer({
                 subs === "both" && "mt-1",
               )}
             >
-              {activeLine.english}
+              {captionLine.english}
             </p>
           )}
         </div>
       </div>
     );
-  }, [subs, activeLine, largeTargets, isFullscreen]);
+  }, [subs, captionLine, largeTargets, isFullscreen]);
 
   return (
     <div
