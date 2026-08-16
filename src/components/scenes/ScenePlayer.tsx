@@ -205,12 +205,12 @@ export function ScenePlayer({
   const learnToken = useRef(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSpokenLine = useRef<string | null>(null);
+  const oralQueue = useRef<(typeof scene.lines)[number][]>([]);
+  const ttsBusy = useRef(false);
   /** Tracks film language authority so ambient-off / probe-silent can re-arm oral. */
   const prevFilmCarriesLanguage = useRef<boolean | null>(null);
   /** User wants continuous film playing — auto-resume if browser stalls */
   const userIntentPlay = useRef(false);
-  /** Guard against overlapping TTS during continuous watch */
-  const ttsBusy = useRef(false);
   const stallSince = useRef<number | null>(null);
   const lastProgressAt = useRef(0);
   const lastMediaTime = useRef(0);
@@ -407,6 +407,7 @@ export function ScenePlayer({
     setOralOnly(false);
     setMediaHasAudio(null);
     lastSpokenLine.current = null;
+    oralQueue.current = [];
     ttsBusy.current = false;
     stallSince.current = null;
     preparingRef.current = false;
@@ -694,11 +695,11 @@ export function ScenePlayer({
     track: VoiceTrack = voice,
   ) {
     if (track === "off" || !line) return;
-    // Continuous watch: interrupt prior speech so the line under the playhead is always heard
-    if (isContinuous && ttsBusy.current) {
-      stopSpeaking();
-      ttsBusy.current = false;
-    } else if (ttsBusy.current) {
+    // Never cut the Voice Agent off mid-word. Queue the next line.
+    if (ttsBusy.current) {
+      if (!oralQueue.current.some((l) => l.id === line.id)) {
+        oralQueue.current.push(line);
+      }
       return;
     }
     ttsBusy.current = true;
@@ -754,7 +755,6 @@ export function ScenePlayer({
       setSpeaking(false);
       ttsBusy.current = false;
       stopJawPulse();
-      // Restore Watch film audio if ambient policy allows
       const vRest = videoRef.current;
       if (vRest) {
         if (filmAudioShouldPlay) {
@@ -764,6 +764,8 @@ export function ScenePlayer({
           vRest.muted = true;
         }
       }
+      const queued = oralQueue.current.shift();
+      if (queued) void speakLine(queued, track);
     }
   }
 
@@ -1044,6 +1046,7 @@ export function ScenePlayer({
       stopSpeaking();
       setSpeaking(false);
       ttsBusy.current = false;
+      oralQueue.current = [];
       setPlaying(false);
       videoRef.current?.pause();
       saveStoryPosition();
@@ -1200,6 +1203,7 @@ export function ScenePlayer({
     setActiveLineIdx(0);
     setTime(0);
     lastSpokenLine.current = null;
+    oralQueue.current = [];
     ttsBusy.current = false;
     pendingResumeSec.current = null;
     appliedResume.current = true;
