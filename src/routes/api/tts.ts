@@ -12,9 +12,9 @@ import {
 /**
  * Server-only oral synthesis proxy.
  *
- * When XAI_VOICE_AGENT_ID is set (Vercel env), this route speaks ONLY
- * through that agent. It does not fall through to REST TTS or a
- * different computer voice — that was swapping speakers on deploy.
+ * When XAI_VOICE_AGENT_ID is set, we speak through that agent first.
+ * If the agent socket fails, REST TTS (same API key) keeps Hear alive.
+ * Env is read at request time so Vercel runtime values are used.
  *
  * Env (runtime, not build-time):
  *   XAI_API_KEY
@@ -122,14 +122,14 @@ export const Route = createFileRoute("/api/tts")({
         const speed = kind === "narragansett" ? 0.78 : 0.92;
         const agentId = getVoiceAgentId();
 
-        // Voice Agent is the only speaker when configured.
+        // Voice Agent first (your programmed voice).
         if (agentId && isVoiceAgentId(agentId)) {
           try {
             const result = await speakWithVoiceAgent({
               apiKey,
               agentId,
               text,
-              timeoutMs: 28_000,
+              timeoutMs: 18_000,
             });
 
             if (result.ok) {
@@ -144,27 +144,13 @@ export const Route = createFileRoute("/api/tts")({
               });
             }
 
-            console.error("[tts] Voice Agent failed", result);
-            return Response.json(
-              {
-                error: "voice_agent_failed",
-                message:
-                  "Your Voice Agent did not return audio. Check the agent is published and the API key can use it.",
-                detail: result.error,
-              },
-              { status: 502 },
-            );
+            console.error("[tts] Voice Agent failed, trying REST TTS", result);
           } catch (err) {
-            console.error("[tts] Voice Agent exception", err);
-            return Response.json(
-              {
-                error: "voice_agent_exception",
-                message: "Voice Agent request failed.",
-              },
-              { status: 502 },
-            );
+            console.error("[tts] Voice Agent exception, trying REST TTS", err);
           }
         }
+
+        // REST TTS so Hear never goes silent if the agent socket fails.
 
         const voiceId = getTtsVoiceId();
         try {

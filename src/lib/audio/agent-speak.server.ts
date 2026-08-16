@@ -1,13 +1,17 @@
 /**
- * Speak text through an xAI Voice Agent (realtime WebSocket).
- * Uses force_message so the agent voice speaks exactly our text (no free chat).
+ * Speak exact text through an xAI Voice Agent (realtime WebSocket).
  *
- * Env: XAI_API_KEY + agent id (XAI_VOICE_AGENT_ID or XAI_TTS_VOICE=agent_…)
+ * Docs: wss://api.x.ai/v1/realtime?model=grok-voice-latest
+ * Saved builder agents: pass agent_id. force_message = hardcoded TTS,
+ * no model improvisation (needed for Narragansett forms).
+ *
+ * Env: XAI_API_KEY + XAI_VOICE_AGENT_ID
  */
 
 import WebSocket from "ws";
 
 const SAMPLE_RATE = 24000;
+const MODEL = "grok-voice-latest";
 
 function pcm16ToWav(pcm: Buffer, sampleRate = SAMPLE_RATE): Buffer {
   const numChannels = 1;
@@ -20,8 +24,8 @@ function pcm16ToWav(pcm: Buffer, sampleRate = SAMPLE_RATE): Buffer {
   header.writeUInt32LE(36 + dataSize, 4);
   header.write("WAVE", 8);
   header.write("fmt ", 12);
-  header.writeUInt32LE(16, 16); // PCM chunk size
-  header.writeUInt16LE(1, 20); // PCM format
+  header.writeUInt32LE(16, 16);
+  header.writeUInt16LE(1, 20);
   header.writeUInt16LE(numChannels, 22);
   header.writeUInt32LE(sampleRate, 24);
   header.writeUInt32LE(byteRate, 28);
@@ -36,9 +40,18 @@ export type AgentSpeakResult =
   | { ok: true; wav: Buffer; agentId: string }
   | { ok: false; error: string; detail?: string };
 
-/**
- * Connect to Voice Agent, force-speak `text`, collect PCM, return WAV.
- */
+function audioFromEvent(event: {
+  type?: string;
+  delta?: unknown;
+  audio?: unknown;
+}): Buffer | null {
+  const raw = event.delta ?? event.audio;
+  if (typeof raw === "string" && raw.length > 0) {
+    return Buffer.from(raw, "base64");
+  }
+  return null;
+}
+
 export function speakWithVoiceAgent(opts: {
   apiKey: string;
   agentId: string;
@@ -46,20 +59,26 @@ export function speakWithVoiceAgent(opts: {
   timeoutMs?: number;
 }): Promise<AgentSpeakResult> {
   const { apiKey, agentId, text } = opts;
-  const timeoutMs = opts.timeoutMs ?? 25_000;
-  const url = `wss://api.x.ai/v1/realtime?agent_id=${encodeURIComponent(agentId)}`;
+  const timeoutMs = opts.timeoutMs ?? 20_000;
+  const url =
+    `wss://api.x.ai/v1/realtime?model=${encodeURIComponent(MODEL)}` +
+    `&agent_id=${encodeURIComponent(agentId)}`;
 
   return new Promise((resolve) => {
     let settled = false;
     const chunks: Buffer[] = [];
-    let sawAudio = false;
+    let sentForce = false;
 
     const finish = (result: AgentSpeakResult) => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      clearTimeout(forceFallback);
       try {
-        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+        if (
+          ws.readyState === WebSocket.OPEN ||
+          ws.readyState === WebSocket.CONNECTING
+        ) {
           ws.close();
         }
       } catch {
@@ -69,12 +88,8 @@ export function speakWithVoiceAgent(opts: {
     };
 
     const timer = setTimeout(() => {
-      if (sawAudio && chunks.length) {
-        finish({
-          ok: true,
-          wav: pcm16ToWav(Buffer.concat(chunks)),
-          agentId,
-        });
+      if (chunks.length) {
+        finish({ ok: true, wav: pcm16ToWav(Buffer.concat(chunks)), agentId });
       } else {
         finish({
           ok: false,
@@ -84,7 +99,24 @@ export function speakWithVoiceAgent(opts: {
       }
     }, timeoutMs);
 
+    const sendForce = () => {
+      if (sentForce || settled) return;
+      sentForce = true;
+      ws.send(
+        JSON.stringify({
+          type: "conversation.item.create",
+          item: {
+            type: "force_message",
+            role: "assistant",
+            interruptible: false,
+            content: [{ type: "output_text", text }],
+          },
+        }),
+      );
+    };
+
     let ws: WebSocket;
+    let forceFallback: ReturnType<typeof setTimeout>;
     try {
       ws = new WebSocket(url, {
         headers: { Authorization: `Bearer ${apiKey}` },
@@ -98,46 +130,51 @@ export function speakWithVoiceAgent(opts: {
       return;
     }
 
+    forceFallback = setTimeout(sendForce, 2500);
+
     ws.on("open", () => {
-      // Prefer PCM @ 24kHz JSON transport (base64 deltas)
       ws.send(
         JSON.stringify({
           type: "session.update",
           session: {
+            turn_detection: null,
             audio: {
               output: {
                 format: { type: "audio/pcm", rate: SAMPLE_RATE },
                 transport: "json",
-                speed: 0.85,
+                speed: 0.88,
               },
             },
-          },
-        }),
-      );
-
-      // Speak exact text with the agent’s configured voice (no model improvisation)
-      ws.send(
-        JSON.stringify({
-          type: "conversation.item.create",
-          item: {
-            type: "force_message",
-            role: "assistant",
-            interruptible: false,
-            content: [{ type: "output_text", text }],
           },
         }),
       );
     });
 
     ws.on("message", (raw) => {
+      if (Buffer.isBuffer(raw) || raw instanceof ArrayBuffer) {
+        const buf = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
+        // Binary PCM frame
+        if (buf.length > 8 && buf[0] !== 0x7b) {
+          chunks.push(buf);
+          return;
+        }
+        raw = buf.toString("utf8");
+      }
+
       let event: {
         type?: string;
-        delta?: string;
+        delta?: unknown;
+        audio?: unknown;
         error?: { message?: string };
       };
       try {
-        event = JSON.parse(raw.toString()) as typeof event;
+        event = JSON.parse(String(raw)) as typeof event;
       } catch {
+        return;
+      }
+
+      if (event.type === "session.updated" || event.type === "session.created") {
+        sendForce();
         return;
       }
 
@@ -150,23 +187,24 @@ export function speakWithVoiceAgent(opts: {
         return;
       }
 
-      // Audio chunk (docs: response.output_audio.delta; some stacks use response.audio.delta)
       if (
-        (event.type === "response.output_audio.delta" ||
-          event.type === "response.audio.delta") &&
-        typeof event.delta === "string"
+        event.type === "response.output_audio.delta" ||
+        event.type === "response.audio.delta"
       ) {
-        sawAudio = true;
-        chunks.push(Buffer.from(event.delta, "base64"));
+        const piece = audioFromEvent(event);
+        if (piece) chunks.push(piece);
         return;
       }
 
-      if (event.type === "response.done" || event.type === "response.output_audio.done") {
+      if (
+        event.type === "response.done" ||
+        event.type === "response.output_audio.done"
+      ) {
         if (chunks.length === 0) {
           finish({
             ok: false,
             error: "agent_no_audio",
-            detail: "Agent completed without audio — check agent voice config",
+            detail: "Agent completed without audio — check the agent has a voice",
           });
           return;
         }
@@ -205,7 +243,6 @@ export function speakWithVoiceAgent(opts: {
   });
 }
 
-/** True if string is an xAI Voice Agent id */
 export function isVoiceAgentId(id: string | undefined | null): boolean {
   return Boolean(id && /^agent_/i.test(id.trim()));
 }

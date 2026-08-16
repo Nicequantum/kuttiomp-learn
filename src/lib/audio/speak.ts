@@ -270,6 +270,8 @@ export async function prefetchSpeak(
   try {
     if (grokAvailable === null) await checkTtsStatus();
     if (!grokAvailable) return false;
+    // Don't stampede a Voice Agent with four warm-up sockets on page load.
+    if (ttsProvider === "xai-voice-agent") return false;
     const url = await fetchTtsBlobUrl(text.trim(), kind);
     return Boolean(url);
   } catch {
@@ -300,9 +302,8 @@ export async function speakWord(opts: {
     await checkTtsStatus();
   }
 
-  // Programmed Voice Agent / Grok TTS is the language voice when live.
-  // Do not fall through to a different packaged speaker if the agent is
-  // the configured provider — that is how Watch/Hear got two voices.
+  // Cloud voice first (Voice Agent, then Grok TTS). If that fails,
+  // packaged oral and browser still speak — never go silent.
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett");
     if (ok) {
@@ -310,12 +311,6 @@ export async function speakWord(opts: {
         await grokSpeak(opts.english, "english");
       }
       return "grok";
-    }
-    if (ttsProvider === "xai-voice-agent") {
-      if (opts.includeEnglish && opts.english) {
-        await grokSpeak(opts.english, "english");
-      }
-      return "none";
     }
   }
 

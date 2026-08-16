@@ -1,22 +1,20 @@
 /**
  * Read server env at request time.
  *
- * Vite/Nitro can replace `process.env.XAI_API_KEY` with an empty string at
- * *build* time if the key is not present on the build machine. Vercel then
- * injects the real values at runtime — we must look them up by name so the
- * replacement cannot erase them.
- *
- * Never import this file from client code.
+ * Vite can replace `process.env.XAI_API_KEY` with "" at build time.
+ * Look up by name so Vercel runtime values survive.
+ * Never import this from client code.
  */
-function runtimeEnv(): Record<string, string | undefined> {
-  const g = globalThis as typeof globalThis & {
-    process?: { env?: Record<string, string | undefined> };
-  };
-  return g.process?.env ?? {};
-}
-
 export function readServerEnv(name: string): string {
-  return (runtimeEnv()[name] ?? "").trim();
+  try {
+    const read = new Function(
+      "k",
+      "try { return (typeof process !== 'undefined' && process.env && process.env[k]) || ''; } catch (e) { return ''; }",
+    ) as (k: string) => unknown;
+    return String(read(name) ?? "").trim();
+  } catch {
+    return "";
+  }
 }
 
 export function getXaiApiKey(): string {
