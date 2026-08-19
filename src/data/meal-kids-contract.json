@@ -1,0 +1,117 @@
+{
+  "clipId": "meal-kids",
+  "title": "Come and eat",
+  "series": "Little Ones",
+  "version": "v13-tan-rules",
+  "status": "review",
+  "qualityFloor": "v13-timed-i2v",
+  "pedagogyRole": "Food / hospitality",
+  "durationSec": 14.72,
+  "aspect": "9:16",
+  "resolution": {
+    "width": 1080,
+    "height": 1920
+  },
+  "fps": 24,
+  "continuousRequired": true,
+  "segmentedShots": false,
+  "videoPath": "/scenes/meal-kids.mp4",
+  "posterPath": "/scenes/meal-kids.jpg",
+  "oralPath": "/audio/kids/meal-kids.mp3",
+  "stillBiblePath": "/stills/friend-tan-teal-bible.jpg",
+  "stillScenePath": "/stills/meal-tan-teal.jpg",
+  "castLock": [
+    "Friend Tan",
+    "Friend Teal"
+  ],
+  "speakersAllowed": [
+    "Friend Tan",
+    "Friend Teal"
+  ],
+  "authoritySource": "reconstruction",
+  "oralSource": "synthetic_tts",
+  "requiresBadge": true,
+  "modesAllowed": [
+    "little_ones"
+  ],
+  "sacred": false,
+  "clanRestricted": false,
+  "sourceNote": "Everyday meal forms from Roger Williams, A Key into the Language of America (1643), as used in the one-day film (L023–L028). Living tribal authority remains supreme. Synthetic oral is a temporary scaffold.",
+  "playbackContract": {
+    "modeDefault": "watch",
+    "continuousRequired": true,
+    "filmCarriesLanguage": true,
+    "soundtrackDefaultOn": true,
+    "ttsMustNotStackOnFilm": true,
+    "endBehavior": "natural-end"
+  },
+  "visualQa": {
+    "mk1": "locked — Tan first line, same nucleus as the take you called perfect",
+    "mk2": "Teal — voice starts on her open at 2.50 and holds to mouth-close",
+    "mk3": "locked — Tan second line, same nucleus as the take you called perfect",
+    "mk4": "Teal — voice delayed to her open at 8.05; tail padding cut",
+    "mk5": "Tan last — waits for the last visible mouth at 10.48; stops when the word ends"
+  },
+  "lines": [
+    {
+      "id": "mk1",
+      "speaker": "Friend Tan",
+      "narragansett": "Téaquacumméich",
+      "english": "What will you eat?",
+      "phoneticScaffold": "Tay-ah-kwah-kum-meech",
+      "fromLine": "L024",
+      "startSec": 0.56,
+      "endSec": 1.8,
+      "historicalSource": "Williams 1643; L024 in one-day film",
+      "audioPath": "/audio/kids/mk1.mp3"
+    },
+    {
+      "id": "mk2",
+      "speaker": "Friend Teal",
+      "narragansett": "Aupúminea-nawsaùmp",
+      "english": "Soft corn porridge.",
+      "phoneticScaffold": "Ow-poo-min-ee-ah now-sowmp",
+      "fromLine": "L025",
+      "startSec": 2.5,
+      "endSec": 4.436,
+      "historicalSource": "Williams 1643; L025 in one-day film",
+      "audioPath": "/audio/kids/mk2.mp3"
+    },
+    {
+      "id": "mk3",
+      "speaker": "Friend Tan",
+      "narragansett": "Namitch, commetesímmin",
+      "english": "Stay — you must eat first.",
+      "phoneticScaffold": "Nah-mitch, koh-meh-teh-sim-min",
+      "fromLine": "L023",
+      "startSec": 5.18,
+      "endSec": 7.0,
+      "historicalSource": "Williams 1643; L023 in one-day film",
+      "audioPath": "/audio/kids/mk3.mp3"
+    },
+    {
+      "id": "mk4",
+      "speaker": "Friend Teal",
+      "narragansett": "Taubotneanawáyean",
+      "english": "I thank you.",
+      "phoneticScaffold": "Tow-bot-nee-ah-nah-why-yan",
+      "fromLine": "L027",
+      "startSec": 8.05,
+      "endSec": 9.51,
+      "historicalSource": "Williams 1643; L027 in one-day film",
+      "audioPath": "/audio/kids/mk4.mp3"
+    },
+    {
+      "id": "mk5",
+      "speaker": "Friend Tan",
+      "narragansett": "Cowaúnckamish",
+      "english": "My respects to you.",
+      "phoneticScaffold": "Koh-wawn-kah-mish",
+      "fromLine": "L028",
+      "startSec": 10.48,
+      "endSec": 11.44,
+      "historicalSource": "Williams 1643; L028 in one-day film",
+      "audioPath": "/audio/kids/mk5.mp3"
+    }
+  ]
+}

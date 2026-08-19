@@ -1,0 +1,11 @@
+{
+  "durationSec": 14.72,
+  "note": "Tan mk1 and mk3 stay on the locked nuclei. Teal and mk5 follow the same rule: voice starts when the mouth opens, stops when the word ends.",
+  "placements": [
+    { "id": "mk1", "startSec": 0.56 },
+    { "id": "mk2", "startSec": 2.5, "stretchTo": 4.45 },
+    { "id": "mk3", "startSec": 5.18 },
+    { "id": "mk4", "startSec": 8.05 },
+    { "id": "mk5", "startSec": 10.48 }
+  ]
+}
