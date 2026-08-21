@@ -293,3 +293,6 @@ This file should be kept in sync:
 
 Backend-specific notes for FastAPI implementers:  
 `docs/BACKEND_IMPLEMENTATION_NOTES.md` in this repo (copy into monorepo).
+
+Phased readiness / cutover checklist:  
+`docs/BACKEND_ASSESSMENT_ROADMAP.md`.
