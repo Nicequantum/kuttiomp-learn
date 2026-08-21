@@ -41,9 +41,12 @@ function visibleWords(modeOverride?: LearningModeId | null): LexicalWord[] {
     );
   }
 
-  let list = bundle.words.filter(
-    (w) => w.source === "historical_seed" || w.source === "keeper_approved",
-  );
+  let list = bundle.words.filter((w) => {
+    if (w.isSacred) return false;
+    if (w.source === "historical_seed") return true;
+    if (w.source === "keeper_approved") return w.elderApproved !== false;
+    return false;
+  });
 
   if (mode === "little_ones" || mode === "young_learner") {
     list = list.filter((w) => {
@@ -86,7 +89,7 @@ export function getWordById(id: string): LexicalWord | undefined {
   const fromVisible = visibleWords().find((w) => w.id === id);
   if (fromVisible) return fromVisible;
   if (mode === "core_adult" || mode === "elder" || !mode) {
-    return getActiveBundle().words.find((w) => w.id === id);
+    return getActiveBundle().words.find((w) => w.id === id && !w.isSacred);
   }
   return undefined;
 }

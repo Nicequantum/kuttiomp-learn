@@ -36,10 +36,10 @@ function ProfilePage() {
         return;
       }
       if (s.provider === "xai-voice-agent") {
-        setTts(`Your Voice Agent is connected (${s.voice})`);
+        setTts(`Machine Voice Agent connected (${s.voice}) — not a living speaker`);
         return;
       }
-      setTts(`Grok TTS ready (voice: ${s.voice ?? "default"})`);
+      setTts(`Machine TTS ready (Grok, voice: ${s.voice ?? "default"})`);
     });
   }, []);
 
@@ -144,9 +144,11 @@ function ProfilePage() {
         <div className="surface-card pad-mode space-y-2">
           <p className="font-medium">{tts}</p>
           <p className="text-sm text-[var(--color-muted)] leading-relaxed">
-            Learn, Hear, and Watch all use this same voice. Path films are
-            picture-only so a leftover computer voice cannot replace the agent
-            you programmed. Set{" "}
+            Living speaker recordings play first when a word has{" "}
+            <code className="text-[var(--color-fg)]">primaryAudioUrl</code>.
+            Machine TTS is a demo stand-in, never labeled as a speaker. Path
+            films are picture-only so a leftover computer voice cannot replace
+            the agent you programmed. Set{" "}
             <code className="text-[var(--color-fg)]">XAI_API_KEY</code> and{" "}
             <code className="text-[var(--color-fg)]">XAI_VOICE_AGENT_ID</code>{" "}
             on the server (your <code className="text-[var(--color-fg)]">agent_…</code> id).

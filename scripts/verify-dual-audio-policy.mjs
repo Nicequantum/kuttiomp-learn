@@ -2,7 +2,10 @@
 /**
  * Pure language-clock policy unit checks (no browser).
  * Mirrors src/lib/audio/film-language-clock.ts — keep in sync.
+ * Also proves speakWord contract order: living recording → machine TTS → browser.
  */
+import { readFileSync } from "node:fs";
+
 let failed = 0;
 function assert(cond, msg) {
   if (!cond) {
@@ -137,6 +140,34 @@ function computeFilmCarriesLanguage({
       oralOnly: true,
     }),
     "oralOnly keeps film muted",
+  );
+}
+
+// Public Lexicon Contract: living primaryAudioUrl before Grok / machine TTS
+{
+  const speakSrc = readFileSync(
+    new URL("../src/lib/audio/speak.ts", import.meta.url),
+    "utf8",
+  );
+  const start = speakSrc.indexOf("export async function speakWord");
+  assert(start >= 0, "speakWord is exported");
+  const body = speakSrc.slice(start);
+  const primaryIdx = body.indexOf("opts.primaryAudioUrl");
+  const grokNarrIdx = body.indexOf('grokSpeak(opts.narragansett');
+  assert(primaryIdx >= 0, "speakWord considers primaryAudioUrl");
+  assert(grokNarrIdx >= 0, "speakWord can fall back to machine TTS");
+  assert(
+    primaryIdx < grokNarrIdx,
+    "living primaryAudioUrl is tried before Grok TTS",
+  );
+  const grokNarrGate = body.search(/if \(grokAvailable\) \{\s*\n\s*const ok = await grokSpeak\(opts\.narragansett/);
+  assert(
+    grokNarrGate < 0 || primaryIdx < grokNarrGate,
+    "Grok narragansett path does not skip living recordings",
+  );
+  assert(
+    /machine TTS|living speaker recording/i.test(speakSrc),
+    "speakWord comments label TTS as machine, not a speaker",
   );
 }
 

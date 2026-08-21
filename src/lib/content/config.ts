@@ -34,17 +34,18 @@ export function isApiConfigured(): boolean {
 }
 
 /**
- * Mock living pipeline while Keepers build real data.
- * Default ON when no live API is configured (so engineering + demos progress).
- * Set VITE_USE_MOCK_PUBLIC_API=false to force seed-only.
- * When VITE_API_BASE_URL is set, live API always wins (mock ignored).
+ * Mock living pipeline — engineering only.
+ * Opt-in: must be explicitly `true` / `1`. Never default on.
+ * Production-shaped configs leave this unset/false so mock rows cannot
+ * ship as living Keeper forms. When `VITE_API_BASE_URL` is set, the live
+ * API always wins and mock is ignored.
  */
 export function isMockPipelineEnabled(): boolean {
   if (isApiConfigured()) return false;
-  const raw = String(
-    import.meta.env.VITE_USE_MOCK_PUBLIC_API ?? "true",
-  ).toLowerCase();
-  return raw !== "false" && raw !== "0";
+  const raw = String(import.meta.env.VITE_USE_MOCK_PUBLIC_API ?? "")
+    .trim()
+    .toLowerCase();
+  return raw === "true" || raw === "1" || raw === "yes";
 }
 
 /**

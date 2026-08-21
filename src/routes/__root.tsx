@@ -84,8 +84,9 @@ function RootDocument() {
       <body className="relative min-h-dvh">
         <ErrorBoundary>
           <ScenicBackdrop />
-          <CorpusHydrator />
-          <Outlet />
+          <CorpusHydrator>
+            <Outlet />
+          </CorpusHydrator>
         </ErrorBoundary>
         <Scripts />
       </body>

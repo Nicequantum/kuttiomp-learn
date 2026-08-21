@@ -45,7 +45,7 @@ export function OralPlayer({
         setStatusLine("Browser voice — demo stand-in only");
         return;
       }
-      setStatusLine("Demo cloud voice (not a living speaker)");
+      setStatusLine("Machine text-to-speech (not a living speaker)");
     });
   }, [primaryAudioUrl]);
 
@@ -71,6 +71,9 @@ export function OralPlayer({
     if (engine === "recording") {
       setStatusLine("Playing living speaker recording");
     }
+    if (engine === "grok") {
+      setStatusLine("Playing machine text-to-speech (not a living speaker)");
+    }
     setPlaying(false);
   }
 
@@ -91,9 +94,9 @@ export function OralPlayer({
         </div>
         <span className="text-xs text-[var(--color-subtle)]">
           {lastEngine === "recording"
-            ? "Speaker"
+            ? "Living speaker"
             : lastEngine === "grok"
-              ? "Demo voice"
+              ? "Machine TTS"
               : lastEngine === "browser"
                 ? "Device"
                 : ""}
