@@ -1,0 +1,38 @@
+# Cheap PR/main gate: typecheck + lexicon contract + dual-audio policy.
+# Does not set VITE_API_BASE_URL or VITE_USE_MOCK_PUBLIC_API (defaults stay empty/false).
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Matches @types/node ^22 and the Vercel/runtime Node 22 line.
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Verify
+        run: npm run verify
