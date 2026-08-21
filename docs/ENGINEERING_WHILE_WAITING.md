@@ -2,6 +2,9 @@
 
 Work that advances the product **without** waiting on live lexicon data.
 
+For the Keeper/API side (what must ship before living corpus appears in Learn), see
+[BACKEND_ASSESSMENT_ROADMAP.md](./BACKEND_ASSESSMENT_ROADMAP.md).
+
 ## Already in place
 
 - Public Lexicon Contract v1 + adapter + hydrate

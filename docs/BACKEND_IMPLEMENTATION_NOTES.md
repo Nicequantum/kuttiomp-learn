@@ -2,7 +2,8 @@
 
 Copy this file into `Nicequantum/Kuttiomp/docs/` when implementing.
 
-Companion contract: [PUBLIC_LEXICON_CONTRACT.md](./PUBLIC_LEXICON_CONTRACT.md)
+Companion contract: [PUBLIC_LEXICON_CONTRACT.md](./PUBLIC_LEXICON_CONTRACT.md)  
+Phased assessment & cutover: [BACKEND_ASSESSMENT_ROADMAP.md](./BACKEND_ASSESSMENT_ROADMAP.md)
 
 ## Suggested FastAPI routes
 

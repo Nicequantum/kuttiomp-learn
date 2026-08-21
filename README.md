@@ -9,7 +9,8 @@ This is the app speakers, families, and learners open — **not** the Knowledge 
 - **Voice:** living speaker recordings first; machine TTS only as a labeled stand-in  
 - **PWA:** installable to iPhone Home Screen after HTTPS deploy  
 
-Related monorepo (backend + Keeper portal): [Nicequantum/Kuttiomp](https://github.com/Nicequantum/Kuttiomp)
+Related monorepo (backend + Keeper portal): [Nicequantum/Kuttiomp](https://github.com/Nicequantum/Kuttiomp)  
+Backend readiness / cutover: [docs/BACKEND_ASSESSMENT_ROADMAP.md](./docs/BACKEND_ASSESSMENT_ROADMAP.md)
 
 This app only **reads** approved + public + non-sacred rows. Keepers write language only in Kuttiomp.
 
