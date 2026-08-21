@@ -344,8 +344,26 @@ export async function speakWord(opts: {
   }
   if (myGen !== speakGen) return "none";
 
-  // When the Voice Agent / Grok TTS is configured it is the only speaker.
-  // Packaged + browser must not start — that is how three voices stacked.
+  // Public Lexicon Contract: living speaker recording first, then demo
+  // cloud voice, then device speech. ScenePlayer already omits packaged
+  // film audio when the Voice Agent is configured, so films stay one-speaker.
+  if (opts.primaryAudioUrl) {
+    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
+    if (myGen !== speakGen) return "none";
+    if (ok) {
+      if (opts.includeEnglish && opts.english) {
+        if (grokAvailable) {
+          await grokSpeak(opts.english, "english");
+        } else {
+          await browserSpeak(opts.english, { rate: 0.9 });
+        }
+      }
+      return "recording";
+    }
+  }
+
+  // Demo Voice Agent / Grok TTS. Do not also start packaged or browser
+  // speech — that is how three voices stacked.
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett", opts.onStart);
     if (myGen !== speakGen) return "none";
@@ -357,16 +375,6 @@ export async function speakWord(opts: {
       return "grok";
     }
     return "none";
-  }
-
-  if (opts.primaryAudioUrl) {
-    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
-    if (ok) {
-      if (opts.includeEnglish && opts.english) {
-        await browserSpeak(opts.english, { rate: 0.9 });
-      }
-      return "recording";
-    }
   }
 
   if (!opts.narragansett?.trim() && !opts.english?.trim()) return "none";

@@ -116,4 +116,6 @@ See [docs/PUBLIC_LEXICON_CONTRACT.md](docs/PUBLIC_LEXICON_CONTRACT.md).
 | `VITE_CONTENT_CORPUS` | `demo_historical` (default) or `keeper_only` |
 | `VITE_API_BASE_URL` | Public API origin, e.g. `https://your-api.example.com` |
 
-Until the monorepo exposes `GET /api/v1/public/lexicon`, leave `VITE_API_BASE_URL` empty.
+Until the Keeper backend exposes `GET /api/v1/public/lexicon`, leave `VITE_API_BASE_URL` empty.
+
+The GitHub repo named `Nicequantum/Kuttiomp` is **not required to be merged** into this learner repo. Keep two GitHub repositories and two deployments; attach them with this env var plus CORS on the API. See [docs/SYSTEM.md](./docs/SYSTEM.md).

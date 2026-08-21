@@ -106,14 +106,32 @@ async function fetchPublicLexicon(): Promise<{
   const base = API_BASE_URL;
   if (!base) throw new Error("API not configured");
 
-  const res = await fetch(`${base}/api/v1/public/lexicon?limit=200&offset=0`, {
-    headers: { Accept: "application/json" },
-  });
-  if (!res.ok) {
-    throw new Error(`Lexicon HTTP ${res.status}`);
+  const PAGE = 200;
+  const MAX_WORDS = 10_000;
+  const collected: PublicLexiconResponse["words"] = [];
+  let offset = 0;
+  let total = Number.POSITIVE_INFINITY;
+  let version: string | null = null;
+
+  while (offset < total && collected.length < MAX_WORDS) {
+    const res = await fetch(
+      `${base}/api/v1/public/lexicon?limit=${PAGE}&offset=${offset}`,
+      { headers: { Accept: "application/json" } },
+    );
+    if (!res.ok) {
+      throw new Error(`Lexicon HTTP ${res.status}`);
+    }
+    const data = (await res.json()) as PublicLexiconResponse;
+    const page = data.words ?? [];
+    version = data.corpusVersion ?? version;
+    if (typeof data.total === "number") total = data.total;
+    collected.push(...page);
+    if (page.length === 0) break;
+    offset += page.length;
+    if (typeof data.total !== "number" && page.length < PAGE) break;
   }
-  const data = (await res.json()) as PublicLexiconResponse;
-  const words = adaptPublicWords(data.words ?? []);
+
+  const words = adaptPublicWords(collected);
 
   let paths: LearningPath[] = [];
   try {
@@ -134,7 +152,7 @@ async function fetchPublicLexicon(): Promise<{
   return {
     words,
     paths,
-    version: data.corpusVersion ?? null,
+    version,
   };
 }
 

@@ -11,6 +11,8 @@ This is the app speakers, families, and learners open — **not** the Knowledge 
 
 Related monorepo (backend + Keeper portal): [Nicequantum/Kuttiomp](https://github.com/Nicequantum/Kuttiomp)
 
+How the two repos attach (do **not** merge them): [docs/SYSTEM.md](./docs/SYSTEM.md)
+
 ---
 
 ## Quick start (local)

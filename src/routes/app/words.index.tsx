@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { CorpusStatus } from "@/components/content/CorpusStatus";
 import { WordCard } from "@/components/content/WordCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -44,12 +45,13 @@ function WordsPage() {
       <header className="space-y-2">
         <h1 className="font-display text-display">Words</h1>
         <p className="text-content text-[var(--color-muted)]">
-          Search modern English or Narragansett (Williams spelling). Full Key
-          seed — living forms appear when published.
+          Search modern English or Narragansett. Living forms appear here when
+          Knowledge Keepers publish them.
         </p>
       </header>
 
       <HistoricalBanner compact />
+      <CorpusStatus />
       <OrthographyGuide compact />
 
       <div className="relative">
