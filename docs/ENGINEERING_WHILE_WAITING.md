@@ -7,7 +7,7 @@ Work that advances the product **without** waiting on live lexicon data.
 - Public Lexicon Contract v1 + adapter + hydrate
 - Demo Williams seed for Keepers demos
 - Land Night UI + Elder photo + white cards
-- Mock living pipeline (`VITE_USE_MOCK_PUBLIC_API=true`)
+- Mock living pipeline (`VITE_USE_MOCK_PUBLIC_API=true` in **dev**; production stays seed-only until `VITE_API_BASE_URL` is set)
 - Progress + listen resume cursor
 - Error boundary
 - `npm run verify:contract`
@@ -33,7 +33,8 @@ Work that advances the product **without** waiting on live lexicon data.
 # Default demo
 VITE_CONTENT_CORPUS=demo_historical
 
-# Engineering: test living merge without API
+# Engineering: test living merge without API (dev). Production builds
+# ignore the mock unless this is explicitly true.
 VITE_USE_MOCK_PUBLIC_API=true
 
 # When public API exists

@@ -30,6 +30,7 @@ export function isPublishablePublicWord(w: PublicWord): boolean {
     return false;
   }
   if (w.isSacred) return false;
+  if (w.elderApproved === false) return false;
   if (w.source !== "keeper_approved") return false;
   return true;
 }

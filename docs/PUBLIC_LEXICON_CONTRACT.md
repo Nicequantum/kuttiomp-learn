@@ -279,8 +279,10 @@ Audio priority in UI:
 - [x] Wire types + adapter stubs
 - [x] `loadCorpus()` / hydrate with seed fallback
 - [x] Env: `VITE_API_BASE_URL`, `VITE_CONTENT_CORPUS`
-- [ ] Prefer `primaryAudioUrl` in OralPlayer when present
-- [ ] Production empty state polish when `keeper_only` + empty
+- [x] Prefer `primaryAudioUrl` in OralPlayer when present
+- [x] Production empty state when `keeper_only` + empty
+- [x] Paginate public lexicon (`limit`/`offset` until `total`)
+- [x] Mock living fixture defaults **dev-only** (never production unless explicitly set)
 
 ---
 

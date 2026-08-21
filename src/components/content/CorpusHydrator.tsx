@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   getCorpusLoadState,
   hydrateCorpus,
@@ -7,23 +7,25 @@ import {
 
 /**
  * Boots public API corpus when VITE_API_BASE_URL is set.
- * Safe no-op on demo seed-only deploys.
+ * Wraps the app tree so pages re-render after hydrate (sibling Outlet
+ * previously stayed on the seed snapshot).
  */
-export function CorpusHydrator() {
+export function CorpusHydrator({ children }: { children?: ReactNode }) {
   const [, setTick] = useState(0);
 
   useEffect(() => {
-    void hydrateCorpus();
-    return subscribeCorpus(() => setTick((n) => n + 1));
+    void hydrateCorpus().then((s) => {
+      if (import.meta.env.DEV) {
+        console.info("[corpus]", s.message, s);
+      }
+    });
+    return subscribeCorpus(() => {
+      setTick((n) => n + 1);
+      if (import.meta.env.DEV) {
+        console.info("[corpus]", getCorpusLoadState().message);
+      }
+    });
   }, []);
 
-  // Dev-only console breadcrumb; no UI chrome required
-  useEffect(() => {
-    const s = getCorpusLoadState();
-    if (import.meta.env.DEV) {
-      console.info("[corpus]", s.message, s);
-    }
-  });
-
-  return null;
+  return <>{children}</>;
 }
