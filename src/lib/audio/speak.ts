@@ -1,6 +1,7 @@
 /**
  * Oral playback — one speaker at a time.
- * Voice Agent (when configured) is the only language voice.
+ * Priority: living keeper recording (primaryAudioUrl), then cloud TTS /
+ * Voice Agent, then browser speech. stopSpeaking() prevents stacked voices.
  */
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -344,8 +345,19 @@ export async function speakWord(opts: {
   }
   if (myGen !== speakGen) return "none";
 
-  // When the Voice Agent / Grok TTS is configured it is the only speaker.
-  // Packaged + browser must not start — that is how three voices stacked.
+  // Living keeper / community recording first (Public Lexicon Contract v1).
+  if (opts.primaryAudioUrl) {
+    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
+    if (myGen !== speakGen) return "none";
+    if (ok) {
+      if (opts.includeEnglish && opts.english) {
+        if (myGen !== speakGen) return "recording";
+        await browserSpeak(opts.english, { rate: 0.9 });
+      }
+      return "recording";
+    }
+  }
+
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett", opts.onStart);
     if (myGen !== speakGen) return "none";
@@ -357,16 +369,6 @@ export async function speakWord(opts: {
       return "grok";
     }
     return "none";
-  }
-
-  if (opts.primaryAudioUrl) {
-    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
-    if (ok) {
-      if (opts.includeEnglish && opts.english) {
-        await browserSpeak(opts.english, { rate: 0.9 });
-      }
-      return "recording";
-    }
   }
 
   if (!opts.narragansett?.trim() && !opts.english?.trim()) return "none";
