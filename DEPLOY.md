@@ -24,9 +24,9 @@ Keep them as **two related deployments**, linked by buttons — not one mixed UI
 
 **Yes.** After both are live:
 
-1. On **this** project set `VITE_KEEPER_PORTAL_URL=https://your-admin.vercel.app`  
-2. On **admin** add a nav button: `Open learner demo` → `https://your-learn.vercel.app`  
-   (env on admin: e.g. `NEXT_PUBLIC_LEARN_APP_URL`)
+1. On **this** project set `VITE_KEEPER_PORTAL_URL=https://kuttiomp-admin.vercel.app`  
+2. On **admin** set `NEXT_PUBLIC_LEARN_APP_URL=https://kuttiomp-learn.vercel.app`  
+   (local pairing: `http://localhost:8080`). The sidebar **Open learner demo** control uses that URL.
 
 No special Vercel networking is required — just two HTTPS URLs.
 
@@ -46,8 +46,9 @@ Add these in **Vercel → Project → Settings → Environment Variables**
 | `XAI_API_KEY` | **Yes for voice** | `xai-...` | Server-only. Never prefix with `VITE_`. |
 | `XAI_VOICE_AGENT_ID` | **Yes for your agent** | `agent_…` | Your Voice Agent. Learn / Hear / Watch all speak through this. |
 | `XAI_TTS_VOICE` | Optional | `ara` | REST TTS voice **only if** no agent id is set. Do not put `agent_…` here unless you skip `XAI_VOICE_AGENT_ID`. |
-| `VITE_CONTENT_CORPUS` | Optional | `demo_historical` | `demo_historical` (Williams seed) or `keeper_only` (production). |
-| `VITE_KEEPER_PORTAL_URL` | Recommended | `https://admin.yourdomain.com` | Shows “Open Keeper portal” in learner Profile. |
+| `VITE_CONTENT_CORPUS` | Optional | `demo_historical` | `demo_historical` (Williams seed + merge live words) until Keepers cut over. Use `keeper_only` only then. |
+| `VITE_API_BASE_URL` | **After FastAPI is hosted** | *(your FastAPI origin)* | Public lexicon origin, no trailing slash. Vite bakes this in at **build** time. There is no production FastAPI URL yet — set this on Vercel only after you host FastAPI (Railway / Fly / Render). Local pairing uses `http://localhost:8000` (see `.env.example`). |
+| `VITE_KEEPER_PORTAL_URL` | Recommended | `https://kuttiomp-admin.vercel.app` | Shows “Open Keeper portal” in learner Profile. Local: `http://localhost:3000`. |
 
 ### Do **not** put the API key in chat or in `VITE_*` vars
 
@@ -59,7 +60,7 @@ Code reads `XAI_API_KEY` and `XAI_VOICE_AGENT_ID` at **request time** on the ser
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_LEARN_APP_URL` | URL of this learner deploy — for a “Preview learner app” button in admin |
+| `NEXT_PUBLIC_LEARN_APP_URL` | Local: `http://localhost:8080`. Production: `https://kuttiomp-learn.vercel.app`. Sidebar **Open learner demo**. |
 
 (Your existing Supabase/Clerk/Grok keys for admin stay as they are.)
 
@@ -113,7 +114,7 @@ See [docs/PUBLIC_LEXICON_CONTRACT.md](docs/PUBLIC_LEXICON_CONTRACT.md).
 
 | Variable | Values |
 |----------|--------|
-| `VITE_CONTENT_CORPUS` | `demo_historical` (default) or `keeper_only` |
-| `VITE_API_BASE_URL` | Public API origin, e.g. `https://your-api.example.com` |
+| `VITE_CONTENT_CORPUS` | `demo_historical` (default, merge path) or `keeper_only` (cutover) |
+| `VITE_API_BASE_URL` | Local: `http://localhost:8000`. Production: set on Vercel **after** FastAPI is hosted. Do not invent a host. |
 
-Until the monorepo exposes `GET /api/v1/public/lexicon`, leave `VITE_API_BASE_URL` empty.
+Kuttiomp exposes `GET /api/v1/public/health` and `GET /api/v1/public/lexicon`. FastAPI is **not** on Vercel. For local pairing, copy `.env.example` → `.env` (`VITE_API_BASE_URL=http://localhost:8000`) and run the API from Kuttiomp `apps/api`. CORS must include `http://localhost:8080` and `https://kuttiomp-learn.vercel.app`. Then `npm run verify:hydrate` and `npm run verify:contract`.

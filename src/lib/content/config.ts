@@ -19,7 +19,7 @@ export const APP_TAGLINE = "A gathering place for Narragansett language";
  */
 export const KEEPER_PORTAL_URL =
   (import.meta.env.VITE_KEEPER_PORTAL_URL as string | undefined)?.trim() ||
-  "https://kuttiomp-admin-viti.vercel.app";
+  "https://kuttiomp-admin.vercel.app";
 
 /**
  * Kuttiomp FastAPI origin for Public Lexicon Contract v1.

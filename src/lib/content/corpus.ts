@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   getActiveBundle,
   getCorpusLoadState,
@@ -22,6 +23,13 @@ export {
   loadCorpus,
   subscribeCorpus,
 };
+
+/** Re-render after live hydrate (empty state, word lists). */
+export function useCorpusTick(): number {
+  const [tick, setTick] = useState(0);
+  useEffect(() => subscribeCorpus(() => setTick((n) => n + 1)), []);
+  return tick;
+}
 
 function currentMode(): LearningModeId | null {
   try {

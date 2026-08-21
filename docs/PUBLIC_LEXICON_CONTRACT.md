@@ -3,7 +3,7 @@
 **Status:** Frozen for implementation  
 **Consumers:** `kuttiomp-learn` (learner app)  
 **Producers:** `Nicequantum/Kuttiomp` API + Supabase (Knowledge Keepers)  
-**Last updated:** 2026-08-02
+**Last updated:** 2026-08-21
 
 This document is the **shared source of truth** for how approved language leaves the Keeper system and enters the public learner app.
 
@@ -40,9 +40,9 @@ A lexical entry is **eligible for the public learner** only if **all** are true:
 
 | Variable | Purpose |
 |----------|---------|
-| `VITE_CONTENT_CORPUS` | `demo_historical` (default) or `keeper_only` |
-| `VITE_API_BASE_URL` | Origin of Kuttiomp API, e.g. `https://api.example.com` (no trailing slash) |
-| `VITE_KEEPER_PORTAL_URL` | Link to admin UI |
+| `VITE_CONTENT_CORPUS` | `demo_historical` (default, merge path) or `keeper_only` |
+| `VITE_API_BASE_URL` | Origin of Kuttiomp FastAPI, no trailing slash. Local pairing: `http://localhost:8000`. Production: set on Vercel **after** FastAPI is hosted (Railway / Fly / Render). Do not invent a host. |
+| `VITE_KEEPER_PORTAL_URL` | Link to admin UI (`https://kuttiomp-admin.vercel.app`) |
 
 ### API (Kuttiomp monorepo)
 
@@ -266,21 +266,22 @@ Audio priority in UI:
 
 ### Kuttiomp monorepo (backend)
 
-- [ ] `GET /api/v1/public/health`
-- [ ] `GET /api/v1/public/lexicon` with publish gate
-- [ ] `GET /api/v1/public/lexicon/{id}`
-- [ ] CORS for Learn origins
-- [ ] Map DB snake_case → public camelCase
-- [ ] Admin: clear “Publish for learners” sets `visibility=public` + `approval_status=approved`
+- [x] `GET /api/v1/public/health`
+- [x] `GET /api/v1/public/lexicon` with publish gate
+- [x] `GET /api/v1/public/lexicon/{id}`
+- [x] CORS for Learn origins (`localhost:8080`, `kuttiomp-learn.vercel.app`)
+- [x] Map DB snake_case → public camelCase
+- [x] Admin: clear “Publish for learners” sets `visibility=public` + `approval_status=approved`
 
 ### kuttiomp-learn (this repo)
 
 - [x] Contract documented (`docs/PUBLIC_LEXICON_CONTRACT.md`)
 - [x] Wire types + adapter stubs
 - [x] `loadCorpus()` / hydrate with seed fallback
-- [x] Env: `VITE_API_BASE_URL`, `VITE_CONTENT_CORPUS`
-- [ ] Prefer `primaryAudioUrl` in OralPlayer when present
-- [ ] Production empty state polish when `keeper_only` + empty
+- [x] Env: `VITE_API_BASE_URL=http://localhost:8000` local pairing; `VITE_CONTENT_CORPUS=demo_historical`
+- [x] `npm run verify:hydrate` against public lexicon (needs a running FastAPI with Supabase)
+- [x] Prefer `primaryAudioUrl` in OralPlayer when present
+- [x] Production empty state polish when `keeper_only` + empty
 
 ---
 

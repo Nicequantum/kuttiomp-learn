@@ -6,6 +6,7 @@ import {
   ORTHOGRAPHY_PRACTICE_ORDER,
   ORTHOGRAPHY_TIPS,
 } from "@/lib/content/orthography-guide";
+import { getCorpusMeta } from "@/lib/content/corpus";
 import { cn } from "@/lib/utils";
 
 export function OrthographyGuide({
@@ -18,6 +19,7 @@ export function OrthographyGuide({
   className?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  if (!getCorpusMeta().isDemo) return null;
 
   if (compact) {
     return (

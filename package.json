@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "verify:contract": "node scripts/verify-contract.mjs",
+    "verify:hydrate": "node scripts/verify-hydrate.mjs",
     "verify": "npm run typecheck && npm run verify:contract && npm run verify:dual-audio-policy",
     "verify:path-media": "node scripts/verify-path-media.mjs",
     "verify:dual-audio-policy": "node scripts/verify-dual-audio-policy.mjs",

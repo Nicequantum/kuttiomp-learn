@@ -67,6 +67,18 @@ export function loadCorpus(): CorpusBundle {
   return active;
 }
 
+function keeperEmptyNotice(
+  kind: "unavailable" | "empty" | "unconfigured",
+): string {
+  if (kind === "unavailable") {
+    return "Content temporarily unavailable. Living forms will appear here when the Keeper service is reachable again.";
+  }
+  if (kind === "unconfigured") {
+    return "The living corpus is not connected yet. Keepers publish approved words from the Knowledge Keeper portal.";
+  }
+  return "Keepers are building the living corpus. Approved public words will appear here.";
+}
+
 function emptyKeeperBundle(notice: string): CorpusBundle {
   return {
     corpus: "keeper_only",
@@ -153,7 +165,7 @@ function applyLivingWords(
           : "Living Keeper corpus",
       notice:
         words.length === 0
-          ? "No published words yet."
+          ? keeperEmptyNotice("empty")
           : sourceLabel === "mock"
             ? "Mock living forms for engineering — not tribal authority. Sacred leak tests must not appear."
             : "Living forms from Knowledge Keepers. Sacred content never appears here.",
@@ -187,7 +199,7 @@ function applyLivingWords(
         sourceLabel === "mock"
           ? `Mock pipeline: ${words.length} living forms (sacred filtered)`
           : words.length === 0
-            ? "API ok — waiting for first published words"
+            ? keeperEmptyNotice("empty")
             : `Loaded ${words.length} living forms`,
       lastHydratedAt: new Date().toISOString(),
     };
@@ -256,9 +268,7 @@ export async function hydrateCorpus(): Promise<CorpusLoadState> {
           lastHydratedAt: new Date().toISOString(),
         };
       } else {
-        active = emptyKeeperBundle(
-          `Could not load living corpus (${detail}). Try again later.`,
-        );
+        active = emptyKeeperBundle(keeperEmptyNotice("unavailable"));
         loadState = {
           mode: "keeper_only",
           source: "empty",
@@ -296,9 +306,7 @@ export async function hydrateCorpus(): Promise<CorpusLoadState> {
       lastHydratedAt: new Date().toISOString(),
     };
   } else {
-    active = emptyKeeperBundle(
-      "Production mode (keeper_only) requires VITE_API_BASE_URL (or mock flag for local tests).",
-    );
+    active = emptyKeeperBundle(keeperEmptyNotice("unconfigured"));
     loadState = {
       ...loadState,
       source: "empty",

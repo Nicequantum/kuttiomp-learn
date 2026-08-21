@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { KeeperEmptyState } from "@/components/content/KeeperEmptyState";
 import { MasteryPanel } from "@/components/content/MasteryPanel";
 import { VideoProductGuide } from "@/components/content/VideoProductGuide";
 import { WordCard } from "@/components/content/WordCard";
@@ -40,7 +41,9 @@ function HomePage() {
   const featured = getFeaturedWords(mode === "little_ones" ? 4 : 5);
   const paths = getPaths().slice(0, 3);
   const total = getAllWords().length;
-  const seedTotal = getCorpusMeta().totalInSeed ?? total;
+  const corpusMeta = getCorpusMeta();
+  const seedTotal = corpusMeta.totalInSeed ?? total;
+  const isDemo = corpusMeta.isDemo;
   const chapters = getChapters();
   const lastId = useProgressStore((s) => s.lastListenWordId);
   const resumeWord = lastId ? getWordById(lastId) : undefined;
@@ -80,11 +83,14 @@ function HomePage() {
         </p>
         <p className="text-sm text-[var(--color-subtle)]">
           {total} forms in your mode
-          {seedTotal !== total ? ` · ${seedTotal} in full seed` : ""}
-          {" · "}
-          {chapters.filter((c) => c.count > 0).length} chapters open
+          {isDemo && seedTotal !== total ? ` · ${seedTotal} in full seed` : ""}
+          {isDemo
+            ? ` · ${chapters.filter((c) => c.count > 0).length} chapters open`
+            : ""}
         </p>
       </header>
+
+      {!isDemo && total === 0 && <KeeperEmptyState />}
 
       <HistoricalBanner compact />
 
@@ -296,6 +302,7 @@ function HomePage() {
         </section>
       )}
 
+      {isDemo && (
       <section className="surface-card pad-mode flex gap-3">
         <BookOpen
           className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]"
@@ -309,6 +316,7 @@ function HomePage() {
           </p>
         </div>
       </section>
+      )}
     </div>
   );
 }

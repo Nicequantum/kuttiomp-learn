@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, EyeOff } from "lucide-react";
 import { OralPlayer } from "@/components/content/OralPlayer";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { KeeperEmptyState } from "@/components/content/KeeperEmptyState";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getListenQueue } from "@/lib/content/corpus";
@@ -50,7 +51,15 @@ function ListenPage() {
   }, [word, index, setListenCursor]);
 
   if (!word) {
-    return <p className="text-[var(--color-muted)]">No content available.</p>;
+    return (
+      <div className="space-y-5">
+        <header className="space-y-2">
+          <p className="label-eyebrow text-[var(--color-primary)]">Focus mode</p>
+          <h1 className="font-display text-display">Listen</h1>
+        </header>
+        <KeeperEmptyState />
+      </div>
+    );
   }
 
   const practiced = practicedIds.includes(word.id);
