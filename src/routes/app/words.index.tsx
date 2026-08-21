@@ -2,10 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import { CorpusStatus } from "@/components/content/CorpusStatus";
 import { WordCard } from "@/components/content/WordCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { getDomains, searchWords, getChapters } from "@/lib/content/corpus";
+import { getCorpusMeta, getDomains, searchWords, getChapters } from "@/lib/content/corpus";
 import { cn } from "@/lib/utils";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 
@@ -27,6 +28,7 @@ function WordsPage() {
   const [chapter, setChapter] = useState<string | null>(chapterParam ?? null);
   const domains = getDomains();
   const chapters = getChapters().filter((c) => c.count > 0);
+  const corpusMeta = getCorpusMeta();
 
   useEffect(() => {
     setChapter(chapterParam ?? null);
@@ -44,12 +46,13 @@ function WordsPage() {
       <header className="space-y-2">
         <h1 className="font-display text-display">Words</h1>
         <p className="text-content text-[var(--color-muted)]">
-          Search modern English or Narragansett (Williams spelling). Full Key
-          seed — living forms appear when published.
+          Search modern English or Narragansett. Living forms appear here when
+          Knowledge Keepers publish them.
         </p>
       </header>
 
       <HistoricalBanner compact />
+      <CorpusStatus />
       <OrthographyGuide compact />
 
       <div className="relative">
@@ -142,7 +145,9 @@ function WordsPage() {
         <p className="text-sm text-[var(--color-subtle)]">
           {results.length} result{results.length === 1 ? "" : "s"}
         </p>
-        <Badge tone="warn">Historical seed</Badge>
+        <Badge tone={corpusMeta.isDemo ? "warn" : "land"}>
+          {corpusMeta.isDemo ? "Historical seed" : "Living corpus"}
+        </Badge>
       </div>
 
       <div className="grid gap-3">

@@ -279,8 +279,11 @@ Audio priority in UI:
 - [x] Wire types + adapter stubs
 - [x] `loadCorpus()` / hydrate with seed fallback
 - [x] Env: `VITE_API_BASE_URL`, `VITE_CONTENT_CORPUS`
-- [ ] Prefer `primaryAudioUrl` in OralPlayer when present
-- [ ] Production empty state polish when `keeper_only` + empty
+- [x] Prefer `primaryAudioUrl` in OralPlayer / `speakWord` when present (before machine TTS)
+- [x] Production empty state when `keeper_only` + empty
+- [x] Paginate public lexicon (`limit`/`offset` until exhausted or cap)
+- [x] Mock living fixture is **opt-in** (`VITE_USE_MOCK_PUBLIC_API=true`) — never default on
+- [x] Adapter drops missing id/gloss, sacred, and `elderApproved === false`
 
 ---
 

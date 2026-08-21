@@ -24,13 +24,27 @@ const DOMAIN_CHAPTER: Record<string, { chapter: string; chapterNum: number }> =
     other: { chapter: "Everyday", chapterNum: 99 },
   };
 
+const RESTRICTED_VISIBILITY = new Set([
+  "sacred",
+  "elders_only",
+  "clan",
+  "family",
+  "clan_only",
+  "family_only",
+]);
+
 /** Defensive: public API must never ship sacred; drop if misconfigured server. */
 export function isPublishablePublicWord(w: PublicWord): boolean {
   if (!w?.id || !w.wordNarragansett?.trim() || !w.englishGloss?.trim()) {
     return false;
   }
   if (w.isSacred) return false;
+  if (w.elderApproved === false) return false;
   if (w.source !== "keeper_approved") return false;
+  const vis = w.visibility?.trim().toLowerCase();
+  if (vis && (vis !== "public" || RESTRICTED_VISIBILITY.has(vis))) {
+    return false;
+  }
   return true;
 }
 

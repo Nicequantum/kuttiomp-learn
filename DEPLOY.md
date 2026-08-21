@@ -43,11 +43,13 @@ Add these in **Vercel → Project → Settings → Environment Variables**
 
 | Variable | Required? | Example | Purpose |
 | --- | --- | --- | --- |
-| `XAI_API_KEY` | **Yes for voice** | `xai-...` | Server-only. Never prefix with `VITE_`. |
-| `XAI_VOICE_AGENT_ID` | **Yes for your agent** | `agent_…` | Your Voice Agent. Learn / Hear / Watch all speak through this. |
-| `XAI_TTS_VOICE` | Optional | `ara` | REST TTS voice **only if** no agent id is set. Do not put `agent_…` here unless you skip `XAI_VOICE_AGENT_ID`. |
-| `VITE_CONTENT_CORPUS` | Optional | `demo_historical` | `demo_historical` (Williams seed) or `keeper_only` (production). |
+| `VITE_API_BASE_URL` | **When Kuttiomp API is up** | *(empty by default)* | **The one env that connects this app to Kuttiomp.** Origin for `GET /api/v1/public/lexicon` (no trailing slash). Leave empty until that route is deployed — the Williams 1643 seed stays the offline/demo corpus. |
+| `VITE_CONTENT_CORPUS` | Optional | `demo_historical` | `demo_historical` (Williams seed, default) or `keeper_only` (production cutover). |
+| `VITE_USE_MOCK_PUBLIC_API` | **Never in production** | `false` | **Dangerous.** Explicit `true` ships fake “living” rows. Leave `false`/unset. Ignored when `VITE_API_BASE_URL` is set. |
 | `VITE_KEEPER_PORTAL_URL` | Recommended | `https://admin.yourdomain.com` | Shows “Open Keeper portal” in learner Profile. |
+| `XAI_API_KEY` | **Yes for machine voice** | `xai-...` | Server-only. Never prefix with `VITE_`. Machine TTS — not a living speaker. |
+| `XAI_VOICE_AGENT_ID` | **Yes for your agent** | `agent_…` | Machine Voice Agent. Living recordings still play first when a word has `primaryAudioUrl`. |
+| `XAI_TTS_VOICE` | Optional | `ara` | REST TTS voice **only if** no agent id is set. Do not put `agent_…` here unless you skip `XAI_VOICE_AGENT_ID`. |
 
 ### Do **not** put the API key in chat or in `VITE_*` vars
 
@@ -111,9 +113,27 @@ No extra env vars. Modes slightly change which scene is shown.
 
 See [docs/PUBLIC_LEXICON_CONTRACT.md](docs/PUBLIC_LEXICON_CONTRACT.md).
 
+**When the Kuttiomp API is up, set this one variable on Learn:**
+
+```
+VITE_API_BASE_URL=https://your-kuttiomp-api.example.com
+```
+
+Leave it **empty** in `.env.example` and on Vercel until `GET /api/v1/public/lexicon` exists. An empty base URL keeps the Williams 1643 demo seed. Do not hardcode a production API URL that is not deployed.
+
 | Variable | Values |
 |----------|--------|
-| `VITE_CONTENT_CORPUS` | `demo_historical` (default) or `keeper_only` |
-| `VITE_API_BASE_URL` | Public API origin, e.g. `https://your-api.example.com` |
+| `VITE_API_BASE_URL` | Kuttiomp API origin (no trailing slash). Empty = Williams demo. |
+| `VITE_CONTENT_CORPUS` | `demo_historical` (default; may merge API words) or `keeper_only` |
+| `VITE_USE_MOCK_PUBLIC_API` | Must be `false`/unset in production |
 
-Until the monorepo exposes `GET /api/v1/public/lexicon`, leave `VITE_API_BASE_URL` empty.
+### CORS (required on the Kuttiomp API)
+
+The Kuttiomp FastAPI CORS allowlist **must** include:
+
+- `https://kuttiomp-learn.vercel.app`
+- Local Learn: `http://localhost:8080`
+
+Without that origin, the browser will block lexicon fetches even if `VITE_API_BASE_URL` is correct.
+
+Learn only reads **approved + public + non-sacred** rows. Keepers write language only in Kuttiomp. This client paginates the public lexicon (`limit` / `offset`) and drops `elderApproved: false`, sacred, and incomplete rows if a misconfigured server leaks them.

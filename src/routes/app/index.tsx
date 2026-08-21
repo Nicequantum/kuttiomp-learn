@@ -23,7 +23,9 @@ import {
   getWordById,
   getChapters,
   getCorpusMeta,
+  getCorpusLoadState,
 } from "@/lib/content/corpus";
+import { CorpusStatus } from "@/components/content/CorpusStatus";
 import { getDayJourneyStats } from "@/lib/content/day-journey";
 import { formatDuration, getLongStories } from "@/lib/content/long-stories";
 import { useModeStore } from "@/lib/mode/store";
@@ -37,6 +39,7 @@ export const Route = createFileRoute("/app/")({
 function HomePage() {
   const mode = useModeStore((s) => s.mode);
   const meta = mode ? MODES[mode] : MODES.core_adult;
+  const corpusMeta = getCorpusMeta();
   const featured = getFeaturedWords(mode === "little_ones" ? 4 : 5);
   const paths = getPaths().slice(0, 3);
   const total = getAllWords().length;
@@ -51,6 +54,8 @@ function HomePage() {
   const lastStoryPositionSec = useProgressStore((s) => s.lastStoryPositionSec);
   const completedDayActs = useProgressStore((s) => s.completedDayActs);
   const completedScenes = useProgressStore((s) => s.completedScenes);
+  const loadState = getCorpusLoadState();
+  const corpusEmpty = loadState.source === "empty" || total === 0;
 
   const storyInProgress =
     longStory &&
@@ -87,6 +92,7 @@ function HomePage() {
       </header>
 
       <HistoricalBanner compact />
+      <CorpusStatus />
 
       <OrthographyGuide compact />
 
@@ -210,6 +216,7 @@ function HomePage() {
         </Link>
       </section>
 
+      {corpusMeta.isDemo && (
       <Link
         to="/app/key"
         className="surface-card pad-mode flex items-center justify-between gap-3 hover:border-[var(--color-border-strong)]"
@@ -223,6 +230,7 @@ function HomePage() {
         </div>
         <ArrowRight className="h-5 w-5 text-[var(--color-subtle)]" aria-hidden />
       </Link>
+      )}
 
       <Link
         to="/app/listen"
@@ -244,6 +252,7 @@ function HomePage() {
 
       <MasteryPanel />
 
+      {!corpusEmpty && (
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-title">Featured forms</h2>
@@ -260,6 +269,7 @@ function HomePage() {
           ))}
         </div>
       </section>
+      )}
 
       {paths.length > 0 && (
         <section className="space-y-3">
@@ -296,6 +306,7 @@ function HomePage() {
         </section>
       )}
 
+      {corpusMeta.isDemo && (
       <section className="surface-card pad-mode flex gap-3">
         <BookOpen
           className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]"
@@ -309,6 +320,7 @@ function HomePage() {
           </p>
         </div>
       </section>
+      )}
     </div>
   );
 }

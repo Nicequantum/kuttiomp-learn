@@ -1,6 +1,6 @@
 {
   "corpusVersion": "mock-2026-08-02",
-  "total": 8,
+  "total": 10,
   "limit": 100,
   "offset": 0,
   "words": [
@@ -113,6 +113,30 @@
       "speakerAttribution": "test",
       "elderApproved": true,
       "isSacred": true,
+      "source": "keeper_approved",
+      "authority": "living_speaker"
+    },
+    {
+      "id": "keeper-mock-009-unpublished-should-drop",
+      "wordNarragansett": "UNPUBLISHED_SHOULD_NOT_APPEAR",
+      "englishGloss": "Unpublished leak test — elderApproved false must be filtered out.",
+      "category": "noun",
+      "semanticDomain": "other",
+      "speakerAttribution": "test",
+      "elderApproved": false,
+      "isSacred": false,
+      "source": "keeper_approved",
+      "authority": "living_speaker"
+    },
+    {
+      "id": "keeper-mock-010-no-gloss-should-drop",
+      "wordNarragansett": "NO_GLOSS_SHOULD_NOT_APPEAR",
+      "englishGloss": "   ",
+      "category": "noun",
+      "semanticDomain": "other",
+      "speakerAttribution": "test",
+      "elderApproved": true,
+      "isSacred": false,
       "source": "keeper_approved",
       "authority": "living_speaker"
     }

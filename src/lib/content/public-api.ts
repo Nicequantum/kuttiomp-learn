@@ -26,6 +26,8 @@ export type PublicWord = {
   speakerRole?: string;
   elderApproved: boolean;
   isSacred: boolean;
+  /** Defensive only — public wire should already be `public`. */
+  visibility?: string;
   source: "keeper_approved";
   authority: "living_speaker";
   primaryAudio?: PublicAudio | null;

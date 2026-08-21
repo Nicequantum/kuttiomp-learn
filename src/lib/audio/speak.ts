@@ -1,6 +1,6 @@
 /**
- * Oral playback — one speaker at a time.
- * Voice Agent (when configured) is the only language voice.
+ * Oral playback — one voice at a time.
+ * Contract order: living recording → machine TTS → browser speech.
  */
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -344,8 +344,29 @@ export async function speakWord(opts: {
   }
   if (myGen !== speakGen) return "none";
 
-  // When the Voice Agent / Grok TTS is configured it is the only speaker.
-  // Packaged + browser must not start — that is how three voices stacked.
+  // Public Lexicon Contract audio order:
+  // 1. living speaker recording (primaryAudioUrl)
+  // 2. machine TTS / Voice Agent (never labeled as a speaker)
+  // 3. browser speech (last resort)
+  // ScenePlayer already omits packaged film audio when the Voice Agent is
+  // configured, so films stay one-speaker.
+  if (opts.primaryAudioUrl) {
+    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
+    if (myGen !== speakGen) return "none";
+    if (ok) {
+      if (opts.includeEnglish && opts.english) {
+        if (grokAvailable) {
+          await grokSpeak(opts.english, "english");
+        } else {
+          await browserSpeak(opts.english, { rate: 0.9 });
+        }
+      }
+      return "recording";
+    }
+  }
+
+  // Machine TTS only after a living recording is absent or failed.
+  // Do not also start browser speech on success — that stacked voices.
   if (grokAvailable) {
     const ok = await grokSpeak(opts.narragansett, "narragansett", opts.onStart);
     if (myGen !== speakGen) return "none";
@@ -357,16 +378,6 @@ export async function speakWord(opts: {
       return "grok";
     }
     return "none";
-  }
-
-  if (opts.primaryAudioUrl) {
-    const ok = await playUrl(opts.primaryAudioUrl, opts.onStart);
-    if (ok) {
-      if (opts.includeEnglish && opts.english) {
-        await browserSpeak(opts.english, { rate: 0.9 });
-      }
-      return "recording";
-    }
   }
 
   if (!opts.narragansett?.trim() && !opts.english?.trim()) return "none";
