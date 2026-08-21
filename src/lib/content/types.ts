@@ -86,4 +86,5 @@ export type CorpusLoadState = {
   corpusVersion: string | null;
   message: string;
   lastHydratedAt: string | null;
+  apiReason?: string | null;
 };

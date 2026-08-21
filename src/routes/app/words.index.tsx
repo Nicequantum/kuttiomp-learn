@@ -6,9 +6,17 @@ import { KeeperEmptyState } from "@/components/content/KeeperEmptyState";
 import { WordCard } from "@/components/content/WordCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { getDomains, searchWords, getChapters, getCorpusMeta } from "@/lib/content/corpus";
+import {
+  getDomains,
+  searchWords,
+  getChapters,
+  getCorpusMeta,
+  useCorpusTick,
+} from "@/lib/content/corpus";
 import { cn } from "@/lib/utils";
 import { OrthographyGuide } from "@/components/content/OrthographyGuide";
+import { useModeStore } from "@/lib/mode/store";
+import { MODES } from "@/lib/mode/modes";
 
 type WordsSearch = {
   chapter?: string;
@@ -22,6 +30,9 @@ export const Route = createFileRoute("/app/words/")({
 });
 
 function WordsPage() {
+  useCorpusTick();
+  const mode = useModeStore((s) => s.mode);
+  const meta = mode ? MODES[mode] : MODES.core_adult;
   const { chapter: chapterParam } = Route.useSearch();
   const [q, setQ] = useState("");
   const [domain, setDomain] = useState<string | null>(null);
@@ -29,6 +40,7 @@ function WordsPage() {
   const domains = getDomains();
   const chapters = getChapters().filter((c) => c.count > 0);
   const isDemo = getCorpusMeta().isDemo;
+  const showChapters = isDemo && meta.id !== "little_ones" && chapters.length > 0;
 
   useEffect(() => {
     setChapter(chapterParam ?? null);
@@ -44,11 +56,16 @@ function WordsPage() {
   return (
     <div className="space-y-5">
       <header className="space-y-2">
-        <h1 className="font-display text-display">Words</h1>
+        <p className="label-eyebrow text-[var(--color-primary)]">{meta.label}</p>
+        <h1 className="font-display text-display">{meta.navLabels.words}</h1>
         <p className="text-content text-[var(--color-muted)]">
-          {isDemo
-            ? "Search modern English or Narragansett (Williams spelling). Full Key seed — living forms appear when published."
-            : "Search approved public words from Knowledge Keepers."}
+          {meta.id === "little_ones"
+            ? "Tap a word to hear it. Living voices first when Keepers have published them."
+            : meta.id === "elder"
+              ? "Approved public words, large and clear. Each form names its speaker or historical record."
+              : isDemo
+                ? "Search modern English or Narragansett (Williams spelling). Living forms are labeled and listed first when published."
+                : "Search approved public words from Knowledge Keepers."}
         </p>
       </header>
 
@@ -108,7 +125,7 @@ function WordsPage() {
         ))}
       </div>
 
-      {chapters.length > 0 && (
+      {showChapters && (
         <div
           className="flex gap-2 overflow-x-auto pb-1"
           role="listbox"

@@ -2,25 +2,39 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, EyeOff } from "lucide-react";
 import { OralPlayer } from "@/components/content/OralPlayer";
-import { HistoricalBanner } from "@/components/content/HistoricalBanner";
+import {
+  HistoricalBanner,
+  HistoricalInlineNote,
+} from "@/components/content/HistoricalBanner";
 import { KeeperEmptyState } from "@/components/content/KeeperEmptyState";
+import {
+  SpeakerAttribution,
+  WordSourceBadge,
+} from "@/components/content/WordAuthority";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getListenQueue } from "@/lib/content/corpus";
+import { getListenQueue, useCorpusTick } from "@/lib/content/corpus";
 import { useProgressStore } from "@/lib/progress/store";
 import { useModeStore } from "@/lib/mode/store";
-import { MODES } from "@/lib/mode/modes";
-import { HistoricalInlineNote } from "@/components/content/HistoricalBanner";
+import { MODES, type LearningMode } from "@/lib/mode/modes";
 
 export const Route = createFileRoute("/app/listen")({
   component: ListenPage,
 });
 
+function listenLead(id: LearningMode): string {
+  if (id === "little_ones") return "Hear one word. Say it with family.";
+  if (id === "young_learner") return "Listen first. Meaning when you are ready.";
+  if (id === "elder") return "One clear voice at a time. Large type. No rush.";
+  return "One form. Hear it. Then reveal meaning when you are ready.";
+}
+
 function ListenPage() {
+  useCorpusTick();
   const mode = useModeStore((s) => s.mode);
   const meta = mode ? MODES[mode] : MODES.core_adult;
   const queue = useMemo(
-    () => getListenQueue(meta.id === "little_ones" ? 8 : 12),
+    () => getListenQueue(meta.id === "little_ones" ? 8 : meta.id === "elder" ? 8 : 12),
     [meta.id],
   );
   const lastListenWordId = useProgressStore((s) => s.lastListenWordId);
@@ -54,8 +68,8 @@ function ListenPage() {
     return (
       <div className="space-y-5">
         <header className="space-y-2">
-          <p className="label-eyebrow text-[var(--color-primary)]">Focus mode</p>
-          <h1 className="font-display text-display">Listen</h1>
+          <p className="label-eyebrow text-[var(--color-primary)]">{meta.label}</p>
+          <h1 className="font-display text-display">{meta.navLabels.listen}</h1>
         </header>
         <KeeperEmptyState />
       </div>
@@ -76,10 +90,10 @@ function ListenPage() {
   return (
     <div className="space-y-5">
       <header className="space-y-2">
-        <p className="label-eyebrow text-[var(--color-primary)]">Focus mode</p>
-        <h1 className="font-display text-display">Listen</h1>
+        <p className="label-eyebrow text-[var(--color-primary)]">{meta.label}</p>
+        <h1 className="font-display text-display">{meta.navLabels.listen}</h1>
         <p className="text-content text-[var(--color-muted)]">
-          One form. Hear it. Then reveal meaning when you are ready.
+          {listenLead(meta.id)}
         </p>
       </header>
 
@@ -110,11 +124,17 @@ function ListenPage() {
           {word.wordNarragansett}
         </p>
 
+        <div className="flex flex-col items-center gap-2">
+          <WordSourceBadge word={word} />
+          <SpeakerAttribution word={word} />
+        </div>
+
         <OralPlayer
           wordId={word.id}
           narragansett={word.wordNarragansett}
           english={word.englishGloss}
           primaryAudioUrl={word.primaryAudioUrl}
+          speakerAttribution={word.speakerAttribution}
           size="hero"
           showEnglishToggle={meta.id !== "little_ones"}
         />
@@ -146,7 +166,7 @@ function ListenPage() {
                   <EyeOff className="h-4 w-4" />
                 </button>
               </div>
-              <HistoricalInlineNote />
+              <HistoricalInlineNote word={word} />
             </div>
           )}
         </div>

@@ -15,6 +15,7 @@ type Props = {
   narragansett: string;
   english: string;
   primaryAudioUrl?: string;
+  speakerAttribution?: string;
   size?: "default" | "hero";
   className?: string;
   showEnglishToggle?: boolean;
@@ -25,6 +26,7 @@ export function OralPlayer({
   narragansett,
   english,
   primaryAudioUrl,
+  speakerAttribution,
   size = "default",
   className,
   showEnglishToggle = true,
@@ -37,7 +39,12 @@ export function OralPlayer({
 
   useEffect(() => {
     if (primaryAudioUrl) {
-      setStatusLine("Living speaker recording available");
+      const who = speakerAttribution?.trim();
+      setStatusLine(
+        who
+          ? `Living speaker recording — ${who}`
+          : "Living speaker recording available",
+      );
       return;
     }
     void checkTtsStatus().then((s) => {
@@ -47,7 +54,7 @@ export function OralPlayer({
       }
       setStatusLine("Demo cloud voice (not a living speaker)");
     });
-  }, [primaryAudioUrl]);
+  }, [primaryAudioUrl, speakerAttribution]);
 
   async function onPlay() {
     if (playing) {
@@ -69,7 +76,12 @@ export function OralPlayer({
       if (err) setStatusLine("Cloud voice unavailable — using device voice");
     }
     if (engine === "recording") {
-      setStatusLine("Playing living speaker recording");
+      const who = speakerAttribution?.trim();
+      setStatusLine(
+        who
+          ? `Playing living speaker recording — ${who}`
+          : "Playing living speaker recording",
+      );
     }
     setPlaying(false);
   }

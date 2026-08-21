@@ -69,9 +69,12 @@ GET /api/v1/public/health
   "ok": true,
   "service": "kuttiomp-public",
   "corpusVersion": "2026-08-02T12:00:00Z",
-  "wordCount": 0
+  "wordCount": 0,
+  "reason": null
 }
 ```
+
+When the API process is up but the living corpus host cannot be reached, health returns `ok: false` with `reason: "living_corpus_unreachable"` (HTTP 200). Learn stays on `demo_historical` and must not fall through to Williams in `keeper_only`.
 
 ### 4.2 Lexicon list (primary)
 

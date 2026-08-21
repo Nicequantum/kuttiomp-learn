@@ -17,7 +17,11 @@ import {
   publicPathToLearning,
   synthesizePathsFromWords,
 } from "./adapter";
-import type { PublicLexiconResponse, PublicPathsResponse } from "./public-api";
+import type {
+  PublicHealthResponse,
+  PublicLexiconResponse,
+  PublicPathsResponse,
+} from "./public-api";
 import type {
   CorpusBundle,
   CorpusLoadState,
@@ -77,6 +81,52 @@ function keeperEmptyNotice(
     return "The living corpus is not connected yet. Keepers publish approved words from the Knowledge Keeper portal.";
   }
   return "Keepers are building the living corpus. Approved public words will appear here.";
+}
+
+function demoUnavailableNotice(detail: string): string {
+  return `Living corpus unreachable (${detail}). Historical demo seed is shown — not living tribal authority.`;
+}
+
+async function fetchPublicHealth(): Promise<PublicHealthResponse> {
+  const base = API_BASE_URL;
+  if (!base) throw new Error("API not configured");
+  const res = await fetch(`${base}/api/v1/public/health`, {
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) {
+    throw new Error(`Health HTTP ${res.status}`);
+  }
+  return (await res.json()) as PublicHealthResponse;
+}
+
+function applyUnavailable(detail: string, reason?: string | null) {
+  if (IS_DEMO_HISTORICAL) {
+    active = structuredClone(seedBundle);
+    loadState = {
+      mode: "demo_historical",
+      source: "seed",
+      apiConfigured: true,
+      apiOk: false,
+      wordCount: active.words.length,
+      corpusVersion: null,
+      message: demoUnavailableNotice(detail),
+      lastHydratedAt: new Date().toISOString(),
+      apiReason: reason ?? "living_corpus_unreachable",
+    };
+    return;
+  }
+  active = emptyKeeperBundle(keeperEmptyNotice("unavailable"));
+  loadState = {
+    mode: "keeper_only",
+    source: "empty",
+    apiConfigured: true,
+    apiOk: false,
+    wordCount: 0,
+    corpusVersion: null,
+    message: active.notice,
+    lastHydratedAt: new Date().toISOString(),
+    apiReason: reason ?? "living_corpus_unreachable",
+  };
 }
 
 function emptyKeeperBundle(notice: string): CorpusBundle {
@@ -202,6 +252,7 @@ function applyLivingWords(
             ? keeperEmptyNotice("empty")
             : `Loaded ${words.length} living forms`,
       lastHydratedAt: new Date().toISOString(),
+      apiReason: null,
     };
     return;
   }
@@ -236,6 +287,7 @@ function applyLivingWords(
           ? `Demo seed + ${words.length} live Keeper forms`
           : "Demo seed (API reachable, no public words yet)",
     lastHydratedAt: new Date().toISOString(),
+    apiReason: null,
   };
 }
 
@@ -246,40 +298,25 @@ export async function hydrateCorpus(): Promise<CorpusLoadState> {
     apiConfigured: isApiConfigured(),
   };
 
-  // 1) Live API
+  // 1) Live API — health first so unreachable Supabase is not a vague 503
   if (isApiConfigured()) {
     try {
+      const health = await fetchPublicHealth();
+      if (!health.ok) {
+        applyUnavailable(
+          health.reason || "living corpus not ready",
+          health.reason,
+        );
+        notify();
+        return loadState;
+      }
       const { words, paths, version } = await fetchPublicLexicon();
       applyLivingWords(words, paths, version, "api");
       notify();
       return loadState;
     } catch (err) {
       const detail = err instanceof Error ? err.message : "unknown error";
-      if (IS_DEMO_HISTORICAL) {
-        active = structuredClone(seedBundle);
-        loadState = {
-          mode: "demo_historical",
-          source: "seed",
-          apiConfigured: true,
-          apiOk: false,
-          wordCount: active.words.length,
-          corpusVersion: null,
-          message: `API unavailable (${detail}) — using demo seed`,
-          lastHydratedAt: new Date().toISOString(),
-        };
-      } else {
-        active = emptyKeeperBundle(keeperEmptyNotice("unavailable"));
-        loadState = {
-          mode: "keeper_only",
-          source: "empty",
-          apiConfigured: true,
-          apiOk: false,
-          wordCount: 0,
-          corpusVersion: null,
-          message: active.notice,
-          lastHydratedAt: new Date().toISOString(),
-        };
-      }
+      applyUnavailable(detail);
       notify();
       return loadState;
     }
@@ -304,6 +341,7 @@ export async function hydrateCorpus(): Promise<CorpusLoadState> {
       message:
         "Demo seed — set VITE_API_BASE_URL when public API is ready (or VITE_USE_MOCK_PUBLIC_API=true to test living pipeline)",
       lastHydratedAt: new Date().toISOString(),
+      apiReason: null,
     };
   } else {
     active = emptyKeeperBundle(keeperEmptyNotice("unconfigured"));
@@ -314,6 +352,7 @@ export async function hydrateCorpus(): Promise<CorpusLoadState> {
       wordCount: 0,
       message: active.notice,
       lastHydratedAt: new Date().toISOString(),
+      apiReason: "unconfigured",
     };
   }
   notify();

@@ -80,6 +80,8 @@ export function getCorpusMeta() {
     loadSource: state.source,
     loadMessage: state.message,
     apiOk: state.apiOk,
+    apiConfigured: state.apiConfigured,
+    apiReason: state.apiReason ?? null,
     corpusVersion: state.corpusVersion,
     totalInSeed: bundle.words.length,
   };
@@ -207,6 +209,16 @@ export function getDomains(): { id: string; label: string; count: number }[] {
     .sort((a, b) => b.count - a.count);
 }
 
+function preferLivingFirst(words: LexicalWord[]): {
+  living: LexicalWord[];
+  historical: LexicalWord[];
+} {
+  return {
+    living: words.filter((w) => w.source === "keeper_approved"),
+    historical: words.filter((w) => w.source !== "keeper_approved"),
+  };
+}
+
 export function getFeaturedWords(limit = 6): LexicalWord[] {
   const preferredChapters = [
     "Salutation",
@@ -216,16 +228,16 @@ export function getFeaturedWords(limit = 6): LexicalWord[] {
     "Earth and Fruits",
     "Travel",
   ];
-  const all = visibleWords();
-  const picked: LexicalWord[] = [];
+  const { living, historical } = preferLivingFirst(visibleWords());
+  const picked: LexicalWord[] = [...living];
   for (const ch of preferredChapters) {
-    for (const hit of all.filter((w) => w.chapter === ch)) {
+    for (const hit of historical.filter((w) => w.chapter === ch)) {
       if (picked.length >= limit) break;
       if (!picked.some((x) => x.id === hit.id)) picked.push(hit);
     }
     if (picked.length >= limit) break;
   }
-  for (const w of all) {
+  for (const w of historical) {
     if (picked.length >= limit) break;
     if (!picked.some((x) => x.id === w.id)) picked.push(w);
   }
@@ -242,14 +254,14 @@ export function getListenQueue(limit = 12): LexicalWord[] {
     "Travel",
     "The Weather",
   ];
-  const all = visibleWords();
-  const ordered: LexicalWord[] = [];
+  const { living, historical } = preferLivingFirst(visibleWords());
+  const ordered: LexicalWord[] = [...living];
   for (const ch of preferred) {
-    for (const w of all.filter((x) => x.chapter === ch)) {
+    for (const w of historical.filter((x) => x.chapter === ch)) {
       if (!ordered.some((o) => o.id === w.id)) ordered.push(w);
     }
   }
-  for (const w of all) {
+  for (const w of historical) {
     if (!ordered.some((o) => o.id === w.id)) ordered.push(w);
   }
   return ordered.slice(0, limit);

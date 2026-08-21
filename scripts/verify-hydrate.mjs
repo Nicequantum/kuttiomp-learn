@@ -64,7 +64,7 @@ async function fetchJson(path) {
   }
   if (!res.ok) {
     throw new Error(
-      `BLOCKER: ${url} returned HTTP ${res.status}. Public routes live on the updated Kuttiomp clone (GET /api/v1/public/health|lexicon). An older API on :8000, missing secrets, or unreachable Supabase will fail here.`,
+      `BLOCKER: ${url} returned HTTP ${res.status}. Public routes exist (GET /api/v1/public/health|lexicon). HTTP 503 here means the API process is up but Supabase is unreachable (paused project or DNS). Keep VITE_CONTENT_CORPUS=demo_historical. Do not invent a production host.`,
     );
   }
   return res.json();
@@ -85,6 +85,12 @@ console.log("corpus mode: demo_historical (merge path; not keeper_only cutover)"
 
 try {
   const health = await fetchJson("/api/v1/public/health");
+  if (health?.ok !== true) {
+    const reason = health?.reason ? ` reason=${health.reason}` : "";
+    throw new Error(
+      `BLOCKER: GET /api/v1/public/health ok=false${reason}. FastAPI is running; the living corpus host did not resolve. Unpause the Supabase project and confirm DNS. Keys stay in Kuttiomp apps/api/.env (never commit). Keep VITE_CONTENT_CORPUS=demo_historical so Williams seed is not used in keeper_only.`,
+    );
+  }
   assert(health?.ok === true, "GET /api/v1/public/health ok");
 
   const data = await fetchJson("/api/v1/public/lexicon?limit=200&offset=0");
@@ -121,7 +127,7 @@ try {
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err));
   console.error(
-    "Remaining user action: host FastAPI (Railway / Fly / Render), then set Vercel VITE_API_BASE_URL to that origin. Keep VITE_CONTENT_CORPUS=demo_historical until Keepers cut over.",
+    "Remaining user action: unpause/fix Supabase DNS, then re-run npm run verify:hydrate. After that, host FastAPI (Railway / Fly / Render) and set Vercel VITE_API_BASE_URL. Keep VITE_CONTENT_CORPUS=demo_historical until Keepers cut over.",
   );
   process.exit(1);
 }

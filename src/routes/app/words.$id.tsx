@@ -5,8 +5,11 @@ import { OrthographyGuide } from "@/components/content/OrthographyGuide";
 import { OralPlayer } from "@/components/content/OralPlayer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getWordById } from "@/lib/content/corpus";
+import { getWordById, useCorpusTick } from "@/lib/content/corpus";
 import { useProgressStore } from "@/lib/progress/store";
+import { useModeStore } from "@/lib/mode/store";
+import { MODES } from "@/lib/mode/modes";
+import { WordSourceBadge } from "@/components/content/WordAuthority";
 import { useState } from "react";
 
 export const Route = createFileRoute("/app/words/$id")({
@@ -14,6 +17,9 @@ export const Route = createFileRoute("/app/words/$id")({
 });
 
 function WordDetailPage() {
+  useCorpusTick();
+  const mode = useModeStore((s) => s.mode);
+  const meta = mode ? MODES[mode] : MODES.core_adult;
   const { id } = Route.useParams();
   const word = getWordById(id);
   const markPracticed = useProgressStore((s) => s.markPracticed);
@@ -55,9 +61,7 @@ function WordDetailPage() {
           {word.englishGloss}
         </p>
         <div className="flex flex-wrap gap-2">
-          <Badge tone={word.source === "keeper_approved" ? "land" : "warn"}>
-            {word.source === "keeper_approved" ? "Living form" : "Historical seed"}
-          </Badge>
+          <WordSourceBadge word={word} />
           {word.isPhrase && <Badge>Phrase</Badge>}
           <Badge tone="neutral">{word.chapter}</Badge>
           <Badge tone="land">{word.semanticDomain}</Badge>
@@ -82,11 +86,15 @@ function WordDetailPage() {
         narragansett={word.wordNarragansett}
         english={word.englishGloss}
         primaryAudioUrl={word.primaryAudioUrl}
+        speakerAttribution={word.speakerAttribution}
         size="hero"
+        showEnglishToggle={meta.id !== "little_ones"}
       />
 
       <section className="surface-card pad-mode space-y-3">
-        <h2 className="font-display text-lg">Living authority</h2>
+        <h2 className="font-display text-lg">
+          {word.source === "keeper_approved" ? "Living authority" : "Historical record"}
+        </h2>
         <div className="flex gap-3">
           <User className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-primary)]" />
           <div>
@@ -105,7 +113,7 @@ function WordDetailPage() {
             </p>
           </div>
         </div>
-        <HistoricalInlineNote />
+        <HistoricalInlineNote word={word} />
       </section>
 
       {word.englishHistorical &&

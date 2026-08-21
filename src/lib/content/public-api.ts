@@ -46,6 +46,8 @@ export type PublicHealthResponse = {
   service?: string;
   corpusVersion?: string;
   wordCount?: number;
+  /** Present when ok is false, e.g. living_corpus_unreachable */
+  reason?: string;
 };
 
 export type PublicPath = {

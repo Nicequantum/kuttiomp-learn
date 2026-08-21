@@ -2,6 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight, Play } from "lucide-react";
 import type { LexicalWord } from "@/lib/content/types";
 import { Badge } from "@/components/ui/badge";
+import {
+  SpeakerAttribution,
+  WordSourceBadge,
+} from "@/components/content/WordAuthority";
 import { speakWord } from "@/lib/audio/speak";
 import { useProgressStore } from "@/lib/progress/store";
 import { useModeStore } from "@/lib/mode/store";
@@ -68,12 +72,11 @@ export function WordCard({
           </p>
         )}
         <div className="mt-2 flex flex-wrap gap-1.5">
-          <Badge tone={word.source === "keeper_approved" ? "land" : "warn"}>
-            {word.source === "keeper_approved" ? "Living" : "Historical"}
-          </Badge>
+          <WordSourceBadge word={word} />
           {practiced && <Badge tone="neutral">Practiced</Badge>}
           {word.primaryAudioUrl && <Badge tone="land">Recording</Badge>}
         </div>
+        <SpeakerAttribution word={word} compact />
       </div>
     </Link>
   );
